@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONCEITO - Consultoria Empresarial</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background: #f9fafb;
+        }
+        header {
+            background: #1e3a8a;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header img {
+            max-height: 60px;
+        }
+        nav a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #f59e0b;
+        }
+        .hero {
+            background: #f3f4f6;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .hero img {
+            max-width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+        }
+        section {
+            padding: 2rem;
+        }
+        .services-grid, .methodology-grid, .testimonials-grid, .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .service-card, .methodology-card, .testimonial-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .cta {
+            background: #3b82f6;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        .cta button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        footer {
+            background: #1e3a8a;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .admin-panel {
+            background: #f3f4f6;
+            padding: 2rem;
+            margin: 2rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .admin-panel.show {
+            display: block;
+        }
+        .tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            display: inline-block;
+            margin-right: 0.5rem;
+            border-radius: 4px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.show {
+            display: block;
+        }
+        .photo-container img {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+        }
+        .client-logo {
+            max-height: 100px;
+            margin: 0.5rem;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #f59e0b;
+        }
+        .hidden {
+            display: none;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-section" class="modal">
+        <div class="modal-content">
+            <h2>Login Administrativo</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Usuário" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                <p id="login-error" class="error hidden">Usuário ou senha inválidos.</p>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="admin-panel">
+        <h2>Painel Administrativo</h2>
+        <button id="save-exit">Salvar e Sair</button>
+        <div>
+            <span class="tab" data-tab="general">Informações Gerais</span>
+            <span class="tab" data-tab="content">Conteúdo</span>
+            <span class="tab" data-tab="media">Mídia</span>
+            <span class="tab" data-tab="design">Design</span>
+        </div>
+
+        <div id="general" class="tab-content show">
+            <h3>Informações Gerais</h3>
+            <h4>Informações da Empresa</h4>
+            <label>Nome da Empresa:</label>
+            <input type="text" data-field="companyName" placeholder="Nome da Empresa">
+            <label>Número do WhatsApp:</label>
+            <input type="text" data-field="whatsapp" placeholder="Número do WhatsApp">
+
+            <h4>Logotipo da Empresa</h4>
+            <label>Clique para fazer upload do logotipo:</label>
+            <input type="file" id="logo-upload" accept="image/*">
+            <label>Tamanho do Logotipo:</label>
+            <input type="radio" name="logo-size" value="small" data-field="logoSize"> Pequeno
+            <input type="radio" name="logo-size" value="medium" data-field="logoSize" checked> Médio
+            <input type="radio" name="logo-size" value="large" data-field="logoSize"> Grande
+            <button id="remove-logo">Remover Logotipo</button>
+
+            <h4>Gerenciar Serviços</h4>
+            <div class="services-list"></div>
+            <input type="text" id="service-title" placeholder="Título do Serviço">
+            <textarea id="service-description" placeholder="Descrição do Serviço"></textarea>
+            <button onclick="addService()">Adicionar Serviço</button>
+        </div>
+
+        <div id="content" class="tab-content">
+            <h3>Conteúdo do Site</h3>
+            <h4>Seção Herói</h4>
+            <label>Título Principal:</label>
+            <input type="text" data-field="heroTitle" placeholder="Título Principal">
+            <label>Descrição:</label>
+            <textarea data-field="heroDescription" placeholder="Descrição"></textarea>
+            <label>Imagem do Hero:</label>
+            <input type="file" id="hero-image" accept="image/*">
+            <button id="remove-hero-image">Remover Imagem do Hero</button>
+
+            <h4>Seção Sobre</h4>
+            <label>Conteúdo:</label>
+            <textarea data-field="aboutContent" placeholder="Conteúdo"></textarea>
+            <label>Texto da Equipe:</label>
+            <textarea data-field="teamText" placeholder="Texto da Equipe"></textarea>
+
+            <h4>Seção CTA</h4>
+            <label>Título:</label>
+            <input type="text" data-field="ctaTitle" placeholder="Título">
+            <label>Descrição:</label>
+            <textarea data-field="ctaDescription" placeholder="Descrição"></textarea>
+
+            <h4>Seção Contato</h4>
+            <label>Endereço:</label>
+            <input type="text" data-field="address" placeholder="Endereço">
+            <label>Email:</label>
+            <input type="email" data-field="email" placeholder="Email">
+            <label>Horário de Atendimento:</label>
+            <input type="text" data-field="hours" placeholder="Horário de Atendimento">
+
+            <h4>Footer</h4>
+            <label>Descrição:</label>
+            <textarea data-field="footerDescription" placeholder="Descrição"></textarea>
+
+            <h4>Estatísticas</h4>
+            <label>Clientes Atendidos:</label>
+            <input type="text" data-field="clientsServed" placeholder="Clientes Atendidos">
+            <label>Crescimento Médio:</label>
+            <input type="text" data-field="growthRate" placeholder="Crescimento Médio">
+            <label>Anos de Experiência:</label>
+            <input type="text" data-field="yearsExperience" placeholder="Anos de Experiência">
+            <label>Gerado para Clientes:</label>
+            <input type="text" data-field="revenueGenerated" placeholder="Gerado para Clientes">
+
+            <h4>Metodologia</h4>
+            <label>Título da Seção:</label>
+            <input type="text" data-field="methodologyTitle" placeholder="Título da Seção">
+            <label>Descrição da Seção:</label>
+            <textarea data-field="methodologyDescription" placeholder="Descrição da Seção"></textarea>
+            <div class="methodology-list"></div>
+            <input type="text" id="methodology-step-title" placeholder="Título da Etapa">
+            <textarea id="methodology-step-description" placeholder="Descrição da Etapa"></textarea>
+            <button onclick="addMethodologyStep()">Adicionar Etapa</button>
+
+            <h4>Depoimentos</h4>
+            <div class="testimonials-list"></div>
+            <textarea id="testimonial-text" placeholder="Texto do Depoimento"></textarea>
+            <input type="text" id="testimonial-author" placeholder="Autor do Depoimento">
+            <button onclick="addTestimonial()">Adicionar Depoimento</button>
+        </div>
+
+        <div id="media" class="tab-content">
+            <h3>Mídia</h3>
+            <h4>Galeria de Fotos</h4>
+            <input type="file" id="photo-upload" accept="image/*" multiple>
+            <label>Selecionar Imagem do GitHub:</label>
+            <select id="github-image-select">
+                <option value="">Selecione uma imagem</option>
+                <option value="" disabled class="loading">Carregando imagens...</option>
+            </select>
+            <div class="gallery-list"></div>
+
+            <h4>Vídeos</h4>
+            <input type="text" id="youtube-url" placeholder="URL do YouTube">
+            <button onclick="addVideo()">Adicionar Vídeo</button>
+            <div class="videos-list"></div>
+
+            <h4>Logos de Clientes</h4>
+            <input type="file" id="client-logo-upload" accept="image/*" multiple>
+            <div class="client-logos-list"></div>
+        </div>
+
+        <div id="design" class="tab-content">
+            <h3>Design</h3>
+            <h4>Cores do Site</h4>
+            <label>Cor Principal (Navy Blue):</label>
+            <input type="color" data-field="primaryColor" value="#1e3a8a">
+            <label>Cor de Destaque (Gold):</label>
+            <input type="color" data-field="highlightColor" value="#f59e0b">
+            <label>Cor Secundária (Laser Blue):</label>
+            <input type="color" data-field="secondaryColor" value="#3b82f6">
+        </div>
+
+        <button id="save-changes">Salvar Alterações</button>
+    </div>
+
+    <div id="site-content">
+        <header>
+            <img data-field="logo" alt="Logo">
+            <nav>
+                <a href="#services">Serviços</a>
+                <a href="#methodology">Metodologia</a>
+                <a href="#about">Sobre Nós</a>
+                <a href="#testimonials">Depoimentos</a>
+                <a href="#contact">Contato</a>
+                <a href="mailto:contato@conceito.com.br">Enviar Currículo</a>
+                <a href="#" id="admin-link">Admin</a>
+            </nav>
+        </header>
+
+        <section id="hero" class="hero">
+            <h1 data-field="heroTitle"></h1>
+            <p data-field="heroDescription"></p>
+            <img data-field="heroImage" alt="Hero Image">
+            <button>Fale com um especialista</button>
+            <button>Conheça nossa metodologia</button>
+        </section>
+
+        <section id="stats">
+            <div><span data-field="clientsServed"></span> Clientes atendidos</div>
+            <div><span data-field="growthRate"></span> Crescimento médio</div>
+            <div><span data-field="yearsExperience"></span> Anos de experiência</div>
+            <div><span data-field="revenueGenerated"></span> Gerados para clientes</div>
+        </section>
+
+        <section id="services">
+            <h2>NOSSOS SERVIÇOS</h2>
+            <div class="services-grid"></div>
+        </section>
+
+        <section id="methodology">
+            <h2 data-field="methodologyTitle"></h2>
+            <p data-field="methodologyDescription"></p>
+            <div class="methodology-grid"></div>
+        </section>
+
+        <section id="about">
+            <h2>SOBRE A CONCEITO</h2>
+            <p data-field="aboutContent"></p>
+            <p data-field="teamText"></p>
+            <div>
+                <div>100% Foco em resultados</div>
+                <div>24/7 Suporte dedicado</div>
+                <div>100+ Especialistas</div>
+            </div>
+        </section>
+
+        <section id="testimonials">
+            <h2>DEPOIMENTOS</h2>
+            <div class="testimonials-grid"></div>
+        </section>
+
+        <section id="clients">
+            <h2>Alguns de nossos clientes</h2>
+            <div class="client-logos"></div>
+        </section>
+
+        <section id="gallery">
+            <h2>Galeria</h2>
+            <div class="gallery-grid"></div>
+        </section>
+
+        <section id="cta" class="cta">
+            <h2 data-field="ctaTitle"></h2>
+            <p data-field="ctaDescription"></p>
+            <button>Agendar Consultoria</button>
+        </section>
+
+        <section id="contact">
+            <h2>FALE CONOSCO</h2>
+            <div>
+                <p>Endereço: <span data-field="address"></span></p>
+                <p>Telefone: <span data-field="whatsapp"></span></p>
+                <p>Email: <span data-field="email"></span></p>
+                <p>Horário de Atendimento: <span data-field="hours"></span></p>
+            </div>
+        </section>
+
+        <footer>
+            <div>
+                <h3>CONCEITO</h3>
+                <p data-field="footerDescription"></p>
+            </div>
+            <div>
+                <h3>Links Rápidos</h3>
+                <a href="#services">Serviços</a>
+                <a href="#methodology">Metodologia</a>
+                <a href="#about">Sobre Nós</a>
+                <a href="#testimonials">Depoimentos</a>
+                <a href="#contact">Contato</a>
+                <a href="mailto:contato@conceito.com.br">Enviar Currículo</a>
+            </div>
+            <div>
+                <h3>Serviços</h3>
+                <a href="#">Estratégia Empresarial</a>
+                <a href="#">Otimização de Processos</a>
+                <a href="#">Gestão de Equipes</a>
+                <a href="#">Consultoria Financeira</a>
+                <a href="#">Expansão de Mercado</a>
+            </div>
+            <div>
+                <h3>Legal</h3>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Cookies</a>
+                <a href="#">FAQ</a>
+            </div>
+            <p>© <span id="current-year"></span> CONCEITO Consultoria Empresarial. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configurações - ATUALIZE ESTES VALORES COM SUAS INFORMAÇÕES
+        const CONFIG = {
+            GITHUB_REPO: 'seu-usuario/seu-repositorio', // Substitua pelo seu usuário/repositório
+            GITHUB_FOLDER: 'images', // Pasta no GitHub onde estão as imagens
+            ADMIN_USER: 'admin', // Usuário para login (altere para produção)
+            ADMIN_PASS: 'admin123' // Senha para login (altere para produção)
+        };
+
+        // Dados do site
+        let siteData = JSON.parse(localStorage.getItem('siteData')) || {
+            companyName: 'CONCEITO Consultoria Empresarial',
+            whatsapp: '(11) 9999-9999',
+            logo: '',
+            logoSize: 'medium',
+            services: [
+                { title: 'Estratégia Empresarial', description: 'Desenvolvimento de estratégias para crescimento.' },
+                { title: 'Otimização de Processos', description: 'Redução de custos e aumento de eficiência.' },
+                { title: 'Gestão de Equipes', description: 'Treinamento para alta performance.' }
+            ],
+            heroTitle: 'TRANSFORME SEU NEGÓCIO',
+            heroDescription: 'Consultoria premium para resultados extraordinários.',
+            heroImage: '',
+            aboutContent: 'Fundada em 2005, a CONCEITO é líder em consultoria empresarial.',
+            teamText: 'Nossa equipe é formada por ex-executivos de grandes corporações.',
+            ctaTitle: 'PRONTO PARA CRESCER?',
+            ctaDescription: 'Agende uma consultoria gratuita hoje mesmo.',
+            address: 'Av. Paulista, 1000, São Paulo/SP',
+            email: 'contato@conceito.com.br',
+            hours: 'Segunda a Sexta, 9h às 18h',
+            footerDescription: 'Consultoria empresarial com foco em resultados.',
+            clientsServed: '+100',
+            growthRate: '+300%',
+            yearsExperience: '15+',
+            revenueGenerated: 'R$50M+',
+            methodologyTitle: 'METODOLOGIA EXCLUSIVA',
+            methodologyDescription: 'Processo comprovado para transformação empresarial.',
+            methodologySteps: [
+                { title: 'Diagnóstico', description: 'Análise completa do negócio.' },
+                { title: 'Planejamento', description: 'Estratégia personalizada.' },
+                { title: 'Implementação', description: 'Execução com suporte.' }
+            ],
+            testimonials: [
+                { text: 'A CONCEITO transformou nossa empresa!', author: 'João Silva, CEO' },
+                { text: 'Resultados incríveis em 6 meses.', author: 'Maria Oliveira, CFO' }
+            ],
+            gallery: [],
+            videos: [],
+            clientLogos: [],
+            primaryColor: '#1e3a8a',
+            highlightColor: '#f59e0b',
+            secondaryColor: '#3b82f6'
+        };
+
+        let isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+        // Funções principais
+        function saveData() {
+            try {
+                localStorage.setItem('siteData', JSON.stringify(siteData));
+                updateSite();
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                alert('Erro ao salvar alterações');
+            }
+        }
+
+        async function fetchGithubImages() {
+            try {
+                // Usando GitHub API diretamente (funciona se o repositório for público)
+                const response = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_FOLDER}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    return Array.isArray(data) ? data.filter(file => 
+                        file.type === 'file' && /\.(jpg|jpeg|png|gif)$/i.test(file.name)
+                    ).map(file => ({
+                        name: file.name,
+                        url: file.download_url
+                    })) : [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Erro ao buscar imagens do GitHub:', error);
+                return [];
+            }
+        }
+
+        function updateSite() {
+            // Atualiza o ano no footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // Atualiza todos os elementos com data-field
+            document.querySelectorAll('[data-field]').forEach(el => {
+                const field = el.dataset.field;
+                if (field === 'logo' || field === 'heroImage') {
+                    el.src = siteData[field] || '';
+                    el.style.display = siteData[field] ? 'block' : 'none';
+                } else if (field.includes('Color')) {
+                    document.documentElement.style.setProperty(`--${field}`, siteData[field]);
+                } else {
+                    el.textContent = siteData[field] || '';
+                }
+            });
+
+            // Atualiza inputs administrativos
+            document.querySelectorAll('input[data-field], textarea[data-field]').forEach(el => {
+                if (el.type !== 'file') el.value = siteData[el.dataset.field] || '';
+            });
+
+            // Atualiza radio buttons
+            document.querySelectorAll('input[name="logo-size"]').forEach(radio => {
+                radio.checked = siteData.logoSize === radio.value;
+            });
+
+            // Atualiza serviços
+            const servicesGrid = document.querySelector('.services-grid');
+            servicesGrid.innerHTML = siteData.services.map(s => `
+                <div class="service-card">
+                    <h3>${s.title}</h3>
+                    <p>${s.description}</p>
+                </div>
+            `).join('');
+
+            const servicesList = document.querySelector('.services-list');
+            servicesList.innerHTML = siteData.services.map((s, i) => `
+                <div class="service-item">
+                    <input type="text" value="${s.title}" oninput="siteData.services[${i}].title = this.value; saveData()">
+                    <textarea oninput="siteData.services[${i}].description = this.value; saveData()">${s.description}</textarea>
+                    <button onclick="removeService(${i})">Remover</button>
+                </div>
+            `).join('');
+
+            // Atualiza metodologia
+            const methodologyGrid = document.querySelector('.methodology-grid');
+            methodologyGrid.innerHTML = siteData.methodologySteps.map(s => `
+                <div class="methodology-card">
+                    <h3>${s.title}</h3>
+                    <p>${s.description}</p>
+                </div>
+            `).join('');
+
+            const methodologyList = document.querySelector('.methodology-list');
+            methodologyList.innerHTML = siteData.methodologySteps.map((s, i) => `
+                <div class="methodology-item">
+                    <input type="text" value="${s.title}" oninput="siteData.methodologySteps[${i}].title = this.value; saveData()">
+                    <textarea oninput="siteData.methodologySteps[${i}].description = this.value; saveData()">${s.description}</textarea>
+                    <button onclick="removeMethodologyStep(${i})">Remover</button>
+                </div>
+            `).join('');
+
+            // Atualiza depoimentos
+            const testimonialsGrid = document.querySelector('.testimonials-grid');
+            testimonialsGrid.innerHTML = siteData.testimonials.map(t => `
+                <div class="testimonial-card">
+                    <p>"${t.text}"</p>
+                    <p>- ${t.author}</p>
+                </div>
+            `).join('');
+
+            const testimonialsList = document.querySelector('.testimonials-list');
+            testimonialsList.innerHTML = siteData.testimonials.map((t, i) => `
+                <div class="testimonial-item">
+                    <textarea oninput="siteData.testimonials[${i}].text = this.value; saveData()">${t.text}</textarea>
+                    <input type="text" value="${t.author}" oninput="siteData.testimonials[${i}].author = this.value; saveData()" placeholder="Autor">
+                    <button onclick="removeTestimonial(${i})">Remover</button>
+                </div>
+            `).join('');
+
+            // Atualiza galeria
+            const galleryGrid = document.querySelector('.gallery-grid');
+            galleryGrid.innerHTML = siteData.gallery.map(url => `
+                <div class="photo-container">
+                    <img src="${url}" alt="Gallery Image">
+                </div>
+            `).join('');
+
+            const galleryList = document.querySelector('.gallery-list');
+            galleryList.innerHTML = siteData.gallery.map((url, i) => `
+                <div class="gallery-item">
+                    <img src="${url}" alt="Gallery Image" style="width:100px;">
+                    <button onclick="removeGalleryImage(${i})">Remover</button>
+                </div>
+            `).join('');
+
+            // Atualiza vídeos
+            const videosList = document.querySelector('.videos-list');
+            videosList.innerHTML = siteData.videos.map((url, i) => `
+                <div class="video-item">
+                    <iframe src="${url}" frameborder="0" allowfullscreen style="width:100%;height:200px;"></iframe>
+                    <button onclick="removeVideo(${i})">Remover</button>
+                </div>
+            `).join('');
+
+            // Atualiza logos de clientes
+            const clientLogos = document.querySelector('.client-logos');
+            clientLogos.innerHTML = siteData.clientLogos.map(url => `
+                <img src="${url}" class="client-logo" alt="Client Logo">
+            `).join('');
+
+            const clientLogosList = document.querySelector('.client-logos-list');
+            clientLogosList.innerHTML = siteData.clientLogos.map((url, i) => `
+                <div class="client-logo-item">
+                    <img src="${url}" alt="Client Logo" style="width:100px;">
+                    <button onclick="removeClientLogo(${i})">Remover</button>
+                </div>
+            `).join('');
+        }
+
+        // Funções administrativas
+        function showLogin() {
+            document.getElementById('login-section').classList.add('show');
+            document.getElementById('admin-panel').classList.remove('show');
+            document.getElementById('site-content').style.display = 'none';
+        }
+
+        function showAdminPanel() {
+            if (!isAuthenticated) {
+                showLogin();
+                return;
+            }
+            document.getElementById('login-section').classList.remove('show');
+            document.getElementById('admin-panel').classList.add('show');
+            document.getElementById('site-content').style.display = 'none';
+            populateGithubImages();
+        }
+
+        function showSiteContent() {
+            document.getElementById('login-section').classList.remove('show');
+            document.getElementById('admin-panel').classList.remove('show');
+            document.getElementById('site-content').style.display = 'block';
+            updateSite();
+        }
+
+        async function populateGithubImages() {
+            const select = document.getElementById('github-image-select');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Carregando imagens...</option>';
+            
+            const images = await fetchGithubImages();
+            
+            select.innerHTML = '<option value="">Selecione uma imagem</option>' + 
+                images.map(img => `<option value="${img.url}">${img.name}</option>`).join('');
+        }
+
+        function handleGithubImageSelect(event) {
+            const url = event.target.value;
+            if (url && !siteData.gallery.includes(url)) {
+                siteData.gallery.push(url);
+                saveData();
+                event.target.value = '';
+            }
+        }
+
+        // Funções CRUD
+        function addService() {
+            const title = document.getElementById('service-title').value;
+            const description = document.getElementById('service-description').value;
+            if (title && description) {
+                siteData.services.push({ title, description });
+                saveData();
+                document.getElementById('service-title').value = '';
+                document.getElementById('service-description').value = '';
+            }
+        }
+
+        function removeService(index) {
+            siteData.services.splice(index, 1);
+            saveData();
+        }
+
+        function addMethodologyStep() {
+            const title = document.getElementById('methodology-step-title').value;
+            const description = document.getElementById('methodology-step-description').value;
+            if (title && description) {
+                siteData.methodologySteps.push({ title, description });
+                saveData();
+                document.getElementById('methodology-step-title').value = '';
+                document.getElementById('methodology-step-description').value = '';
+            }
+        }
+
+        function removeMethodologyStep(index) {
+            siteData.methodologySteps.splice(index, 1);
+            saveData();
+        }
+
+        function addTestimonial() {
+            const text = document.getElementById('testimonial-text').value;
+            const author = document.getElementById('testimonial-author').value;
+            if (text && author) {
+                siteData.testimonials.push({ text, author });
+                saveData();
+                document.getElementById('testimonial-text').value = '';
+                document.getElementById('testimonial-author').value = '';
+            }
+        }
+
+        function removeTestimonial(index) {
+            siteData.testimonials.splice(index, 1);
+            saveData();
+        }
+
+        function addVideo() {
+            const url = document.getElementById('youtube-url').value;
+            if (url) {
+                const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|embed|watch|videoId)\b|youtu\.be\/))([^"&?\/]+)/)?.[1];
+                if (videoId) {
+                    siteData.videos.push(`https://www.youtube.com/embed/${videoId}`);
+                    saveData();
+                    document.getElementById('youtube-url').value = '';
+                } else {
+                    alert('URL do YouTube inválido.');
+                }
+            }
+        }
+
+        function removeVideo(index) {
+            siteData.videos.splice(index, 1);
+            saveData();
+        }
+
+        function removeGalleryImage(index) {
+            siteData.gallery.splice(index, 1);
+            saveData();
+        }
+
+        function removeClientLogo(index) {
+            siteData.clientLogos.splice(index, 1);
+            saveData();
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateSite();
+
+            // Login
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === CONFIG.ADMIN_USER && password === CONFIG.ADMIN_PASS) {
+                    isAuthenticated = true;
+                    localStorage.setItem('isAuthenticated', 'true');
+                    document.getElementById('login-error').classList.add('hidden');
+                    showAdminPanel();
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            });
+
+            // Link Admin
+            document.getElementById('admin-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showAdminPanel();
+            });
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
+                    document.getElementById(tab.dataset.tab).classList.add('show');
+                });
+            });
+
+            // Botões de salvar
+            document.getElementById('save-changes').addEventListener('click', () => {
+                saveData();
+                alert('Alterações salvas com sucesso!');
+            });
+
+            document.getElementById('save-exit').addEventListener('click', () => {
+                saveData();
+                isAuthenticated = false;
+                localStorage.removeItem('isAuthenticated');
+                showSiteContent();
+            });
+
+            // Uploads
+            document.getElementById('logo-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        siteData.logo = e.target.result;
+                        saveData();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('remove-logo').addEventListener('click', () => {
+                siteData.logo = '';
+                saveData();
+            });
+
+            document.getElementById('hero-image').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        siteData.heroImage = e.target.result;
+                        saveData();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('remove-hero-image').addEventListener('click', () => {
+                siteData.heroImage = '';
+                saveData();
+            });
+
+            document.getElementById('photo-upload').addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        siteData.gallery.push(e.target.result);
+                        saveData();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            document.getElementById('client-logo-upload').addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        siteData.clientLogos.push(e.target.result);
+                        saveData();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Inputs dinâmicos
+            document.querySelectorAll('input[data-field], textarea[data-field]').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    siteData[input.dataset.field] = e.target.value;
+                    saveData();
+                });
+            });
+
+            document.querySelectorAll('input[name="logo-size"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    siteData.logoSize = e.target.value;
+                    saveData();
+                });
+            });
+
+            // Seleção de imagens do GitHub
+            document.getElementById('github-image-select').addEventListener('change', handleGithubImageSelect);
+
+            // Mostra conteúdo do site por padrão
+            showSiteContent();
+        });
+
+        // Funções globais para chamadas via HTML
+        window.addService = addService;
+        window.removeService = removeService;
+        window.addMethodologyStep = addMethodologyStep;
+        window.removeMethodologyStep = removeMethodologyStep;
+        window.addTestimonial = addTestimonial;
+        window.removeTestimonial = removeTestimonial;
+        window.addVideo = addVideo;
+        window.removeVideo = removeVideo;
+        window.removeGalleryImage = removeGalleryImage;
+        window.removeClientLogo = removeClientLogo;
+        window.handleGithubImageSelect = handleGithubImageSelect;
+    </script>
+</body>
+</html>
