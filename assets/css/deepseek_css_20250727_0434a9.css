@@ -1,0 +1,40 @@
+/* Estilos do painel administrativo */
+#admin-panel {
+  transition: all 0.3s ease;
+}
+
+.editable-active {
+  outline: 2px dashed var(--primary-color);
+  background-color: rgba(0, 31, 63, 0.1);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  min-height: 1.5rem;
+}
+
+[data-editable-img] {
+  transition: all 0.3s ease;
+}
+
+[data-editable-img]:hover {
+  outline: 2px solid var(--primary-color);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+#admin-controls {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  #admin-panel {
+    right: 1rem;
+    left: auto;
+  }
+  
+  #admin-panel > div {
+    width: 90vw;
+    max-width: 320px;
+  }
+}
