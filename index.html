@@ -1,899 +1,763 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONCEITO - Consultoria Empresarial</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            background: #f9fafb;
-        }
-        header {
-            background: #1e3a8a;
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header img {
-            max-height: 60px;
-        }
-        nav a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        nav a:hover {
-            color: #f59e0b;
-        }
-        .hero {
-            background: #f3f4f6;
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-        .hero img {
-            max-width: 100%;
-            aspect-ratio: 4 / 5;
-            object-fit: cover;
-        }
-        section {
-            padding: 2rem;
-        }
-        .services-grid, .methodology-grid, .testimonials-grid, .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-        .service-card, .methodology-card, .testimonial-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .cta {
-            background: #3b82f6;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-        }
-        .cta button {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        footer {
-            background: #1e3a8a;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.show {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            max-width: 400px;
-            width: 90%;
-        }
-        .admin-panel {
-            background: #f3f4f6;
-            padding: 2rem;
-            margin: 2rem;
-            border-radius: 8px;
-            display: none;
-        }
-        .admin-panel.show {
-            display: block;
-        }
-        .tab {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            background: #3b82f6;
-            color: white;
-            display: inline-block;
-            margin-right: 0.5rem;
-            border-radius: 4px;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.show {
-            display: block;
-        }
-        .photo-container img {
-            width: 100%;
-            aspect-ratio: 4 / 5;
-            object-fit: cover;
-        }
-        .client-logo {
-            max-height: 100px;
-            margin: 0.5rem;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 0.5rem;
-            margin: 0.5rem 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #f59e0b;
-        }
-        .hidden {
-            display: none;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        .loading {
-            color: #666;
-            font-style: italic;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="CONCEITO Consultoria">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
+  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#001F3F">
+  <link rel="canonical" href="https://conceito.com.br">
+  <title>CONCEITO | Consultoria Empresarial Premium - Versão 24</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" as="style">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Custom CSS for elements that need more specific styling */
+    .hero-gradient {
+      background: linear-gradient(135deg, #001F3F 0%, #003366 50%, #0066CC 100%);
+    }
+    .text-outline {
+      text-shadow: -1px -1px 0 #001F3F, 1px -1px 0 #001F3F, -1px 1px 0 #001F3F, 1px 1px 0 #001F3F;
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    .card-hover:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .transition-all {
+      transition: all 0.3s ease;
+    }
+    .section-divider {
+      height: 100px;
+      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
+    }
+    .testimonial-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+  </style>
 </head>
-<body>
-    <div id="login-section" class="modal">
-        <div class="modal-content">
-            <h2>Login Administrativo</h2>
-            <form id="login-form">
-                <input type="text" id="username" placeholder="Usuário" required>
-                <input type="password" id="password" placeholder="Senha" required>
-                <p id="login-error" class="error hidden">Usuário ou senha inválidos.</p>
-                <button type="submit">Entrar</button>
-            </form>
+<body class="font-sans antialiased text-gray-800">
+  <!-- Navigation -->
+  <nav class="fixed w-full bg-white shadow-md z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center">
+          <a href="#" class="flex items-center">
+            <span class="text-3xl font-bold text-blue-900 font-bebas">CONCEITO</span>
+            <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">v24</span>
+          </a>
         </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="#servicos" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Serviços</a>
+          <a href="#metodologia" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Metodologia</a>
+          <a href="#sobre" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Sobre Nós</a>
+          <a href="#depoimentos" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Depoimentos</a>
+          <a href="#contato" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Contato</a>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-blue-900 hover:text-blue-600">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div id="admin-panel" class="admin-panel">
-        <h2>Painel Administrativo</h2>
-        <button id="save-exit">Salvar e Sair</button>
-        <div>
-            <span class="tab" data-tab="general">Informações Gerais</span>
-            <span class="tab" data-tab="content">Conteúdo</span>
-            <span class="tab" data-tab="media">Mídia</span>
-            <span class="tab" data-tab="design">Design</span>
-        </div>
-
-        <div id="general" class="tab-content show">
-            <h3>Informações Gerais</h3>
-            <h4>Informações da Empresa</h4>
-            <label>Nome da Empresa:</label>
-            <input type="text" data-field="companyName" placeholder="Nome da Empresa">
-            <label>Número do WhatsApp:</label>
-            <input type="text" data-field="whatsapp" placeholder="Número do WhatsApp">
-
-            <h4>Logotipo da Empresa</h4>
-            <label>Clique para fazer upload do logotipo:</label>
-            <input type="file" id="logo-upload" accept="image/*">
-            <label>Tamanho do Logotipo:</label>
-            <input type="radio" name="logo-size" value="small" data-field="logoSize"> Pequeno
-            <input type="radio" name="logo-size" value="medium" data-field="logoSize" checked> Médio
-            <input type="radio" name="logo-size" value="large" data-field="logoSize"> Grande
-            <button id="remove-logo">Remover Logotipo</button>
-
-            <h4>Gerenciar Serviços</h4>
-            <div class="services-list"></div>
-            <input type="text" id="service-title" placeholder="Título do Serviço">
-            <textarea id="service-description" placeholder="Descrição do Serviço"></textarea>
-            <button onclick="addService()">Adicionar Serviço</button>
-        </div>
-
-        <div id="content" class="tab-content">
-            <h3>Conteúdo do Site</h3>
-            <h4>Seção Herói</h4>
-            <label>Título Principal:</label>
-            <input type="text" data-field="heroTitle" placeholder="Título Principal">
-            <label>Descrição:</label>
-            <textarea data-field="heroDescription" placeholder="Descrição"></textarea>
-            <label>Imagem do Hero:</label>
-            <input type="file" id="hero-image" accept="image/*">
-            <button id="remove-hero-image">Remover Imagem do Hero</button>
-
-            <h4>Seção Sobre</h4>
-            <label>Conteúdo:</label>
-            <textarea data-field="aboutContent" placeholder="Conteúdo"></textarea>
-            <label>Texto da Equipe:</label>
-            <textarea data-field="teamText" placeholder="Texto da Equipe"></textarea>
-
-            <h4>Seção CTA</h4>
-            <label>Título:</label>
-            <input type="text" data-field="ctaTitle" placeholder="Título">
-            <label>Descrição:</label>
-            <textarea data-field="ctaDescription" placeholder="Descrição"></textarea>
-
-            <h4>Seção Contato</h4>
-            <label>Endereço:</label>
-            <input type="text" data-field="address" placeholder="Endereço">
-            <label>Email:</label>
-            <input type="email" data-field="email" placeholder="Email">
-            <label>Horário de Atendimento:</label>
-            <input type="text" data-field="hours" placeholder="Horário de Atendimento">
-
-            <h4>Footer</h4>
-            <label>Descrição:</label>
-            <textarea data-field="footerDescription" placeholder="Descrição"></textarea>
-
-            <h4>Estatísticas</h4>
-            <label>Clientes Atendidos:</label>
-            <input type="text" data-field="clientsServed" placeholder="Clientes Atendidos">
-            <label>Crescimento Médio:</label>
-            <input type="text" data-field="growthRate" placeholder="Crescimento Médio">
-            <label>Anos de Experiência:</label>
-            <input type="text" data-field="yearsExperience" placeholder="Anos de Experiência">
-            <label>Gerado para Clientes:</label>
-            <input type="text" data-field="revenueGenerated" placeholder="Gerado para Clientes">
-
-            <h4>Metodologia</h4>
-            <label>Título da Seção:</label>
-            <input type="text" data-field="methodologyTitle" placeholder="Título da Seção">
-            <label>Descrição da Seção:</label>
-            <textarea data-field="methodologyDescription" placeholder="Descrição da Seção"></textarea>
-            <div class="methodology-list"></div>
-            <input type="text" id="methodology-step-title" placeholder="Título da Etapa">
-            <textarea id="methodology-step-description" placeholder="Descrição da Etapa"></textarea>
-            <button onclick="addMethodologyStep()">Adicionar Etapa</button>
-
-            <h4>Depoimentos</h4>
-            <div class="testimonials-list"></div>
-            <textarea id="testimonial-text" placeholder="Texto do Depoimento"></textarea>
-            <input type="text" id="testimonial-author" placeholder="Autor do Depoimento">
-            <button onclick="addTestimonial()">Adicionar Depoimento</button>
-        </div>
-
-        <div id="media" class="tab-content">
-            <h3>Mídia</h3>
-            <h4>Galeria de Fotos</h4>
-            <input type="file" id="photo-upload" accept="image/*" multiple>
-            <label>Selecionar Imagem do GitHub:</label>
-            <select id="github-image-select">
-                <option value="">Selecione uma imagem</option>
-                <option value="" disabled class="loading">Carregando imagens...</option>
-            </select>
-            <div class="gallery-list"></div>
-
-            <h4>Vídeos</h4>
-            <input type="text" id="youtube-url" placeholder="URL do YouTube">
-            <button onclick="addVideo()">Adicionar Vídeo</button>
-            <div class="videos-list"></div>
-
-            <h4>Logos de Clientes</h4>
-            <input type="file" id="client-logo-upload" accept="image/*" multiple>
-            <div class="client-logos-list"></div>
-        </div>
-
-        <div id="design" class="tab-content">
-            <h3>Design</h3>
-            <h4>Cores do Site</h4>
-            <label>Cor Principal (Navy Blue):</label>
-            <input type="color" data-field="primaryColor" value="#1e3a8a">
-            <label>Cor de Destaque (Gold):</label>
-            <input type="color" data-field="highlightColor" value="#f59e0b">
-            <label>Cor Secundária (Laser Blue):</label>
-            <input type="color" data-field="secondaryColor" value="#3b82f6">
-        </div>
-
-        <button id="save-changes">Salvar Alterações</button>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#servicos" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Serviços</a>
+        <a href="#metodologia" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Metodologia</a>
+        <a href="#sobre" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Sobre Nós</a>
+        <a href="#depoimentos" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Depoimentos</a>
+        <a href="#contato" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Contato</a>
+      </div>
     </div>
+  </nav>
 
-    <div id="site-content">
-        <header>
-            <img data-field="logo" alt="Logo">
-            <nav>
-                <a href="#services">Serviços</a>
-                <a href="#methodology">Metodologia</a>
-                <a href="#about">Sobre Nós</a>
-                <a href="#testimonials">Depoimentos</a>
-                <a href="#contact">Contato</a>
-                <a href="mailto:contato@conceito.com.br">Enviar Currículo</a>
-                <a href="#" id="admin-link">Admin</a>
-            </nav>
-        </header>
-
-        <section id="hero" class="hero">
-            <h1 data-field="heroTitle"></h1>
-            <p data-field="heroDescription"></p>
-            <img data-field="heroImage" alt="Hero Image">
-            <button>Fale com um especialista</button>
-            <button>Conheça nossa metodologia</button>
-        </section>
-
-        <section id="stats">
-            <div><span data-field="clientsServed"></span> Clientes atendidos</div>
-            <div><span data-field="growthRate"></span> Crescimento médio</div>
-            <div><span data-field="yearsExperience"></span> Anos de experiência</div>
-            <div><span data-field="revenueGenerated"></span> Gerados para clientes</div>
-        </section>
-
-        <section id="services">
-            <h2>NOSSOS SERVIÇOS</h2>
-            <div class="services-grid"></div>
-        </section>
-
-        <section id="methodology">
-            <h2 data-field="methodologyTitle"></h2>
-            <p data-field="methodologyDescription"></p>
-            <div class="methodology-grid"></div>
-        </section>
-
-        <section id="about">
-            <h2>SOBRE A CONCEITO</h2>
-            <p data-field="aboutContent"></p>
-            <p data-field="teamText"></p>
-            <div>
-                <div>100% Foco em resultados</div>
-                <div>24/7 Suporte dedicado</div>
-                <div>100+ Especialistas</div>
-            </div>
-        </section>
-
-        <section id="testimonials">
-            <h2>DEPOIMENTOS</h2>
-            <div class="testimonials-grid"></div>
-        </section>
-
-        <section id="clients">
-            <h2>Alguns de nossos clientes</h2>
-            <div class="client-logos"></div>
-        </section>
-
-        <section id="gallery">
-            <h2>Galeria</h2>
-            <div class="gallery-grid"></div>
-        </section>
-
-        <section id="cta" class="cta">
-            <h2 data-field="ctaTitle"></h2>
-            <p data-field="ctaDescription"></p>
-            <button>Agendar Consultoria</button>
-        </section>
-
-        <section id="contact">
-            <h2>FALE CONOSCO</h2>
-            <div>
-                <p>Endereço: <span data-field="address"></span></p>
-                <p>Telefone: <span data-field="whatsapp"></span></p>
-                <p>Email: <span data-field="email"></span></p>
-                <p>Horário de Atendimento: <span data-field="hours"></span></p>
-            </div>
-        </section>
-
-        <footer>
-            <div>
-                <h3>CONCEITO</h3>
-                <p data-field="footerDescription"></p>
-            </div>
-            <div>
-                <h3>Links Rápidos</h3>
-                <a href="#services">Serviços</a>
-                <a href="#methodology">Metodologia</a>
-                <a href="#about">Sobre Nós</a>
-                <a href="#testimonials">Depoimentos</a>
-                <a href="#contact">Contato</a>
-                <a href="mailto:contato@conceito.com.br">Enviar Currículo</a>
-            </div>
-            <div>
-                <h3>Serviços</h3>
-                <a href="#">Estratégia Empresarial</a>
-                <a href="#">Otimização de Processos</a>
-                <a href="#">Gestão de Equipes</a>
-                <a href="#">Consultoria Financeira</a>
-                <a href="#">Expansão de Mercado</a>
-            </div>
-            <div>
-                <h3>Legal</h3>
-                <a href="#">Termos de Uso</a>
-                <a href="#">Política de Privacidade</a>
-                <a href="#">Cookies</a>
-                <a href="#">FAQ</a>
-            </div>
-            <p>© <span id="current-year"></span> CONCEITO Consultoria Empresarial. Todos os direitos reservados.</p>
-        </footer>
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-32 pb-20 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex items-center justify-between">
+        <div class="md:w-1/2 mb-12 md:mb-0">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 font-bebas leading-tight">
+            <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
+          </h1>
+          <p class="text-lg md:text-xl mb-8 max-w-lg">
+            Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
+          </p>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="#contato" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center">
+              Fale com um especialista
+            </a>
+            <a href="#metodologia" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center">
+              Conheça nossa metodologia
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Business growth" class="rounded-lg shadow-2xl floating max-w-full h-auto">
+        </div>
+      </div>
     </div>
+  </section>
 
-    <script>
-        // Configurações - ATUALIZE ESTES VALORES COM SUAS INFORMAÇÕES
-        const CONFIG = {
-            GITHUB_REPO: 'seu-usuario/seu-repositorio', // Substitua pelo seu usuário/repositório
-            GITHUB_FOLDER: 'images', // Pasta no GitHub onde estão as imagens
-            ADMIN_USER: 'admin', // Usuário para login (altere para produção)
-            ADMIN_PASS: 'admin123' // Senha para login (altere para produção)
-        };
+  <!-- Stats Section -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+        <div class="p-6 border-r border-gray-200 last:border-r-0">
+          <div class="text-4xl font-bold text-blue-900 mb-2">+<span class="counter" data-target="250">0</span></div>
+          <div class="text-gray-600">Clientes atendidos</div>
+        </div>
+        <div class="p-6 border-r border-gray-200 last:border-r-0">
+          <div class="text-4xl font-bold text-blue-900 mb-2">+<span class="counter" data-target="120">0</span>%</div>
+          <div class="text-gray-600">Crescimento médio</div>
+        </div>
+        <div class="p-6 border-r border-gray-200 last:border-r-0">
+          <div class="text-4xl font-bold text-blue-900 mb-2"><span class="counter" data-target="18">0</span>+</div>
+          <div class="text-gray-600">Anos de experiência</div>
+        </div>
+        <div class="p-6">
+          <div class="text-4xl font-bold text-blue-900 mb-2">R$<span class="counter" data-target="500">0</span>M+</div>
+          <div class="text-gray-600">Gerados para clientes</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        // Dados do site
-        let siteData = JSON.parse(localStorage.getItem('siteData')) || {
-            companyName: 'CONCEITO Consultoria Empresarial',
-            whatsapp: '(11) 9999-9999',
-            logo: '',
-            logoSize: 'medium',
-            services: [
-                { title: 'Estratégia Empresarial', description: 'Desenvolvimento de estratégias para crescimento.' },
-                { title: 'Otimização de Processos', description: 'Redução de custos e aumento de eficiência.' },
-                { title: 'Gestão de Equipes', description: 'Treinamento para alta performance.' }
-            ],
-            heroTitle: 'TRANSFORME SEU NEGÓCIO',
-            heroDescription: 'Consultoria premium para resultados extraordinários.',
-            heroImage: '',
-            aboutContent: 'Fundada em 2005, a CONCEITO é líder em consultoria empresarial.',
-            teamText: 'Nossa equipe é formada por ex-executivos de grandes corporações.',
-            ctaTitle: 'PRONTO PARA CRESCER?',
-            ctaDescription: 'Agende uma consultoria gratuita hoje mesmo.',
-            address: 'Av. Paulista, 1000, São Paulo/SP',
-            email: 'contato@conceito.com.br',
-            hours: 'Segunda a Sexta, 9h às 18h',
-            footerDescription: 'Consultoria empresarial com foco em resultados.',
-            clientsServed: '+100',
-            growthRate: '+300%',
-            yearsExperience: '15+',
-            revenueGenerated: 'R$50M+',
-            methodologyTitle: 'METODOLOGIA EXCLUSIVA',
-            methodologyDescription: 'Processo comprovado para transformação empresarial.',
-            methodologySteps: [
-                { title: 'Diagnóstico', description: 'Análise completa do negócio.' },
-                { title: 'Planejamento', description: 'Estratégia personalizada.' },
-                { title: 'Implementação', description: 'Execução com suporte.' }
-            ],
-            testimonials: [
-                { text: 'A CONCEITO transformou nossa empresa!', author: 'João Silva, CEO' },
-                { text: 'Resultados incríveis em 6 meses.', author: 'Maria Oliveira, CFO' }
-            ],
-            gallery: [],
-            videos: [],
-            clientLogos: [],
-            primaryColor: '#1e3a8a',
-            highlightColor: '#f59e0b',
-            secondaryColor: '#3b82f6'
-        };
+  <!-- Services Section -->
+  <section id="servicos" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">NOSSOS <span class="text-yellow-500">SERVIÇOS</span></h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Soluções personalizadas para cada etapa do crescimento do seu negócio
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
+          <div class="h-48 bg-blue-800 flex items-center justify-center">
+            <i class="fas fa-chart-line text-white text-6xl"></i>
+          </div>
+          <div class="p-8">
+            <h3 class="text-xl font-bold text-blue-900 mb-4">Estratégia Empresarial</h3>
+            <p class="text-gray-600 mb-6">
+              Desenvolvimento de estratégias de crescimento com plano de ação detalhado para alcançar resultados extraordinários.
+            </p>
+            <a href="#" class="text-blue-600 font-medium flex items-center">
+              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Service 2 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
+          <div class="h-48 bg-blue-700 flex items-center justify-center">
+            <i class="fas fa-cogs text-white text-6xl"></i>
+          </div>
+          <div class="p-8">
+            <h3 class="text-xl font-bold text-blue-900 mb-4">Otimização de Processos</h3>
+            <p class="text-gray-600 mb-6">
+              Redesenho de processos operacionais para eliminar desperdícios e aumentar produtividade em até 200%.
+            </p>
+            <a href="#" class="text-blue-600 font-medium flex items-center">
+              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Service 3 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
+          <div class="h-48 bg-blue-600 flex items-center justify-center">
+            <i class="fas fa-users text-white text-6xl"></i>
+          </div>
+          <div class="p-8">
+            <h3 class="text-xl font-bold text-blue-900 mb-4">Gestão de Equipes</h3>
+            <p class="text-gray-600 mb-6">
+              Metodologia exclusiva para desenvolvimento de lideranças e alta performance de equipes.
+            </p>
+            <a href="#" class="text-blue-600 font-medium flex items-center">
+              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        let isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  <!-- Methodology Section -->
+  <section id="metodologia" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">METODOLOGIA <span class="text-yellow-500">EXCLUSIVA</span></h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Processo comprovado que já transformou centenas de empresas
+        </p>
+      </div>
+      
+      <div class="relative">
+        <!-- Timeline line -->
+        <div class="hidden md:block absolute left-1/2 h-full w-1 bg-blue-200 transform -translate-x-1/2"></div>
+        
+        <!-- Timeline items -->
+        <div class="space-y-12 md:space-y-0">
+          <!-- Item 1 -->
+          <div class="md:flex items-center w-full">
+            <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
+              <div class="bg-blue-50 p-8 rounded-xl">
+                <div class="text-blue-900 font-bold text-xl mb-4">1. Diagnóstico Estratégico</div>
+                <p class="text-gray-700">
+                  Análise profunda de todos os aspectos do negócio para identificar oportunidades de melhoria e pontos críticos.
+                </p>
+              </div>
+            </div>
+            <div class="hidden md:flex md:w-1/2 justify-center">
+              <div class="w-16 h-16 rounded-full bg-blue-900 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">1</div>
+            </div>
+            <div class="md:hidden w-16 h-16 rounded-full bg-blue-900 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">1</div>
+            <div class="md:w-1/2 md:pl-12"></div>
+          </div>
+          
+          <!-- Item 2 -->
+          <div class="md:flex items-center w-full">
+            <div class="md:w-1/2 md:pr-12"></div>
+            <div class="hidden md:flex md:w-1/2 justify-center">
+              <div class="w-16 h-16 rounded-full bg-blue-800 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">2</div>
+            </div>
+            <div class="md:hidden w-16 h-16 rounded-full bg-blue-800 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">2</div>
+            <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0">
+              <div class="bg-blue-50 p-8 rounded-xl">
+                <div class="text-blue-900 font-bold text-xl mb-4">2. Planejamento Personalizado</div>
+                <p class="text-gray-700">
+                  Desenvolvimento de um plano estratégico exclusivo para seu negócio com metas claras e indicadores de desempenho.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Item 3 -->
+          <div class="md:flex items-center w-full">
+            <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
+              <div class="bg-blue-50 p-8 rounded-xl">
+                <div class="text-blue-900 font-bold text-xl mb-4">3. Implementação com Suporte</div>
+                <p class="text-gray-700">
+                  Execução do plano com acompanhamento próximo de nossos consultores para garantir os resultados esperados.
+                </p>
+              </div>
+            </div>
+            <div class="hidden md:flex md:w-1/2 justify-center">
+              <div class="w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">3</div>
+            </div>
+            <div class="md:hidden w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">3</div>
+            <div class="md:w-1/2 md:pl-12"></div>
+          </div>
+          
+          <!-- Item 4 -->
+          <div class="md:flex items-center w-full">
+            <div class="md:w-1/2 md:pr-12"></div>
+            <div class="hidden md:flex md:w-1/2 justify-center">
+              <div class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">4</div>
+            </div>
+            <div class="md:hidden w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">4</div>
+            <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0">
+              <div class="bg-blue-50 p-8 rounded-xl">
+                <div class="text-blue-900 font-bold text-xl mb-4">4. Resultados e Escalabilidade</div>
+                <p class="text-gray-700">
+                  Consolidação dos resultados e preparação da empresa para o próximo nível de crescimento e expansão.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        // Funções principais
-        function saveData() {
-            try {
-                localStorage.setItem('siteData', JSON.stringify(siteData));
-                updateSite();
-            } catch (error) {
-                console.error('Erro ao salvar dados:', error);
-                alert('Erro ao salvar alterações');
-            }
-        }
+  <!-- About Section -->
+  <section id="sobre" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex items-center">
+        <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
+          <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-6 font-bebas">SOBRE A <span class="text-yellow-500">CONCEITO</span></h2>
+          <p class="text-gray-700 mb-6">
+            Fundada em 2005, a CONCEITO se consolidou como uma das principais consultorias empresariais do Brasil, com atuação em todo o território nacional e clientes em mais de 15 países.
+          </p>
+          <p class="text-gray-700 mb-6">
+            Nossa equipe é composta por especialistas com experiência prática em gestão empresarial, muitos deles ex-executivos de grandes corporações que decidiram dedicar seu conhecimento a transformar empresas de todos os portes.
+          </p>
+          <div class="flex items-center">
+            <div class="mr-4">
+              <div class="text-3xl font-bold text-blue-900">100%</div>
+              <div class="text-gray-600 text-sm">Foco em resultados</div>
+            </div>
+            <div class="mr-4">
+              <div class="text-3xl font-bold text-blue-900">24/7</div>
+              <div class="text-gray-600 text-sm">Suporte dedicado</div>
+            </div>
+            <div>
+              <div class="text-3xl font-bold text-blue-900">100+</div>
+              <div class="text-gray-600 text-sm">Especialistas</div>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2">
+          <div class="bg-blue-900 rounded-xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Equipe CONCEITO" class="w-full h-auto opacity-90">
+            <div class="p-6 text-white">
+              <h3 class="text-xl font-bold mb-2">Nossa Equipe</h3>
+              <p>Profissionais altamente qualificados com experiência prática em diversas indústrias e mercados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        async function fetchGithubImages() {
-            try {
-                // Usando GitHub API diretamente (funciona se o repositório for público)
-                const response = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_FOLDER}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    return Array.isArray(data) ? data.filter(file => 
-                        file.type === 'file' && /\.(jpg|jpeg|png|gif)$/i.test(file.name)
-                    ).map(file => ({
-                        name: file.name,
-                        url: file.download_url
-                    })) : [];
-                }
-                return [];
-            } catch (error) {
-                console.error('Erro ao buscar imagens do GitHub:', error);
-                return [];
-            }
-        }
+  <!-- Testimonials Section -->
+  <section id="depoimentos" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">DEPOIMENTOS DE <span class="text-yellow-500">CLIENTES</span></h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Veja o que nossos clientes dizem sobre nossos serviços
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card rounded-xl p-8 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="text-yellow-500 text-2xl">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-6">
+            "A CONCEITO transformou completamente nosso negócio. Em 8 meses aumentamos nossa receita em 150% e reduzimos custos em 30%. Recomendo sem dúvidas!"
+          </p>
+          <div class="flex items-center">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Silva" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <div class="font-bold text-blue-900">Carlos Silva</div>
+              <div class="text-sm text-gray-600">CEO, Indústria ABC</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card rounded-xl p-8 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="text-yellow-500 text-2xl">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-6">
+            "O trabalho da CONCEITO foi fundamental para nossa expansão internacional. Eles não só criaram a estratégia, como nos acompanharam em todo o processo."
+          </p>
+          <div class="flex items-center">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Ana Oliveira" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <div class="font-bold text-blue-900">Ana Oliveira</div>
+              <div class="text-sm text-gray-600">Diretora, TechStart</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card rounded-xl p-8 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="text-yellow-500 text-2xl">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-6">
+            "Depois de anos tentando melhorar nossos processos internos, a CONCEITO conseguiu em 3 meses o que não tínhamos conseguido em 5 anos. Incrível!"
+          </p>
+          <div class="flex items-center">
+            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Roberto Santos" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <div class="font-bold text-blue-900">Roberto Santos</div>
+              <div class="text-sm text-gray-600">Presidente, Grupo XYZ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function updateSite() {
-            // Atualiza o ano no footer
-            document.getElementById('current-year').textContent = new Date().getFullYear();
+  <!-- Clients Section -->
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h3 class="text-xl text-gray-600">Alguns de nossos clientes</h3>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
+        <div class="flex justify-center">
+          <img src="https://via.placeholder.com/150x60?text=LOGO+1" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
+        </div>
+        <div class="flex justify-center">
+          <img src="https://via.placeholder.com/150x60?text=LOGO+2" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
+        </div>
+        <div class="flex justify-center">
+          <img src="https://via.placeholder.com/150x60?text=LOGO+3" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
+        </div>
+        <div class="flex justify-center">
+          <img src="https://via.placeholder.com/150x60?text=LOGO+4" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
+        </div>
+        <div class="flex justify-center">
+          <img src="https://via.placeholder.com/150x60?text=LOGO+5" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
+        </div>
+      </div>
+    </div>
+  </section>
 
-            // Atualiza todos os elementos com data-field
-            document.querySelectorAll('[data-field]').forEach(el => {
-                const field = el.dataset.field;
-                if (field === 'logo' || field === 'heroImage') {
-                    el.src = siteData[field] || '';
-                    el.style.display = siteData[field] ? 'block' : 'none';
-                } else if (field.includes('Color')) {
-                    document.documentElement.style.setProperty(`--${field}`, siteData[field]);
-                } else {
-                    el.textContent = siteData[field] || '';
-                }
-            });
+  <!-- CTA Section -->
+  <section class="py-20 bg-blue-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-5xl font-bold mb-6 font-bebas">PRONTO PARA <span class="text-yellow-300">TRANSFORMAR</span> SEU NEGÓCIO?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Agende uma consultoria gratuita com nossos especialistas e descubra como podemos ajudar sua empresa a alcançar novos patamares.
+      </p>
+      <a href="#contato" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-12 rounded-lg transition-all transform hover:scale-105 shadow-lg inline-block">
+        Agendar Consultoria
+      </a>
+    </div>
+  </section>
 
-            // Atualiza inputs administrativos
-            document.querySelectorAll('input[data-field], textarea[data-field]').forEach(el => {
-                if (el.type !== 'file') el.value = siteData[el.dataset.field] || '';
-            });
-
-            // Atualiza radio buttons
-            document.querySelectorAll('input[name="logo-size"]').forEach(radio => {
-                radio.checked = siteData.logoSize === radio.value;
-            });
-
-            // Atualiza serviços
-            const servicesGrid = document.querySelector('.services-grid');
-            servicesGrid.innerHTML = siteData.services.map(s => `
-                <div class="service-card">
-                    <h3>${s.title}</h3>
-                    <p>${s.description}</p>
-                </div>
-            `).join('');
-
-            const servicesList = document.querySelector('.services-list');
-            servicesList.innerHTML = siteData.services.map((s, i) => `
-                <div class="service-item">
-                    <input type="text" value="${s.title}" oninput="siteData.services[${i}].title = this.value; saveData()">
-                    <textarea oninput="siteData.services[${i}].description = this.value; saveData()">${s.description}</textarea>
-                    <button onclick="removeService(${i})">Remover</button>
-                </div>
-            `).join('');
-
-            // Atualiza metodologia
-            const methodologyGrid = document.querySelector('.methodology-grid');
-            methodologyGrid.innerHTML = siteData.methodologySteps.map(s => `
-                <div class="methodology-card">
-                    <h3>${s.title}</h3>
-                    <p>${s.description}</p>
-                </div>
-            `).join('');
-
-            const methodologyList = document.querySelector('.methodology-list');
-            methodologyList.innerHTML = siteData.methodologySteps.map((s, i) => `
-                <div class="methodology-item">
-                    <input type="text" value="${s.title}" oninput="siteData.methodologySteps[${i}].title = this.value; saveData()">
-                    <textarea oninput="siteData.methodologySteps[${i}].description = this.value; saveData()">${s.description}</textarea>
-                    <button onclick="removeMethodologyStep(${i})">Remover</button>
-                </div>
-            `).join('');
-
-            // Atualiza depoimentos
-            const testimonialsGrid = document.querySelector('.testimonials-grid');
-            testimonialsGrid.innerHTML = siteData.testimonials.map(t => `
-                <div class="testimonial-card">
-                    <p>"${t.text}"</p>
-                    <p>- ${t.author}</p>
-                </div>
-            `).join('');
-
-            const testimonialsList = document.querySelector('.testimonials-list');
-            testimonialsList.innerHTML = siteData.testimonials.map((t, i) => `
-                <div class="testimonial-item">
-                    <textarea oninput="siteData.testimonials[${i}].text = this.value; saveData()">${t.text}</textarea>
-                    <input type="text" value="${t.author}" oninput="siteData.testimonials[${i}].author = this.value; saveData()" placeholder="Autor">
-                    <button onclick="removeTestimonial(${i})">Remover</button>
-                </div>
-            `).join('');
-
-            // Atualiza galeria
-            const galleryGrid = document.querySelector('.gallery-grid');
-            galleryGrid.innerHTML = siteData.gallery.map(url => `
-                <div class="photo-container">
-                    <img src="${url}" alt="Gallery Image">
-                </div>
-            `).join('');
-
-            const galleryList = document.querySelector('.gallery-list');
-            galleryList.innerHTML = siteData.gallery.map((url, i) => `
-                <div class="gallery-item">
-                    <img src="${url}" alt="Gallery Image" style="width:100px;">
-                    <button onclick="removeGalleryImage(${i})">Remover</button>
-                </div>
-            `).join('');
-
-            // Atualiza vídeos
-            const videosList = document.querySelector('.videos-list');
-            videosList.innerHTML = siteData.videos.map((url, i) => `
-                <div class="video-item">
-                    <iframe src="${url}" frameborder="0" allowfullscreen style="width:100%;height:200px;"></iframe>
-                    <button onclick="removeVideo(${i})">Remover</button>
-                </div>
-            `).join('');
-
-            // Atualiza logos de clientes
-            const clientLogos = document.querySelector('.client-logos');
-            clientLogos.innerHTML = siteData.clientLogos.map(url => `
-                <img src="${url}" class="client-logo" alt="Client Logo">
-            `).join('');
-
-            const clientLogosList = document.querySelector('.client-logos-list');
-            clientLogosList.innerHTML = siteData.clientLogos.map((url, i) => `
-                <div class="client-logo-item">
-                    <img src="${url}" alt="Client Logo" style="width:100px;">
-                    <button onclick="removeClientLogo(${i})">Remover</button>
-                </div>
-            `).join('');
-        }
-
-        // Funções administrativas
-        function showLogin() {
-            document.getElementById('login-section').classList.add('show');
-            document.getElementById('admin-panel').classList.remove('show');
-            document.getElementById('site-content').style.display = 'none';
-        }
-
-        function showAdminPanel() {
-            if (!isAuthenticated) {
-                showLogin();
-                return;
-            }
-            document.getElementById('login-section').classList.remove('show');
-            document.getElementById('admin-panel').classList.add('show');
-            document.getElementById('site-content').style.display = 'none';
-            populateGithubImages();
-        }
-
-        function showSiteContent() {
-            document.getElementById('login-section').classList.remove('show');
-            document.getElementById('admin-panel').classList.remove('show');
-            document.getElementById('site-content').style.display = 'block';
-            updateSite();
-        }
-
-        async function populateGithubImages() {
-            const select = document.getElementById('github-image-select');
-            if (!select) return;
+  <!-- Contact Section -->
+  <section id="contato" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex">
+        <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
+          <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-6 font-bebas">FALE <span class="text-yellow-500">CONOSCO</span></h2>
+          <p class="text-gray-700 mb-8">
+            Entre em contato com nossa equipe para saber mais sobre nossos serviços e como podemos ajudar seu negócio a crescer.
+          </p>
+          
+          <div class="space-y-6">
+            <div class="flex items-start">
+              <div class="text-blue-900 text-xl mr-4 mt-1">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-blue-900 mb-1">Endereço</h4>
+                <p class="text-gray-700">Av. Paulista, 1000 - São Paulo/SP</p>
+              </div>
+            </div>
             
-            select.innerHTML = '<option value="">Carregando imagens...</option>';
+            <div class="flex items-start">
+              <div class="text-blue-900 text-xl mr-4 mt-1">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-blue-900 mb-1">Telefone</h4>
+                <p class="text-gray-700">(11) 9999-9999</p>
+              </div>
+            </div>
             
-            const images = await fetchGithubImages();
+            <div class="flex items-start">
+              <div class="text-blue-900 text-xl mr-4 mt-1">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-blue-900 mb-1">Email</h4>
+                <p class="text-gray-700">contato@conceito.com.br</p>
+              </div>
+            </div>
             
-            select.innerHTML = '<option value="">Selecione uma imagem</option>' + 
-                images.map(img => `<option value="${img.url}">${img.name}</option>`).join('');
+            <div class="flex items-start">
+              <div class="text-blue-900 text-xl mr-4 mt-1">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-blue-900 mb-1">Horário de Atendimento</h4>
+                <p class="text-gray-700">Segunda a Sexta, das 9h às 18h</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="md:w-1/2">
+          <form class="bg-gray-50 p-8 rounded-xl shadow-lg">
+            <div class="mb-6">
+              <label for="name" class="block text-gray-700 font-medium mb-2">Nome Completo</label>
+              <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div class="mb-6">
+              <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+              <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div class="mb-6">
+              <label for="phone" class="block text-gray-700 font-medium mb-2">Telefone</label>
+              <input type="tel" id="phone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div class="mb-6">
+              <label for="company" class="block text-gray-700 font-medium mb-2">Empresa</label>
+              <input type="text" id="company" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div class="mb-6">
+              <label for="message" class="block text-gray-700 font-medium mb-2">Mensagem</label>
+              <textarea id="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition-all">
+              Enviar Mensagem
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex md:justify-between">
+        <div class="mb-8 md:mb-0">
+          <a href="#" class="text-3xl font-bold font-bebas">CONCEITO</a>
+          <p class="mt-4 max-w-xs">
+            Consultoria empresarial premium com foco em resultados extraordinários.
+          </p>
+          <div class="flex space-x-4 mt-6">
+            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-youtube"></i></a>
+            <button id="download-site" class="text-white hover:text-yellow-300 text-xl bg-blue-8
+
+00 hover:bg-blue-700 rounded-full w-10 h-10 flex items-center justify-center" title="Baixar Site">
+              <i class="fas fa-download"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-lg font-bold mb-4">Links Rápidos</h3>
+            <ul class="space-y-2">
+              <li><a href="#servicos" class="hover:text-yellow-300 transition-colors">Serviços</a></li>
+              <li><a href="#metodologia" class="hover:text-yellow-300 transition-colors">Metodologia</a></li>
+              <li><a href="#sobre" class="hover:text-yellow-300 transition-colors">Sobre Nós</a></li>
+              <li><a href="#depoimentos" class="hover:text-yellow-300 transition-colors">Depoimentos</a></li>
+              <li><a href="#contato" class="hover:text-yellow-300 transition-colors">Contato</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-4">Serviços</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Estratégia Empresarial</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Otimização de Processos</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Gestão de Equipes</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Consultoria Financeira</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Expansão de Mercado</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-4">Legal</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Termos de Uso</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Política de Privacidade</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">Cookies</a></li>
+              <li><a href="#" class="hover:text-yellow-300 transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">
+        <p>© 2023 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-900 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Back to top button
+    const backToTopButton = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopButton.classList.remove('opacity-100', 'visible');
+        backToTopButton.classList.add('opacity-0', 'invisible');
+      }
+    });
+
+    backToTopButton.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          // Close mobile menu if open
+          const mobileMenu = document.getElementById('mobile-menu');
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+          }
         }
+      });
+    });
 
-        function handleGithubImageSelect(event) {
-            const url = event.target.value;
-            if (url && !siteData.gallery.includes(url)) {
-                siteData.gallery.push(url);
-                saveData();
-                event.target.value = '';
-            }
+    // Counter animation
+    function animateCounters() {
+      const counters = document.querySelectorAll('.counter');
+      const speed = 200;
+      
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+        const increment = target / speed;
+        
+        if (count < target) {
+          counter.innerText = Math.ceil(count + increment);
+          setTimeout(animateCounters, 1);
+        } else {
+          counter.innerText = target;
         }
+      });
+    }
 
-        // Funções CRUD
-        function addService() {
-            const title = document.getElementById('service-title').value;
-            const description = document.getElementById('service-description').value;
-            if (title && description) {
-                siteData.services.push({ title, description });
-                saveData();
-                document.getElementById('service-title').value = '';
-                document.getElementById('service-description').value = '';
-            }
+    // Intersection Observer to trigger counter animation when section is in view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          observer.unobserve(entry.target);
         }
+      });
+    }, { threshold: 0.5 });
 
-        function removeService(index) {
-            siteData.services.splice(index, 1);
-            saveData();
-        }
+    const statsSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-4.gap-8.text-center');
+    if (statsSection) {
+      observer.observe(statsSection);
+    }
 
-        function addMethodologyStep() {
-            const title = document.getElementById('methodology-step-title').value;
-            const description = document.getElementById('methodology-step-description').value;
-            if (title && description) {
-                siteData.methodologySteps.push({ title, description });
-                saveData();
-                document.getElementById('methodology-step-title').value = '';
-                document.getElementById('methodology-step-description').value = '';
-            }
-        }
+    // Download site as HTML file
+    document.getElementById('download-site').addEventListener('click', function() {
+      const htmlContent = document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'site-conceito-consultoria.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      // Feedback visual
+      this.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-download"></i>';
+      }, 2000);
+    });
 
-        function removeMethodologyStep(index) {
-            siteData.methodologySteps.splice(index, 1);
-            saveData();
-        }
-
-        function addTestimonial() {
-            const text = document.getElementById('testimonial-text').value;
-            const author = document.getElementById('testimonial-author').value;
-            if (text && author) {
-                siteData.testimonials.push({ text, author });
-                saveData();
-                document.getElementById('testimonial-text').value = '';
-                document.getElementById('testimonial-author').value = '';
-            }
-        }
-
-        function removeTestimonial(index) {
-            siteData.testimonials.splice(index, 1);
-            saveData();
-        }
-
-        function addVideo() {
-            const url = document.getElementById('youtube-url').value;
-            if (url) {
-                const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|embed|watch|videoId)\b|youtu\.be\/))([^"&?\/]+)/)?.[1];
-                if (videoId) {
-                    siteData.videos.push(`https://www.youtube.com/embed/${videoId}`);
-                    saveData();
-                    document.getElementById('youtube-url').value = '';
-                } else {
-                    alert('URL do YouTube inválido.');
-                }
-            }
-        }
-
-        function removeVideo(index) {
-            siteData.videos.splice(index, 1);
-            saveData();
-        }
-
-        function removeGalleryImage(index) {
-            siteData.gallery.splice(index, 1);
-            saveData();
-        }
-
-        function removeClientLogo(index) {
-            siteData.clientLogos.splice(index, 1);
-            saveData();
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', async () => {
-            updateSite();
-
-            // Login
-            document.getElementById('login-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                if (username === CONFIG.ADMIN_USER && password === CONFIG.ADMIN_PASS) {
-                    isAuthenticated = true;
-                    localStorage.setItem('isAuthenticated', 'true');
-                    document.getElementById('login-error').classList.add('hidden');
-                    showAdminPanel();
-                } else {
-                    document.getElementById('login-error').classList.remove('hidden');
-                }
-            });
-
-            // Link Admin
-            document.getElementById('admin-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                showAdminPanel();
-            });
-
-            // Tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
-                    document.getElementById(tab.dataset.tab).classList.add('show');
-                });
-            });
-
-            // Botões de salvar
-            document.getElementById('save-changes').addEventListener('click', () => {
-                saveData();
-                alert('Alterações salvas com sucesso!');
-            });
-
-            document.getElementById('save-exit').addEventListener('click', () => {
-                saveData();
-                isAuthenticated = false;
-                localStorage.removeItem('isAuthenticated');
-                showSiteContent();
-            });
-
-            // Uploads
-            document.getElementById('logo-upload').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        siteData.logo = e.target.result;
-                        saveData();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            document.getElementById('remove-logo').addEventListener('click', () => {
-                siteData.logo = '';
-                saveData();
-            });
-
-            document.getElementById('hero-image').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        siteData.heroImage = e.target.result;
-                        saveData();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            document.getElementById('remove-hero-image').addEventListener('click', () => {
-                siteData.heroImage = '';
-                saveData();
-            });
-
-            document.getElementById('photo-upload').addEventListener('change', (e) => {
-                const files = Array.from(e.target.files);
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        siteData.gallery.push(e.target.result);
-                        saveData();
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-
-            document.getElementById('client-logo-upload').addEventListener('change', (e) => {
-                const files = Array.from(e.target.files);
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        siteData.clientLogos.push(e.target.result);
-                        saveData();
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-
-            // Inputs dinâmicos
-            document.querySelectorAll('input[data-field], textarea[data-field]').forEach(input => {
-                input.addEventListener('input', (e) => {
-                    siteData[input.dataset.field] = e.target.value;
-                    saveData();
-                });
-            });
-
-            document.querySelectorAll('input[name="logo-size"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    siteData.logoSize = e.target.value;
-                    saveData();
-                });
-            });
-
-            // Seleção de imagens do GitHub
-            document.getElementById('github-image-select').addEventListener('change', handleGithubImageSelect);
-
-            // Mostra conteúdo do site por padrão
-            showSiteContent();
-        });
-
-        // Funções globais para chamadas via HTML
-        window.addService = addService;
-        window.removeService = removeService;
-        window.addMethodologyStep = addMethodologyStep;
-        window.removeMethodologyStep = removeMethodologyStep;
-        window.addTestimonial = addTestimonial;
-        window.removeTestimonial = removeTestimonial;
-        window.addVideo = addVideo;
-        window.removeVideo = removeVideo;
-        window.removeGalleryImage = removeGalleryImage;
-        window.removeClientLogo = removeClientLogo;
-        window.handleGithubImageSelect = handleGithubImageSelect;
-    </script>
+    // Form submission
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Obrigado por sua mensagem! Entraremos em contato em breve.');
+        form.reset();
+      });
+    }
+  </script>
 </body>
 </html>
