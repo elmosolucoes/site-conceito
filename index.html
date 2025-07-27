@@ -420,7 +420,19 @@
 
         function loadData() {
             try {
-                const savedData = JSON.parse(localStorage.getItem('siteData')) || staticData;
+               async function fetchSiteData() {
+  try {
+    const res = await fetch('/.netlify/functions/getSiteData');
+    if (res.ok) {
+      const data = await res.json();
+      Object.assign(staticData, data);
+    }
+  } catch (e) {
+    // fallback para localStorage se offline
+    const savedData = JSON.parse(localStorage.getItem('siteData')) || staticData;
+    Object.assign(staticData, savedData);
+  }
+}
                 Object.assign(staticData, savedData);
 
                 document.getElementById('companyName').value = staticData.companyName;
@@ -563,7 +575,7 @@
                         }
                         const id = parseInt(button.parentElement.dataset.id);
                         staticData.services = staticData.services.filter(s => s.id !== id);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                 });
@@ -577,7 +589,7 @@
                         }
                         const id = parseInt(button.parentElement.dataset.id);
                         staticData.methodologySteps = staticData.methodologySteps.filter(s => s.id !== id);
-                        saveData();
+                        await saveSiteData();;
                         loadData();
                     });
                 });
@@ -591,7 +603,7 @@
                         }
                         const id = parseInt(button.parentElement.dataset.id);
                         staticData.testimonials = staticData.testimonials.filter(t => t.id !== id);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                 });
@@ -605,7 +617,7 @@
                         }
                         const index = parseInt(button.dataset.index);
                         staticData.clientLogos.splice(index, 1);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                 });
@@ -614,10 +626,21 @@
             }
         }
 
-        function saveData() {
+        function await saveSiteData() {
             try {
-                localStorage.setItem('siteData', JSON.stringify(staticData));
-            } catch (error) {
+async function saveSiteData() {
+  try {
+    const res = await fetch('/.netlify/functions/saveSiteData', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(staticData)
+    });
+    if (!res.ok) throw new Error('Falha ao salvar no backend');
+  } catch (e) {
+    // fallback para localStorage se offline
+    localStorage.setItem('siteData', JSON.stringify(staticData));
+  }
+}            } catch (error) {
                 console.error('Erro ao salvar dados:', error);
             }
         }
@@ -732,7 +755,7 @@
                         return;
                     }
                     updateData();
-                    saveData();
+                    await saveSiteData();
                     loadData();
                     showModal('Alterações salvas com sucesso!');
                 });
@@ -744,7 +767,7 @@
                         return;
                     }
                     updateData();
-                    saveData();
+                    await saveSiteData();
                     loadData();
                     showModal('Alterações salvas com sucesso!');
                     isAuthenticated = false;
@@ -779,11 +802,11 @@
                         }
                         const id = parseInt(serviceDiv.dataset.id);
                         staticData.services = staticData.services.filter(s => s.id !== id);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                     staticData.services.push({ id, title: '', text: '' });
-                    saveData();
+                    await saveSiteData();
                     loadData();
                 });
 
@@ -811,11 +834,11 @@
                         }
                         const id = parseInt(stepDiv.dataset.id);
                         staticData.methodologySteps = staticData.methodologySteps.filter(s => s.id !== id);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                     staticData.methodologySteps.push({ id, title: '', text: '' });
-                    saveData();
+                    await saveSiteData();
                     loadData();
                 });
 
@@ -844,11 +867,11 @@
                         }
                         const id = parseInt(testimonialDiv.dataset.id);
                         staticData.testimonials = staticData.testimonials.filter(t => t.id !== id);
-                        saveData();
+                        await saveSiteData();
                         loadData();
                     });
                     staticData.testimonials.push({ id, text: '', author: '', position: '' });
-                    saveData();
+                    await saveSiteData();
                     loadData();
                 });
 
@@ -863,7 +886,7 @@
                         const reader = new FileReader();
                         reader.onload = () => {
                             staticData.logo = reader.result;
-                            saveData();
+                            await saveSiteData();
                             loadData();
                             showModal('Logotipo uploaded com sucesso!');
                         };
@@ -878,7 +901,7 @@
                         return;
                     }
                     staticData.logo = null;
-                    saveData();
+                    await saveSiteData();
                     loadData();
                     showModal('Logotipo removido com sucesso.');
                 });
@@ -894,7 +917,7 @@
                         const reader = new FileReader();
                         reader.onload = () => {
                             staticData.heroImage = reader.result;
-                            saveData();
+                            await saveSiteData();
                             loadData();
                             showModal('Imagem do Hero carregada com sucesso!');
                         };
@@ -909,7 +932,7 @@
                         return;
                     }
                     staticData.heroImage = null;
-                    saveData();
+                    await saveSiteData();
                     loadData();
                     showModal('Imagem do Hero removida com sucesso.');
                 });
@@ -930,7 +953,7 @@
                     });
                     Promise.all(readers).then(photos => {
                         staticData.photos = [...staticData.photos, ...photos];
-                        saveData();
+                        await saveSiteData();
                         loadData();
                         showModal('Fotos carregadas com sucesso!');
                     });
@@ -952,7 +975,7 @@
                     });
                     Promise.all(readers).then(logos => {
                         staticData.clientLogos = [...staticData.clientLogos, ...logos];
-                        saveData();
+                        await saveSiteData();
                         loadData();
                         showModal('Logos de clientes carregados com sucesso!');
                     });
@@ -967,7 +990,7 @@
                     const video = document.getElementById('videoLink').value;
                     if (video.includes('youtube.com')) {
                         staticData.videos.push(video);
-                        saveData();
+                        await saveSiteData();;
                         loadData();
                         document.getElementById('videoLink').value = '';
                         showModal('Vídeo adicionado com sucesso!');
