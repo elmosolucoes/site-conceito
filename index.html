@@ -1,46 +1,450 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Consultoria empresarial premium com metodologia exclusiva para crescimento acelerado.">
-  <meta name="keywords" content="consultoria, negócios, estratégia, gestão">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://conceito-consultoria.com.br/">
-  <meta property="og:title" content="Conceito Consultoria - Transforme seu negócio">
-  <meta property="og:description" content="Metodologia exclusiva que aumenta em até 300% a eficiência operacional.">
-  <meta property="og:image" content="https://conceito-consultoria.com.br/images/og-image.jpg">
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:title" content="Conceito Consultoria - Transforme seu negócio">
-  <meta property="twitter:description" content="Metodologia exclusiva que aumenta em até 300% a eficiência operacional.">
-  <meta property="twitter:image" content="https://conceito-consultoria.com.br/images/og-image.jpg">
-
-  <title>Conceito - Excelência em Consultoria Empresarial</title>
-  <link rel="stylesheet" href="/dist/output.css" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  
-  <!-- Estilos CSS inline (opcional) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONCEITO | Consultoria Empresarial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #1A3C5A;
-      --highlight-color: #FFD700;
-      --secondary-color: #00B7EB;
+      --primary-color: #001F3F;
+      --secondary-color: #003366;
+      --accent-color: #F59E0B;
     }
-    .btn-primary { background-color: var(--primary-color); color: white; }
-    .btn-primary:hover { background-color: #15324a; }
+    
+    .editable {
+      outline: 1px dashed rgba(0, 31, 63, 0.3);
+      min-height: 20px;
+    }
+    
+    .editable:hover {
+      outline: 1px dashed var(--primary-color);
+      background-color: rgba(0, 31, 63, 0.05);
+    }
+    
+    .admin-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+    }
+    
+    .admin-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+    }
   </style>
 </head>
-<body>
-  <div id="root"></div>
-  <noscript>
-    <h1 style="text-align: center; margin-top: 2rem;">
-      Este site requer JavaScript. Por favor, ative-o nas configurações do seu navegador.
-    </h1>
-  </noscript>
-  <script type="module" src="/src/index.jsx"></script>
+<body class="font-sans antialiased text-gray-800">
+  <!-- Conteúdo do Site -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="text-3xl font-bold text-blue-900" data-editable="logo">CONCEITO</div>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#servicos" class="text-blue-900 hover:text-blue-600" data-editable="nav-servicos">Serviços</a>
+          <a href="#sobre" class="text-blue-900 hover:text-blue-600" data-editable="nav-sobre">Sobre Nós</a>
+          <a href="#contato" class="text-blue-900 hover:text-blue-600" data-editable="nav-contato">Contato</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Seção Hero -->
+    <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
+      <div class="container mx-auto px-4">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6" data-editable="hero-titulo">Transforme Seu Negócio</h1>
+        <p class="text-xl mb-8 max-w-lg" data-editable="hero-subtitulo">Soluções empresariais premium para crescimento sustentável</p>
+        <button class="bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg" data-editable="hero-botao">Fale Conosco</button>
+      </div>
+    </section>
+
+    <!-- Outras seções do site... -->
+  </main>
+
+  <!-- Painel Administrativo -->
+  <div class="admin-panel">
+    <button id="admin-button" class="bg-blue-900 text-white p-3 rounded-full shadow-lg">
+      <i class="fas fa-cog"></i>
+    </button>
+  </div>
+
+  <!-- Modal de Login -->
+  <div id="login-modal" class="admin-modal">
+    <div class="bg-white rounded-lg p-8 max-w-md mx-auto mt-20">
+      <h2 class="text-2xl font-bold mb-6">Acesso Administrativo</h2>
+      <form id="login-form">
+        <div class="mb-4">
+          <label class="block mb-2">Usuário</label>
+          <input type="text" id="username" class="w-full p-2 border rounded" required>
+        </div>
+        <div class="mb-6">
+          <label class="block mb-2">Senha</label>
+          <input type="password" id="password" class="w-full p-2 border rounded" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-900 text-white py-2 rounded">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Administração -->
+  <div id="admin-modal" class="admin-modal">
+    <div class="bg-white rounded-lg p-8 max-w-4xl mx-auto mt-10 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Painel Administrativo</h2>
+        <button id="close-admin" class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="mb-6">
+        <button id="toggle-edit" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">
+          <i class="fas fa-edit mr-2"></i>Ativar Edição
+        </button>
+        <button id="save-changes" class="bg-green-600 text-white px-4 py-2 rounded">
+          <i class="fas fa-save mr-2"></i>Salvar no GitHub
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Configurações Rápidas</h3>
+          <div class="mb-4">
+            <label class="block mb-1">Cor Primária</label>
+            <input type="color" id="primary-color" value="#001F3F" class="w-full h-10">
+          </div>
+        </div>
+        
+        <div class="md:col-span-2">
+          <h3 class="text-lg font-semibold mb-3">Histórico de Alterações</h3>
+          <div id="change-history" class="bg-gray-100 p-4 rounded max-h-40 overflow-y-auto">
+            <p class="text-gray-500 text-sm">Nenhuma alteração ainda.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Unificado -->
+  <script>
+    // Configurações
+    const CONFIG = {
+      github: {
+        repo: 'elmosolucoes/site-conceito',
+        branch: 'main',
+        filePath: 'config.json'
+      },
+      admin: {
+        username: 'admin',
+        password: 'Euvou*1717' // Em produção, use um hash seguro
+      }
+    };
+
+    // Estado do sistema
+    const state = {
+      editMode: false,
+      authenticated: localStorage.getItem('adminAuth') === 'true',
+      changes: {}
+    };
+
+    // Elementos DOM
+    const elements = {
+      adminButton: document.getElementById('admin-button'),
+      loginModal: document.getElementById('login-modal'),
+      adminModal: document.getElementById('admin-modal'),
+      loginForm: document.getElementById('login-form'),
+      closeAdmin: document.getElementById('close-admin'),
+      toggleEdit: document.getElementById('toggle-edit'),
+      saveChanges: document.getElementById('save-changes'),
+      primaryColor: document.getElementById('primary-color'),
+      changeHistory: document.getElementById('change-history')
+    };
+
+    // Inicialização
+    function init() {
+      // Verificar autenticação
+      if (state.authenticated) {
+        checkGitHubConnection();
+      }
+      
+      // Configurar eventos
+      setupEventListeners();
+      
+      // Carregar configurações salvas
+      loadSavedConfig();
+    }
+
+    // Configurar eventos
+    function setupEventListeners() {
+      // Botão admin
+      elements.adminButton.addEventListener('click', () => {
+        if (state.authenticated) {
+          elements.adminModal.style.display = 'block';
+        } else {
+          elements.loginModal.style.display = 'block';
+        }
+      });
+
+      // Fechar modais
+      elements.closeAdmin.addEventListener('click', () => {
+        elements.adminModal.style.display = 'none';
+      });
+      
+      elements.loginModal.addEventListener('click', (e) => {
+        if (e.target === elements.loginModal) {
+          elements.loginModal.style.display = 'none';
+        }
+      });
+      
+      elements.adminModal.addEventListener('click', (e) => {
+        if (e.target === elements.adminModal) {
+          elements.adminModal.style.display = 'none';
+        }
+      });
+
+      // Login
+      elements.loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (username === CONFIG.admin.username && password === CONFIG.admin.password) {
+          state.authenticated = true;
+          localStorage.setItem('adminAuth', 'true');
+          elements.loginModal.style.display = 'none';
+          elements.adminModal.style.display = 'block';
+          checkGitHubConnection();
+        } else {
+          alert('Credenciais inválidas');
+        }
+      });
+
+      // Modo edição
+      elements.toggleEdit.addEventListener('click', toggleEditMode);
+
+      // Salvar alterações
+      elements.saveChanges.addEventListener('click', saveChangesToGitHub);
+
+      // Cor primária
+      elements.primaryColor.addEventListener('change', updatePrimaryColor);
+    }
+
+    // Alternar modo de edição
+    function toggleEditMode() {
+      state.editMode = !state.editMode;
+      
+      if (state.editMode) {
+        elements.toggleEdit.innerHTML = '<i class="fas fa-eye mr-2"></i>Desativar Edição';
+        elements.toggleEdit.classList.remove('bg-blue-600');
+        elements.toggleEdit.classList.add('bg-red-600');
+        enableEditing();
+      } else {
+        elements.toggleEdit.innerHTML = '<i class="fas fa-edit mr-2"></i>Ativar Edição';
+        elements.toggleEdit.classList.remove('bg-red-600');
+        elements.toggleEdit.classList.add('bg-blue-600');
+        disableEditing();
+      }
+    }
+
+    // Habilitar edição
+    function enableEditing() {
+      document.querySelectorAll('[data-editable]').forEach(el => {
+        el.contentEditable = true;
+        el.classList.add('editable');
+        
+        el.addEventListener('blur', () => {
+          const id = el.getAttribute('data-editable');
+          state.changes[id] = el.textContent;
+          addToHistory(`Texto alterado: ${id}`);
+        });
+      });
+    }
+
+    // Desabilitar edição
+    function disableEditing() {
+      document.querySelectorAll('[data-editable]').forEach(el => {
+        el.contentEditable = false;
+        el.classList.remove('editable');
+      });
+    }
+
+    // Atualizar cor primária
+    function updatePrimaryColor() {
+      const color = elements.primaryColor.value;
+      document.documentElement.style.setProperty('--primary-color', color);
+      
+      // Aplicar a cor em elementos específicos
+      document.querySelectorAll('.bg-blue-900').forEach(el => {
+        el.style.backgroundColor = color;
+      });
+      
+      addToHistory(`Cor primária alterada para ${color}`);
+      state.changes.primaryColor = color;
+    }
+
+    // Adicionar ao histórico
+    function addToHistory(message) {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      
+      if (elements.changeHistory.firstChild.textContent === 'Nenhuma alteração ainda.') {
+        elements.changeHistory.innerHTML = '';
+      }
+      
+      const entry = document.createElement('p');
+      entry.className = 'text-sm mb-1';
+      entry.innerHTML = `<span class="text-gray-500">[${time}]</span> ${message}`;
+      elements.changeHistory.prepend(entry);
+    }
+
+    // Salvar no GitHub
+    async function saveChangesToGitHub() {
+      if (Object.keys(state.changes).length === 0) {
+        alert('Nenhuma alteração para salvar');
+        return;
+      }
+      
+      try {
+        elements.saveChanges.disabled = true;
+        elements.saveChanges.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+        
+        // Obter SHA do arquivo atual (se existir)
+        let sha = null;
+        try {
+          const response = await fetch(
+            `https://api.github.com/repos/${CONFIG.github.repo}/contents/${CONFIG.github.filePath}`,
+            {
+              headers: {
+                'Authorization': `token ${localStorage.getItem('githubToken')}`,
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            }
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            sha = data.sha;
+          }
+        } catch (e) {
+          console.error('Erro ao obter SHA:', e);
+        }
+        
+        // Criar payload
+        const payload = {
+          message: 'Atualização via painel administrativo',
+          content: btoa(JSON.stringify(state.changes, null, 2)),
+          sha: sha,
+          branch: CONFIG.github.branch
+        };
+        
+        // Fazer commit
+        const response = await fetch(
+          `https://api.github.com/repos/${CONFIG.github.repo}/contents/${CONFIG.github.filePath}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${localStorage.getItem('githubToken')}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error('Falha ao salvar no GitHub');
+        }
+        
+        // Limpar alterações após salvar
+        state.changes = {};
+        addToHistory('Alterações salvas no GitHub');
+        alert('Alterações salvas com sucesso!');
+        
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        addToHistory(`Erro ao salvar: ${error.message}`);
+        alert('Erro ao salvar alterações');
+      } finally {
+        elements.saveChanges.disabled = false;
+        elements.saveChanges.innerHTML = '<i class="fas fa-save mr-2"></i>Salvar no GitHub';
+      }
+    }
+
+    // Verificar conexão com GitHub
+    async function checkGitHubConnection() {
+      const token = localStorage.getItem('githubToken');
+      if (!token) {
+        addToHistory('Token GitHub não configurado');
+        return false;
+      }
+      
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${CONFIG.github.repo}`,
+          {
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error('Token inválido ou sem permissões');
+        }
+        
+        return true;
+      } catch (error) {
+        addToHistory(`Erro de conexão com GitHub: ${error.message}`);
+        return false;
+      }
+    }
+
+    // Carregar configurações salvas
+    async function loadSavedConfig() {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${CONFIG.github.repo}/contents/${CONFIG.github.filePath}`,
+          {
+            headers: {
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          }
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          const content = JSON.parse(atob(data.content));
+          
+          // Aplicar configurações
+          if (content.primaryColor) {
+            elements.primaryColor.value = content.primaryColor;
+            updatePrimaryColor();
+          }
+          
+          // Aplicar textos editáveis
+          Object.entries(content).forEach(([key, value]) => {
+            const el = document.querySelector(`[data-editable="${key}"]`);
+            if (el) el.textContent = value;
+          });
+          
+          addToHistory('Configurações carregadas do GitHub');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar configurações:', error);
+      }
+    }
+
+    // Inicializar quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
