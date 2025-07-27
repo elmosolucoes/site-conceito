@@ -1,143 +1,137 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <title>Site Conceito - Painel Admin Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="author" content="CONCEITO Consultoria">
-  <meta name="robots" content="index, follow">
-  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
-  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#001F3F">
-  <link rel="canonical" href="https://conceito.com.br">
-  <title>CONCEITO | Consultoria Empresarial Premium - Versão 24</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" as="style">
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//fonts.gstatic.com">
-  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Custom CSS for elements that need more specific styling */
-    .hero-gradient {
-      background: linear-gradient(135deg, #001F3F 0%, #003366 50%, #0066CC 100%);
+    .admin-panel { position: fixed; top: 0; right: 0; background: #fff; border-left: 2px solid #001F3F; z-index: 9999; width: 350px; height: 100vh; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1);}
+    .admin-panel input, .admin-panel textarea { width: 100%; margin-bottom: 10px; }
+    .admin-panel label { font-weight: bold; margin-top: 10px; display: block;}
+    .admin-panel .section-title { margin-top: 20px; font-size: 1.1rem; color: #003366;}
+    .edit-btn { background: #facc15; color: #001F3F; border-radius: 5px; padding: 2px 8px; font-size: 0.8rem; margin-left: 5px; cursor: pointer;}
+    .editable:hover { outline: 2px dashed #facc15; }
+    .logo-img { height: 48px; }
+    /* Login modal */
+    .login-modal-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;
     }
-    .text-outline {
-      text-shadow: -1px -1px 0 #001F3F, 1px -1px 0 #001F3F, -1px 1px 0 #001F3F, 1px 1px 0 #001F3F;
+    .login-modal {
+      background: #fff; padding: 2rem 2rem 1.5rem 2rem; border-radius: 1rem; box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+      min-width: 320px; max-width: 90vw;
     }
-    .floating {
-      animation: floating 3s ease-in-out infinite;
-    }
-    @keyframes floating {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0px); }
-    }
-    .card-hover:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    .transition-all {
-      transition: all 0.3s ease;
-    }
-    .section-divider {
-      height: 100px;
-      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
-    }
-    .testimonial-card {
-      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-    }
+    .login-modal label { font-weight: bold; }
+    .login-modal input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 0.5rem;}
+    .login-modal .error-msg { color: #dc2626; font-size: 0.95rem; margin-bottom: 0.5rem;}
   </style>
 </head>
 <body class="font-sans antialiased text-gray-800">
-  <!-- Navigation -->
+
+  <!-- Painel Admin -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <div class="p-4">
+      <div class="flex justify-between items-center mb-4">
+        <span class="font-bold text-blue-900 text-lg">Painel de Edição</span>
+        <button onclick="toggleAdminPanel()" class="text-red-600 text-xl"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="editForm">
+        <div class="section-title">Logo</div>
+        <label>URL da Logo:</label>
+        <input type="text" id="logoUrl" placeholder="https://..." />
+        <label>Alt da Logo:</label>
+        <input type="text" id="logoAlt" placeholder="Descrição da logo" />
+
+        <div class="section-title">Textos Principais</div>
+        <label>Título Hero:</label>
+        <textarea id="heroTitle"></textarea>
+        <label>Descrição Hero:</label>
+        <textarea id="heroDesc"></textarea>
+
+        <div class="section-title">Imagem Hero</div>
+        <label>URL da Imagem:</label>
+        <input type="text" id="heroImgUrl" />
+        <label>Alt da Imagem:</label>
+        <input type="text" id="heroImgAlt" />
+
+        <div class="section-title">Vídeo Hero (opcional)</div>
+        <label>URL do Vídeo (YouTube embed):</label>
+        <input type="text" id="heroVideoUrl" placeholder="https://www.youtube.com/embed/..." />
+
+        <div class="section-title">Sobre Nós</div>
+        <label>Título:</label>
+        <textarea id="aboutTitle"></textarea>
+        <label>Texto 1:</label>
+        <textarea id="aboutText1"></textarea>
+        <label>Texto 2:</label>
+        <textarea id="aboutText2"></textarea>
+        <label>Imagem Equipe (URL):</label>
+        <input type="text" id="aboutImgUrl" />
+        <label>Alt Imagem Equipe:</label>
+        <input type="text" id="aboutImgAlt" />
+
+        <div class="section-title">Depoimentos</div>
+        <label>Nome Cliente 1:</label>
+        <input type="text" id="testi1Name" />
+        <label>Depoimento 1:</label>
+        <textarea id="testi1Text"></textarea>
+        <label>Foto Cliente 1 (URL):</label>
+        <input type="text" id="testi1Img" />
+
+        <!-- Adicione mais campos conforme necessário -->
+
+        <div class="mt-4 flex gap-2">
+          <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded">Salvar</button>
+          <button type="button" onclick="resetAdminPanel()" class="bg-gray-300 px-4 py-2 rounded">Restaurar Padrão</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Botão flutuante para abrir painel -->
+  <button id="adminBtn" onclick="handleAdminBtnClick()" style="position:fixed;bottom:24px;left:24px;z-index:9999;background:#001F3F;color:#fff;border-radius:50%;width:56px;height:56px;box-shadow:0 2px 8px rgba(0,0,0,0.2);border:none;font-size:1.5rem;">
+    <i class="fas fa-cog"></i>
+  </button>
+
+  <!-- Login Modal -->
+  <div id="loginModalBg" class="login-modal-bg hidden">
+    <form id="loginForm" class="login-modal" autocomplete="off" onsubmit="return false;">
+      <div class="mb-4 text-center">
+        <span class="font-bold text-blue-900 text-xl">Acesso Restrito</span>
+      </div>
+      <div class="error-msg" id="loginError" style="display:none;"></div>
+      <label for="loginUser">Usuário:</label>
+      <input type="text" id="loginUser" autocomplete="username" placeholder="Usuário" required />
+      <label for="loginPass">Senha:</label>
+      <input type="password" id="loginPass" autocomplete="current-password" placeholder="Senha" required />
+      <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded w-full mt-2">Entrar</button>
+    </form>
+  </div>
+
+  <!-- NAV -->
   <nav class="fixed w-full bg-white shadow-md z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center">
         <div class="flex items-center">
           <a href="#" class="flex items-center">
-            <span class="text-3xl font-bold text-blue-900 font-bebas">CONCEITO</span>
-            <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">v24</span>
+            <img id="logoImg" src="https://via.placeholder.com/180x48?text=LOGO" alt="Logo Conceito" class="logo-img mr-2" />
+            <span id="logoText" class="text-3xl font-bold text-blue-900 font-bebas hidden">CONCEITO <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">v24</span></span>
           </a>
         </div>
-        <div class="hidden md:flex space-x-8">
-          <a href="#servicos" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Serviços</a>
-          <a href="#metodologia" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Metodologia</a>
-          <a href="#sobre" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Sobre Nós</a>
-          <a href="#depoimentos" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Depoimentos</a>
-          <a href="#contato" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Contato</a>
-        </div>
-        <div class="md:hidden">
-          <button id="mobile-menu-button" class="text-blue-900 hover:text-blue-600">
-            <i class="fas fa-bars text-2xl"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <a href="#servicos" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Serviços</a>
-        <a href="#metodologia" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Metodologia</a>
-        <a href="#sobre" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Sobre Nós</a>
-        <a href="#depoimentos" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Depoimentos</a>
-        <a href="#contato" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Contato</a>
+        <!-- ... resto do menu ... -->
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- HERO -->
   <section class="hero-gradient pt-32 pb-20 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="md:flex items-center justify-between">
         <div class="md:w-1/2 mb-12 md:mb-0">
-          <h1 class="text-4xl md:text-6xl font-bold mb-6 font-bebas leading-tight">
-            <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
-          </h1>
-          <p class="text-lg md:text-xl mb-8 max-w-lg">
-            Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
-          </p>
+          <h1 id="heroTitleEl" class="text-4xl md:text-6xl font-bold mb-6 font-bebas leading-tight editable"></h1>
+          <p id="heroDescEl" class="text-lg md:text-xl mb-8 max-w-lg editable"></p>
           <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <a href="#contato" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center">
               Fale com um especialista
@@ -148,216 +142,25 @@
           </div>
         </div>
         <div class="md:w-1/2 flex justify-center">
-          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Business growth" class="rounded-lg shadow-2xl floating max-w-full h-auto">
+          <img id="heroImg" src="" alt="" class="rounded-lg shadow-2xl floating max-w-full h-auto" />
+          <iframe id="heroVideo" class="rounded-lg shadow-2xl floating max-w-full h-auto hidden" width="400" height="225" frameborder="0" allowfullscreen></iframe>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Stats Section -->
-  <section class="bg-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-        <div class="p-6 border-r border-gray-200 last:border-r-0">
-          <div class="text-4xl font-bold text-blue-900 mb-2">+<span class="counter" data-target="250">0</span></div>
-          <div class="text-gray-600">Clientes atendidos</div>
-        </div>
-        <div class="p-6 border-r border-gray-200 last:border-r-0">
-          <div class="text-4xl font-bold text-blue-900 mb-2">+<span class="counter" data-target="120">0</span>%</div>
-          <div class="text-gray-600">Crescimento médio</div>
-        </div>
-        <div class="p-6 border-r border-gray-200 last:border-r-0">
-          <div class="text-4xl font-bold text-blue-900 mb-2"><span class="counter" data-target="18">0</span>+</div>
-          <div class="text-gray-600">Anos de experiência</div>
-        </div>
-        <div class="p-6">
-          <div class="text-4xl font-bold text-blue-900 mb-2">R$<span class="counter" data-target="500">0</span>M+</div>
-          <div class="text-gray-600">Gerados para clientes</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section id="servicos" class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">NOSSOS <span class="text-yellow-500">SERVIÇOS</span></h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Soluções personalizadas para cada etapa do crescimento do seu negócio
-        </p>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Service 1 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
-          <div class="h-48 bg-blue-800 flex items-center justify-center">
-            <i class="fas fa-chart-line text-white text-6xl"></i>
-          </div>
-          <div class="p-8">
-            <h3 class="text-xl font-bold text-blue-900 mb-4">Estratégia Empresarial</h3>
-            <p class="text-gray-600 mb-6">
-              Desenvolvimento de estratégias de crescimento com plano de ação detalhado para alcançar resultados extraordinários.
-            </p>
-            <a href="#" class="text-blue-600 font-medium flex items-center">
-              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-          </div>
-        </div>
-        
-        <!-- Service 2 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
-          <div class="h-48 bg-blue-700 flex items-center justify-center">
-            <i class="fas fa-cogs text-white text-6xl"></i>
-          </div>
-          <div class="p-8">
-            <h3 class="text-xl font-bold text-blue-900 mb-4">Otimização de Processos</h3>
-            <p class="text-gray-600 mb-6">
-              Redesenho de processos operacionais para eliminar desperdícios e aumentar produtividade em até 200%.
-            </p>
-            <a href="#" class="text-blue-600 font-medium flex items-center">
-              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-          </div>
-        </div>
-        
-        <!-- Service 3 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all card-hover">
-          <div class="h-48 bg-blue-600 flex items-center justify-center">
-            <i class="fas fa-users text-white text-6xl"></i>
-          </div>
-          <div class="p-8">
-            <h3 class="text-xl font-bold text-blue-900 mb-4">Gestão de Equipes</h3>
-            <p class="text-gray-600 mb-6">
-              Metodologia exclusiva para desenvolvimento de lideranças e alta performance de equipes.
-            </p>
-            <a href="#" class="text-blue-600 font-medium flex items-center">
-              Saiba mais <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Methodology Section -->
-  <section id="metodologia" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">METODOLOGIA <span class="text-yellow-500">EXCLUSIVA</span></h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Processo comprovado que já transformou centenas de empresas
-        </p>
-      </div>
-      
-      <div class="relative">
-        <!-- Timeline line -->
-        <div class="hidden md:block absolute left-1/2 h-full w-1 bg-blue-200 transform -translate-x-1/2"></div>
-        
-        <!-- Timeline items -->
-        <div class="space-y-12 md:space-y-0">
-          <!-- Item 1 -->
-          <div class="md:flex items-center w-full">
-            <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
-              <div class="bg-blue-50 p-8 rounded-xl">
-                <div class="text-blue-900 font-bold text-xl mb-4">1. Diagnóstico Estratégico</div>
-                <p class="text-gray-700">
-                  Análise profunda de todos os aspectos do negócio para identificar oportunidades de melhoria e pontos críticos.
-                </p>
-              </div>
-            </div>
-            <div class="hidden md:flex md:w-1/2 justify-center">
-              <div class="w-16 h-16 rounded-full bg-blue-900 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">1</div>
-            </div>
-            <div class="md:hidden w-16 h-16 rounded-full bg-blue-900 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">1</div>
-            <div class="md:w-1/2 md:pl-12"></div>
-          </div>
-          
-          <!-- Item 2 -->
-          <div class="md:flex items-center w-full">
-            <div class="md:w-1/2 md:pr-12"></div>
-            <div class="hidden md:flex md:w-1/2 justify-center">
-              <div class="w-16 h-16 rounded-full bg-blue-800 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">2</div>
-            </div>
-            <div class="md:hidden w-16 h-16 rounded-full bg-blue-800 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">2</div>
-            <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0">
-              <div class="bg-blue-50 p-8 rounded-xl">
-                <div class="text-blue-900 font-bold text-xl mb-4">2. Planejamento Personalizado</div>
-                <p class="text-gray-700">
-                  Desenvolvimento de um plano estratégico exclusivo para seu negócio com metas claras e indicadores de desempenho.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Item 3 -->
-          <div class="md:flex items-center w-full">
-            <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0">
-              <div class="bg-blue-50 p-8 rounded-xl">
-                <div class="text-blue-900 font-bold text-xl mb-4">3. Implementação com Suporte</div>
-                <p class="text-gray-700">
-                  Execução do plano com acompanhamento próximo de nossos consultores para garantir os resultados esperados.
-                </p>
-              </div>
-            </div>
-            <div class="hidden md:flex md:w-1/2 justify-center">
-              <div class="w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">3</div>
-            </div>
-            <div class="md:hidden w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">3</div>
-            <div class="md:w-1/2 md:pl-12"></div>
-          </div>
-          
-          <!-- Item 4 -->
-          <div class="md:flex items-center w-full">
-            <div class="md:w-1/2 md:pr-12"></div>
-            <div class="hidden md:flex md:w-1/2 justify-center">
-              <div class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg">4</div>
-            </div>
-            <div class="md:hidden w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold border-4 border-white shadow-lg mx-auto mb-4">4</div>
-            <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0">
-              <div class="bg-blue-50 p-8 rounded-xl">
-                <div class="text-blue-900 font-bold text-xl mb-4">4. Resultados e Escalabilidade</div>
-                <p class="text-gray-700">
-                  Consolidação dos resultados e preparação da empresa para o próximo nível de crescimento e expansão.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Section -->
+  <!-- SOBRE -->
   <section id="sobre" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="md:flex items-center">
         <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
-          <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-6 font-bebas">SOBRE A <span class="text-yellow-500">CONCEITO</span></h2>
-          <p class="text-gray-700 mb-6">
-            Fundada em 2005, a CONCEITO se consolidou como uma das principais consultorias empresariais do Brasil, com atuação em todo o território nacional e clientes em mais de 15 países.
-          </p>
-          <p class="text-gray-700 mb-6">
-            Nossa equipe é composta por especialistas com experiência prática em gestão empresarial, muitos deles ex-executivos de grandes corporações que decidiram dedicar seu conhecimento a transformar empresas de todos os portes.
-          </p>
-          <div class="flex items-center">
-            <div class="mr-4">
-              <div class="text-3xl font-bold text-blue-900">100%</div>
-              <div class="text-gray-600 text-sm">Foco em resultados</div>
-            </div>
-            <div class="mr-4">
-              <div class="text-3xl font-bold text-blue-900">24/7</div>
-              <div class="text-gray-600 text-sm">Suporte dedicado</div>
-            </div>
-            <div>
-              <div class="text-3xl font-bold text-blue-900">100+</div>
-              <div class="text-gray-600 text-sm">Especialistas</div>
-            </div>
-          </div>
+          <h2 id="aboutTitleEl" class="text-3xl md:text-5xl font-bold text-blue-900 mb-6 font-bebas editable"></h2>
+          <p id="aboutText1El" class="text-gray-700 mb-6 editable"></p>
+          <p id="aboutText2El" class="text-gray-700 mb-6 editable"></p>
         </div>
         <div class="md:w-1/2">
           <div class="bg-blue-900 rounded-xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Equipe CONCEITO" class="w-full h-auto opacity-90">
+            <img id="aboutImg" src="" alt="" class="w-full h-auto opacity-90" />
             <div class="p-6 text-white">
               <h3 class="text-xl font-bold mb-2">Nossa Equipe</h3>
               <p>Profissionais altamente qualificados com experiência prática em diversas indústrias e mercados.</p>
@@ -368,16 +171,9 @@
     </div>
   </section>
 
-  <!-- Testimonials Section -->
+  <!-- DEPOIMENTOS -->
   <section id="depoimentos" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-4 font-bebas">DEPOIMENTOS DE <span class="text-yellow-500">CLIENTES</span></h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Veja o que nossos clientes dizem sobre nossos serviços
-        </p>
-      </div>
-      
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Testimonial 1 -->
         <div class="testimonial-card rounded-xl p-8 shadow-lg">
@@ -390,374 +186,230 @@
               <i class="fas fa-star"></i>
             </div>
           </div>
-          <p class="text-gray-700 italic mb-6">
-            "A CONCEITO transformou completamente nosso negócio. Em 8 meses aumentamos nossa receita em 150% e reduzimos custos em 30%. Recomendo sem dúvidas!"
-          </p>
+          <p id="testi1TextEl" class="text-gray-700 italic mb-6 editable"></p>
           <div class="flex items-center">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Silva" class="w-12 h-12 rounded-full mr-4">
+            <img id="testi1ImgEl" src="" alt="Cliente 1" class="w-12 h-12 rounded-full mr-4" />
             <div>
-              <div class="font-bold text-blue-900">Carlos Silva</div>
+              <div id="testi1NameEl" class="font-bold text-blue-900 editable"></div>
               <div class="text-sm text-gray-600">CEO, Indústria ABC</div>
             </div>
           </div>
         </div>
-        
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card rounded-xl p-8 shadow-lg">
-          <div class="flex items-center mb-4">
-            <div class="text-yellow-500 text-2xl">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-          <p class="text-gray-700 italic mb-6">
-            "O trabalho da CONCEITO foi fundamental para nossa expansão internacional. Eles não só criaram a estratégia, como nos acompanharam em todo o processo."
-          </p>
-          <div class="flex items-center">
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Ana Oliveira" class="w-12 h-12 rounded-full mr-4">
-            <div>
-              <div class="font-bold text-blue-900">Ana Oliveira</div>
-              <div class="text-sm text-gray-600">Diretora, TechStart</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card rounded-xl p-8 shadow-lg">
-          <div class="flex items-center mb-4">
-            <div class="text-yellow-500 text-2xl">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star-half-alt"></i>
-            </div>
-          </div>
-          <p class="text-gray-700 italic mb-6">
-            "Depois de anos tentando melhorar nossos processos internos, a CONCEITO conseguiu em 3 meses o que não tínhamos conseguido em 5 anos. Incrível!"
-          </p>
-          <div class="flex items-center">
-            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Roberto Santos" class="w-12 h-12 rounded-full mr-4">
-            <div>
-              <div class="font-bold text-blue-900">Roberto Santos</div>
-              <div class="text-sm text-gray-600">Presidente, Grupo XYZ</div>
-            </div>
-          </div>
-        </div>
+        <!-- ... mais depoimentos ... -->
       </div>
     </div>
   </section>
-
-  <!-- Clients Section -->
-  <section class="py-12 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h3 class="text-xl text-gray-600">Alguns de nossos clientes</h3>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
-        <div class="flex justify-center">
-          <img src="https://via.placeholder.com/150x60?text=LOGO+1" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="flex justify-center">
-          <img src="https://via.placeholder.com/150x60?text=LOGO+2" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="flex justify-center">
-          <img src="https://via.placeholder.com/150x60?text=LOGO+3" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="flex justify-center">
-          <img src="https://via.placeholder.com/150x60?text=LOGO+4" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="flex justify-center">
-          <img src="https://via.placeholder.com/150x60?text=LOGO+5" alt="Client Logo" class="h-12 opacity-70 hover:opacity-100 transition-opacity">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-20 bg-blue-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl md:text-5xl font-bold mb-6 font-bebas">PRONTO PARA <span class="text-yellow-300">TRANSFORMAR</span> SEU NEGÓCIO?</h2>
-      <p class="text-xl mb-8 max-w-2xl mx-auto">
-        Agende uma consultoria gratuita com nossos especialistas e descubra como podemos ajudar sua empresa a alcançar novos patamares.
-      </p>
-      <a href="#contato" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-12 rounded-lg transition-all transform hover:scale-105 shadow-lg inline-block">
-        Agendar Consultoria
-      </a>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contato" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="md:flex">
-        <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
-          <h2 class="text-3xl md:text-5xl font-bold text-blue-900 mb-6 font-bebas">FALE <span class="text-yellow-500">CONOSCO</span></h2>
-          <p class="text-gray-700 mb-8">
-            Entre em contato com nossa equipe para saber mais sobre nossos serviços e como podemos ajudar seu negócio a crescer.
-          </p>
-          
-          <div class="space-y-6">
-            <div class="flex items-start">
-              <div class="text-blue-900 text-xl mr-4 mt-1">
-                <i class="fas fa-map-marker-alt"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-blue-900 mb-1">Endereço</h4>
-                <p class="text-gray-700">Av. Paulista, 1000 - São Paulo/SP</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="text-blue-900 text-xl mr-4 mt-1">
-                <i class="fas fa-phone-alt"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-blue-900 mb-1">Telefone</h4>
-                <p class="text-gray-700">(11) 9999-9999</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="text-blue-900 text-xl mr-4 mt-1">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-blue-900 mb-1">Email</h4>
-                <p class="text-gray-700">contato@conceito.com.br</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="text-blue-900 text-xl mr-4 mt-1">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-blue-900 mb-1">Horário de Atendimento</h4>
-                <p class="text-gray-700">Segunda a Sexta, das 9h às 18h</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="md:w-1/2">
-          <form class="bg-gray-50 p-8 rounded-xl shadow-lg">
-            <div class="mb-6">
-              <label for="name" class="block text-gray-700 font-medium mb-2">Nome Completo</label>
-              <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <div class="mb-6">
-              <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
-              <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <div class="mb-6">
-              <label for="phone" class="block text-gray-700 font-medium mb-2">Telefone</label>
-              <input type="tel" id="phone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <div class="mb-6">
-              <label for="company" class="block text-gray-700 font-medium mb-2">Empresa</label>
-              <input type="text" id="company" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <div class="mb-6">
-              <label for="message" class="block text-gray-700 font-medium mb-2">Mensagem</label>
-              <textarea id="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-            </div>
-            
-            <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition-all">
-              Enviar Mensagem
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-blue-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="md:flex md:justify-between">
-        <div class="mb-8 md:mb-0">
-          <a href="#" class="text-3xl font-bold font-bebas">CONCEITO</a>
-          <p class="mt-4 max-w-xs">
-            Consultoria empresarial premium com foco em resultados extraordinários.
-          </p>
-          <div class="flex space-x-4 mt-6">
-            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" class="text-white hover:text-yellow-300 text-xl"><i class="fab fa-youtube"></i></a>
-            <button id="download-site" class="text-white hover:text-yellow-300 text-xl bg-blue-8
-
-00 hover:bg-blue-700 rounded-full w-10 h-10 flex items-center justify-center" title="Baixar Site">
-              <i class="fas fa-download"></i>
-            </button>
-          </div>
-        </div>
-        
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-          <div>
-            <h3 class="text-lg font-bold mb-4">Links Rápidos</h3>
-            <ul class="space-y-2">
-              <li><a href="#servicos" class="hover:text-yellow-300 transition-colors">Serviços</a></li>
-              <li><a href="#metodologia" class="hover:text-yellow-300 transition-colors">Metodologia</a></li>
-              <li><a href="#sobre" class="hover:text-yellow-300 transition-colors">Sobre Nós</a></li>
-              <li><a href="#depoimentos" class="hover:text-yellow-300 transition-colors">Depoimentos</a></li>
-              <li><a href="#contato" class="hover:text-yellow-300 transition-colors">Contato</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 class="text-lg font-bold mb-4">Serviços</h3>
-            <ul class="space-y-2">
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Estratégia Empresarial</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Otimização de Processos</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Gestão de Equipes</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Consultoria Financeira</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Expansão de Mercado</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 class="text-lg font-bold mb-4">Legal</h3>
-            <ul class="space-y-2">
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Termos de Uso</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Política de Privacidade</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">Cookies</a></li>
-              <li><a href="#" class="hover:text-yellow-300 transition-colors">FAQ</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border-t border-blue-800 mt-12 pt-8 text-center text-sm text-blue-200">
-        <p>© 2023 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Back to Top Button -->
-  <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-900 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all">
-    <i class="fas fa-arrow-up"></i>
-  </button>
 
   <script>
-    // Mobile menu toggle
-    document.getElementById('mobile-menu-button').addEventListener('click', function() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('hidden');
-    });
+    // Dados padrão
+    const defaultData = {
+      logoUrl: "https://via.placeholder.com/180x48?text=LOGO",
+      logoAlt: "Logo Conceito",
+      heroTitle: "TRANSFORME SEU NEGÓCIO COM CONSULTORIA PREMIUM",
+      heroDesc: "Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.",
+      heroImgUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      heroImgAlt: "Business growth",
+      heroVideoUrl: "",
+      aboutTitle: "SOBRE A CONCEITO",
+      aboutText1: "Fundada em 2005, a CONCEITO se consolidou como uma das principais consultorias empresariais do Brasil, com atuação em todo o território nacional e clientes em mais de 15 países.",
+      aboutText2: "Nossa equipe é composta por especialistas com experiência prática em gestão empresarial, muitos deles ex-executivos de grandes corporações que decidiram dedicar seu conhecimento a transformar empresas de todos os portes.",
+      aboutImgUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      aboutImgAlt: "Equipe CONCEITO",
+      testi1Name: "Carlos Silva",
+      testi1Text: "\"A CONCEITO transformou completamente nosso negócio. Em 8 meses aumentamos nossa receita em 150% e reduzimos custos em 30%. Recomendo sem dúvidas!\"",
+      testi1Img: "https://randomuser.me/api/portraits/men/32.jpg"
+    };
 
-    // Back to top button
-    const backToTopButton = document.getElementById('back-to-top');
-    window.addEventListener('scroll', function() {
-      if (window.pageYOffset > 300) {
-        backToTopButton.classList.remove('opacity-0', 'invisible');
-        backToTopButton.classList.add('opacity-100', 'visible');
+    // Carregar dados do LocalStorage ou padrão
+    function getSiteData() {
+      return JSON.parse(localStorage.getItem('siteData')) || defaultData;
+    }
+
+    function setSiteData(data) {
+      localStorage.setItem('siteData', JSON.stringify(data));
+    }
+
+    // Preencher elementos do site
+    function renderSite() {
+      const data = getSiteData();
+      // Logo
+      document.getElementById('logoImg').src = data.logoUrl;
+      document.getElementById('logoImg').alt = data.logoAlt;
+      // Esconde texto "CONCEITO v24"
+      document.getElementById('logoText').style.display = "none";
+      // Hero
+      document.getElementById('heroTitleEl').innerText = data.heroTitle;
+      document.getElementById('heroDescEl').innerText = data.heroDesc;
+      // Hero imagem/vídeo
+      if (data.heroVideoUrl && data.heroVideoUrl.includes("youtube.com/embed")) {
+        document.getElementById('heroImg').style.display = "none";
+        const heroVideo = document.getElementById('heroVideo');
+        heroVideo.src = data.heroVideoUrl;
+        heroVideo.style.display = "";
       } else {
-        backToTopButton.classList.remove('opacity-100', 'visible');
-        backToTopButton.classList.add('opacity-0', 'invisible');
+        document.getElementById('heroImg').src = data.heroImgUrl;
+        document.getElementById('heroImg').alt = data.heroImgAlt;
+        document.getElementById('heroImg').style.display = "";
+        document.getElementById('heroVideo').style.display = "none";
+      }
+      // Sobre
+      document.getElementById('aboutTitleEl').innerText = data.aboutTitle;
+      document.getElementById('aboutText1El').innerText = data.aboutText1;
+      document.getElementById('aboutText2El').innerText = data.aboutText2;
+      document.getElementById('aboutImg').src = data.aboutImgUrl;
+      document.getElementById('aboutImg').alt = data.aboutImgAlt;
+      // Depoimentos
+      document.getElementById('testi1NameEl').innerText = data.testi1Name;
+      document.getElementById('testi1TextEl').innerText = data.testi1Text;
+      document.getElementById('testi1ImgEl').src = data.testi1Img;
+    }
+
+    // Preencher painel admin com dados atuais
+    function fillAdminPanel() {
+      const data = getSiteData();
+      document.getElementById('logoUrl').value = data.logoUrl;
+      document.getElementById('logoAlt').value = data.logoAlt;
+      document.getElementById('heroTitle').value = data.heroTitle;
+      document.getElementById('heroDesc').value = data.heroDesc;
+      document.getElementById('heroImgUrl').value = data.heroImgUrl;
+      document.getElementById('heroImgAlt').value = data.heroImgAlt;
+      document.getElementById('heroVideoUrl').value = data.heroVideoUrl;
+      document.getElementById('aboutTitle').value = data.aboutTitle;
+      document.getElementById('aboutText1').value = data.aboutText1;
+      document.getElementById('aboutText2').value = data.aboutText2;
+      document.getElementById('aboutImgUrl').value = data.aboutImgUrl;
+      document.getElementById('aboutImgAlt').value = data.aboutImgAlt;
+      document.getElementById('testi1Name').value = data.testi1Name;
+      document.getElementById('testi1Text').value = data.testi1Text;
+      document.getElementById('testi1Img').value = data.testi1Img;
+    }
+
+    // Abrir/fechar painel
+    function toggleAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      if (panel.classList.contains('hidden')) {
+        fillAdminPanel();
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    }
+
+    // Botão admin: só abre painel se logado
+    function handleAdminBtnClick() {
+      if (isLoggedIn()) {
+        toggleAdminPanel();
+      } else {
+        showLoginModal();
+      }
+    }
+
+    // Login modal
+    function showLoginModal() {
+      document.getElementById('loginModalBg').classList.remove('hidden');
+      document.getElementById('loginUser').focus();
+      document.getElementById('loginError').style.display = "none";
+      document.getElementById('loginForm').reset();
+    }
+    function hideLoginModal() {
+      document.getElementById('loginModalBg').classList.add('hidden');
+    }
+
+    // Login logic
+    function isLoggedIn() {
+      return sessionStorage.getItem('adminLoggedIn') === 'true';
+    }
+    function setLoggedIn(val) {
+      if (val) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+      } else {
+        sessionStorage.removeItem('adminLoggedIn');
+      }
+    }
+
+    // Login form submit
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      if (user === 'elmodg' && pass === 'Euvou*1717') {
+        setLoggedIn(true);
+        hideLoginModal();
+        toggleAdminPanel();
+      } else {
+        document.getElementById('loginError').innerText = "Usuário ou senha inválidos.";
+        document.getElementById('loginError').style.display = "block";
       }
     });
 
-    backToTopButton.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Fechar login modal ao clicar fora
+    document.getElementById('loginModalBg').addEventListener('click', function(e) {
+      if (e.target === this) hideLoginModal();
     });
 
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          window.scrollTo({
-            top: targetElement.offsetTop - 80,
-            behavior: 'smooth'
-          });
-          
-          // Close mobile menu if open
-          const mobileMenu = document.getElementById('mobile-menu');
-          if (!mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-          }
-        }
+    // Salvar alterações
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        logoUrl: document.getElementById('logoUrl').value,
+        logoAlt: document.getElementById('logoAlt').value,
+        heroTitle: document.getElementById('heroTitle').value,
+        heroDesc: document.getElementById('heroDesc').value,
+        heroImgUrl: document.getElementById('heroImgUrl').value,
+        heroImgAlt: document.getElementById('heroImgAlt').value,
+        heroVideoUrl: document.getElementById('heroVideoUrl').value,
+        aboutTitle: document.getElementById('aboutTitle').value,
+        aboutText1: document.getElementById('aboutText1').value,
+        aboutText2: document.getElementById('aboutText2').value,
+        aboutImgUrl: document.getElementById('aboutImgUrl').value,
+        aboutImgAlt: document.getElementById('aboutImgAlt').value,
+        testi1Name: document.getElementById('testi1Name').value,
+        testi1Text: document.getElementById('testi1Text').value,
+        testi1Img: document.getElementById('testi1Img').value
+      };
+      setSiteData(data);
+      renderSite();
+      alert('Alterações salvas!');
+    });
+
+    // Restaurar padrão
+    function resetAdminPanel() {
+      if (confirm("Tem certeza que deseja restaurar o conteúdo padrão?")) {
+        localStorage.removeItem('siteData');
+        fillAdminPanel();
+        renderSite();
+      }
+    }
+
+    // Edição inline rápida (duplo clique)
+    document.querySelectorAll('.editable').forEach(el => {
+      el.addEventListener('dblclick', function() {
+        const oldText = this.innerText;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = oldText;
+        input.style.width = "100%";
+        this.innerText = '';
+        this.appendChild(input);
+        input.focus();
+        input.onblur = () => {
+          this.innerText = input.value;
+          // Atualiza no LocalStorage
+          const data = getSiteData();
+          if (this.id === 'heroTitleEl') data.heroTitle = input.value;
+          if (this.id === 'heroDescEl') data.heroDesc = input.value;
+          if (this.id === 'aboutTitleEl') data.aboutTitle = input.value;
+          if (this.id === 'aboutText1El') data.aboutText1 = input.value;
+          if (this.id === 'aboutText2El') data.aboutText2 = input.value;
+          if (this.id === 'testi1NameEl') data.testi1Name = input.value;
+          if (this.id === 'testi1TextEl') data.testi1Text = input.value;
+          setSiteData(data);
+        };
       });
     });
 
-    // Counter animation
-    function animateCounters() {
-      const counters = document.querySelectorAll('.counter');
-      const speed = 200;
-      
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = target / speed;
-        
-        if (count < target) {
-          counter.innerText = Math.ceil(count + increment);
-          setTimeout(animateCounters, 1);
-        } else {
-          counter.innerText = target;
-        }
-      });
-    }
-
-    // Intersection Observer to trigger counter animation when section is in view
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateCounters();
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    const statsSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-4.gap-8.text-center');
-    if (statsSection) {
-      observer.observe(statsSection);
-    }
-
-    // Download site as HTML file
-    document.getElementById('download-site').addEventListener('click', function() {
-      const htmlContent = document.documentElement.outerHTML;
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'site-conceito-consultoria.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      // Feedback visual
-      this.innerHTML = '<i class="fas fa-check"></i>';
-      setTimeout(() => {
-        this.innerHTML = '<i class="fas fa-download"></i>';
-      }, 2000);
-    });
-
-    // Form submission
-    const form = document.querySelector('form');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Obrigado por sua mensagem! Entraremos em contato em breve.');
-        form.reset();
-      });
-    }
+    // Inicialização
+    renderSite();
   </script>
 </body>
 </html>
