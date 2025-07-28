@@ -3,233 +3,2891 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">CONCEITO | Consultoria Empresarial</title>
+  <meta name="author" content="CONCEITO Consultoria">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
+  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#001F3F">
+  <link rel="canonical" href="https://conceito.com.br">
+  <title>CONCEITO | Consultoria Empresarial Premium - Versão 24</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" as="style">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.css" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #001F3F;
-      --secondary-color: #003366;
-      --accent-color: #F59E0B;
+    /* Custom CSS for elements that need more specific styling */
+    .hero-gradient {
+      background: linear-gradient(135deg, #001F3F 0%, #003366 50%, #0066CC 100%);
+    }
+    .text-outline {
+      text-shadow: -1px -1px 0 #001F3F, 1px -1px 0 #001F3F, -1px 1px 0 #001F3F, 1px 1px 0 #001F3F;
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    .card-hover:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .transition-all {
+      transition: all 0.3s ease;
+    }
+    .pulse-slow {
+      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #0066CC;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .service-icon {
+      background: linear-gradient(135deg, #0066CC, #003366);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-divider {
+      height: 100px;
+      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
+    }
+    .testimonial-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+    
+    /* Admin Panel Styles */
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .admin-panel.open {
+      right: 0;
+    }
+    .admin-toggle {
+      position: fixed;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: #001F3F;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .editable {
-      outline: 1px dashed rgba(0, 31, 63, 0.3);
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
       min-height: 20px;
+      display: inline-block;
     }
-    .editable:hover {
-      outline: 1px dashed var(--primary-color);
-      background-color: rgba(0, 31, 63, 0.05);
+    .admin-logged-in .editable:hover {
+      outline: 2px dashed #0066CC;
+      outline-offset: 2px;
+      background-color: rgba(0, 102, 204, 0.1);
     }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-    .modal.show { display: block; }
-    .modal-content { background: white; margin: 15% auto; padding: 1.5rem; width: 80%; max-width: 500px; border-radius: 8px; }
-    .tab { cursor: pointer; }
-    .tab.active { background: #1e3a8a; color: #fff; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .hidden { display: none !important; }
-    .admin-panel { position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 10000; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
-    .client-logo { max-height: 80px; max-width: 150px; object-fit: contain; }
-    .testimonial-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .star-rating { color: #F59E0B; font-size: 1.2rem; }
-    .media-thumbnail { position: relative; cursor: pointer; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
-    .media-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
-    .media-thumbnail i { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; }
-    .form-section { margin-bottom: 2rem; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
-    #siteLogo { object-fit: contain; background: transparent; }
-    .nav-item { display: flex; align-items: center; margin-bottom: 0.5rem; }
-    .nav-item input { flex: 1; margin-right: 0.5rem; }
+    .edit-overlay {
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: #0066CC;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .admin-logged-in .editable:hover .edit-overlay {
+      opacity: 1;
+    }
+    .admin-logged-in .editable::after {
+      content: '✏️';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #0066CC;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      opacity: 0.8;
+      z-index: 101;
+    }
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .login-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 300px;
+    }
+    .edit-input {
+      background: white;
+      border: 2px solid #0066CC;
+      padding: 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      width: 100%;
+      min-width: 200px;
+    }
+    
+    /* Admin Panel Styles */
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .admin-panel.open {
+      right: 0;
+    }
+    .admin-toggle {
+      position: fixed;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: #001F3F;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .editable {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 20px;
+      display: inline-block;
+    }
+    .admin-logged-in .editable:hover {
+      outline: 2px dashed #0066CC;
+      outline-offset: 2px;
+      background-color: rgba(0, 102, 204, 0.1);
+    }
+    .edit-overlay {
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: #0066CC;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .admin-logged-in .editable:hover .edit-overlay {
+      opacity: 1;
+    }
+    .admin-logged-in .editable::after {
+      content: '✏️';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #0066CC;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      opacity: 0.8;
+      z-index: 101;
+    }
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .login-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 300px;
+    }
+    .edit-input {
+      background: white;
+      border: 2px solid #0066CC;
+      padding: 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      width: 100%;
+      min-width: 200px;
+    }
   </style>
 </head>
-<body class="font-sans antialiased text-gray-800">
-  <!-- Header -->
-  <header class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-4">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center">
-          <img id="siteLogo" src="" alt="Logo" class="h-10 mr-4 hidden">
-          <div class="text-3xl font-bold text-blue-900" id="companyName">CONCEITO</div>
+<body class="font-['Montserrat'] bg-gray-50">
+  
+  <!-- Admin Toggle Button -->
+  <button class="admin-toggle" onclick="toggleAdmin()">
+    <i class="fas fa-cog"></i>
+  </button>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="login-modal" style="display: none;">
+    <div class="login-form">
+      <h3 class="text-xl font-bold mb-4">Acesso Administrativo</h3>
+      <form onsubmit="handleLogin(event)">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Login:</label>
+          <input type="text" id="loginUser" class="w-full px-3 py-2 border rounded" required>
         </div>
-        <nav class="hidden md:flex space-x-8" id="mainNav">
-          <!-- Menu será renderizado dinamicamente -->
-        </nav>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
-      <div class="container mx-auto px-4">
-        <h1 class="text-4xl md:text-6xl font-bold mb-6" id="heroTitle">Transforme Seu Negócio</h1>
-        <p class="text-xl mb-8 max-w-lg" id="heroDescription">Soluções empresariais premium para crescimento sustentável</p>
-        <div>
-          <a href="#contato" id="ctaButton" class="inline-block bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg">Fale Conosco</a>
-          <a href="#servicos" id="secondaryButton" class="inline-block ml-4 border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-blue-900 transition">Nossos Serviços</a>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Senha:</label>
+          <input type="password" id="loginPass" class="w-full px-3 py-2 border rounded" required>
         </div>
-      </div>
-    </section>
-
-    <!-- Serviços -->
-    <section id="servicos" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="servicesTitle">Nossos Serviços</h2>
-        <div class="grid md:grid-cols-3 gap-8" id="servicesList">
-          <!-- Serviços serão renderizados aqui -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Clientes -->
-    <section id="clientes" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="clientsTitle">Nossos Clientes</h2>
-        <div class="flex flex-wrap justify-center gap-8" id="clientsList">
-          <!-- Logos de clientes serão renderizadas aqui -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Depoimentos -->
-    <section id="depoimentos" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="testimonialsTitle">Depoimentos</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsList">
-          <!-- Depoimentos serão renderizados aqui -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Galeria de Mídia -->
-    <section id="midia" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="mediaTitle">Galeria</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="mediaGallery">
-          <!-- Mídias serão renderizadas aqui -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Sobre Nós -->
-    <section id="sobre" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="aboutTitle">Sobre Nós</h2>
-        <div class="max-w-3xl mx-auto text-center" id="aboutContent">
-          Somos uma consultoria empresarial com mais de 15 anos de experiência, ajudando empresas a crescerem de forma sustentável e inovadora.
-        </div>
-      </div>
-    </section>
-
-    <!-- Trabalhe Conosco - Formulário Atualizado -->
-    <section id="trabalhe-conosco" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Trabalhe Conosco</h2>
-        <div class="max-w-4xl mx-auto">
-          <form name="curriculum" method="POST" data-netlify="true" enctype="multipart/form-data" netlify-honeypot="bot-field" action="/success.html" class="space-y-4">
-            <input type="hidden" name="form-name" value="curriculum">
-            
-            <!-- Campo honeypot para proteção contra spam -->
-            <p class="hidden">
-              <label>Não preencha este campo: <input name="bot-field"></label>
-            </p>
-
-            <!-- Dados Pessoais -->
-            <div class="form-section">
-              <h3 class="text-xl font-bold mb-4">Dados Pessoais</h3>
-              <div class="form-group">
-                <label>Nome Completo</label>
-                <input type="text" name="nome" placeholder="Nome Completo" required>
-              </div>
-              <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" name="email" placeholder="E-mail" required>
-              </div>
-              <div class="form-group">
-                <label>Telefone</label>
-                <input type="text" name="telefone" placeholder="Telefone" required>
-              </div>
-            </div>
-
-            <!-- Informações Profissionais -->
-            <div class="form-section">
-              <h3 class="text-xl font-bold mb-4">Informações Profissionais</h3>
-              <div class="form-group">
-                <label>Cargo Pretendido</label>
-                <input type="text" name="cargo_pretendido" placeholder="Cargo Pretendido" required>
-              </div>
-              <div class="form-group">
-                <label>Pretensão Salarial</label>
-                <input type="text" name="pretensao_salarial" placeholder="Pretensão Salarial">
-              </div>
-              <div class="form-group">
-                <label>Currículo (PDF)</label>
-                <input type="file" name="curriculo" accept=".pdf" required>
-              </div>
-            </div>
-
-            <button type="submit" class="bg-blue-900 text-white py-3 px-6 rounded font-bold hover:bg-blue-800 w-full">
-              Enviar Currículo
-            </button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contato -->
-    <section id="contato" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="contactTitle">Fale Conosco</h2>
-        <div class="max-w-xl mx-auto">
-          <form class="space-y-4">
-            <input type="text" placeholder="Seu nome" class="w-full p-3 border rounded" required>
-            <input type="email" placeholder="Seu e-mail" class="w-full p-3 border rounded" required>
-            <textarea placeholder="Sua mensagem" class="w-full p-3 border rounded" rows="5" required></textarea>
-            <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded font-bold">Enviar Mensagem</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-blue-900 text-white py-8">
-    <div class="container mx-auto px-4 text-center">
-      <div id="footerContent">© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</div>
-    </div>
-  </footer>
-
-  <!-- Painel Administrativo (modal de login) -->
-  <div id="adminModal" class="modal">
-    <div class="modal-content">
-      <h2 class="text-2xl mb-4 font-bold">Login Administrativo</h2>
-      <form id="adminLoginForm">
-        <input type="text" id="adminUsername" placeholder="Usuário" class="border p-2 mb-2 w-full text-center text-gray-600" required>
-        <input type="password" id="adminPassword" placeholder="Senha" class="border p-2 mb-2 w-full text-center text-gray-600" required>
-        <p id="loginError" class="text-red-600 hidden mb-2">Usuário ou senha inválidos.</p>
-        <button type="submit" class="bg-blue-900 text-white p-2 w-full rounded">Entrar</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Entrar
+        </button>
       </form>
     </div>
   </div>
 
-  <!-- Painel Administrativo (lateral) -->
-  <div id="adminPanel" class="admin-panel hidden">
-    <!-- ... (conteúdo do painel administrativo permanece igual) ... -->
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="p-4 border-b bg-gray-50">
+      <h3 class="text-lg font-bold">Painel Administrativo</h3>
+      <button onclick="closeAdmin()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="p-4">
+      <div class="mb-6">
+        <button onclick="saveChanges()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 mb-2">
+          <i class="fas fa-save mr-2"></i>Salvar Alterações
+        </button>
+        <button onclick="loadData()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+          <i class="fas fa-refresh mr-2"></i>Recarregar Dados
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="font-semibold mb-2">Configurações Gerais</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Nome da Empresa:</label>
+              <input type="text" id="companyName" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('companyName', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Versão:</label>
+              <input type="text" id="version" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('version', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Hero Section</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Título Principal:</label>
+              <textarea id="heroTitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroTitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Subtítulo:</label>
+              <textarea id="heroSubtitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroSubtitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Imagem Principal:</label>
+              <input type="file" id="heroImageFile" accept="image/*" class="w-full px-2 py-1 border rounded text-sm mb-2" onchange="handleImageUpload('heroImage', this)">
+              <input type="url" id="heroImage" placeholder="Ou cole uma URL de imagem" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImage', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Descrição da Imagem (Alt Text):</label>
+              <input type="text" id="heroImageAlt" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImageAlt', this.value)" placeholder="Descreva a imagem para acessibilidade">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Contato</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Telefone:</label>
+              <input type="text" id="phone" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('phone', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Email:</label>
+              <input type="email" id="email" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('email', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Endereço:</label>
+              <input type="text" id="address" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('address', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Estatísticas</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-sm text-gray-600">Aumento Receita:</label>
+              <input type="text" id="stat1" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat1', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Redução Custos:</label>
+              <input type="text" id="stat2" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat2', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Satisfação:</label>
+              <input type="text" id="stat3" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat3', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Projetos:</label>
+              <input type="text" id="stat4" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat4', this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Botão flutuante para abrir painel admin -->
-  <button id="adminFloatBtn" class="fixed bottom-4 right-4 z-50 bg-blue-900 text-white p-4 rounded-full shadow-lg hover:bg-blue-700" title="Abrir Painel Administrativo">
-    <i class="fas fa-cog fa-lg"></i>
+  <!-- Admin Toggle Button -->
+  <button class="admin-toggle" onclick="toggleAdmin()">
+    <i class="fas fa-cog"></i>
   </button>
 
-  <script src="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.js"></script>
+  <!-- Login Modal -->
+  <div id="loginModal" class="login-modal" style="display: none;">
+    <div class="login-form">
+      <h3 class="text-xl font-bold mb-4">Acesso Administrativo</h3>
+      <form onsubmit="handleLogin(event)">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Login:</label>
+          <input type="text" id="loginUser" class="w-full px-3 py-2 border rounded" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Senha:</label>
+          <input type="password" id="loginPass" class="w-full px-3 py-2 border rounded" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="p-4 border-b bg-gray-50">
+      <h3 class="text-lg font-bold">Painel Administrativo</h3>
+      <button onclick="closeAdmin()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="p-4">
+      <div class="mb-6">
+        <button onclick="saveChanges()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 mb-2">
+          <i class="fas fa-save mr-2"></i>Salvar Alterações
+        </button>
+        <button onclick="loadData()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+          <i class="fas fa-refresh mr-2"></i>Recarregar Dados
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="font-semibold mb-2">Configurações Gerais</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Nome da Empresa:</label>
+              <input type="text" id="companyName" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('companyName', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Versão:</label>
+              <input type="text" id="version" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('version', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Hero Section</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Título Principal:</label>
+              <textarea id="heroTitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroTitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Subtítulo:</label>
+              <textarea id="heroSubtitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroSubtitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Imagem Principal:</label>
+              <input type="file" id="heroImageFile" accept="image/*" class="w-full px-2 py-1 border rounded text-sm mb-2" onchange="handleImageUpload('heroImage', this)">
+              <input type="url" id="heroImage" placeholder="Ou cole uma URL de imagem" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImage', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Descrição da Imagem (Alt Text):</label>
+              <input type="text" id="heroImageAlt" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImageAlt', this.value)" placeholder="Descreva a imagem para acessibilidade">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Contato</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Telefone:</label>
+              <input type="text" id="phone" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('phone', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Email:</label>
+              <input type="email" id="email" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('email', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Endereço:</label>
+              <input type="text" id="address" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('address', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Estatísticas</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-sm text-gray-600">Aumento Receita:</label>
+              <input type="text" id="stat1" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat1', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Redução Custos:</label>
+              <input type="text" id="stat2" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat2', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Satisfação:</label>
+              <input type="text" id="stat3" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat3', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Projetos:</label>
+              <input type="text" id="stat4" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat4', this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="fixed w-full bg-white shadow-md z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center">
+          <a href="#" class="flex items-center">
+            <span id="nav-company-name" class="text-3xl font-bold text-blue-900 editable" style="font-family: 'Bebas Neue';" data-field="companyName">CONCEITO</span>
+            <span id="nav-version" class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
+          </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="#services" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Serviços</a>
+          <a href="#methodology" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Metodologia</a>
+          <a href="#results" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Sobre Nós</a>
+          <a href="#testimonials" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Depoimentos</a>
+          <a href="#contact" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Contato</a>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-blue-900 hover:text-blue-600">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Serviços</a>
+        <a href="#methodology" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Metodologia</a>
+        <a href="#results" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Sobre Nós</a>
+        <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Depoimentos</a>
+        <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Contato</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-32 pb-20 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex items-center justify-between">
+        <div class="md:w-1/2 mb-12 md:mb-0">
+          <h1 id="hero-title" class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle">
+            <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
+            <div class="edit-overlay">Clique para editar</div>
+          </h1>
+          <p id="hero-subtitle" class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">
+            Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
+            <div class="edit-overlay">Clique para editar</div>
+          </p>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center">
+              Fale com um especialista
+            </a>
+            <a href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center">
+              Conheça nossa metodologia
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Business growth" class="rounded-lg shadow-2xl floating max-w-full h-auto editable" data-field="heroImage" data-alt-field="heroImageAlt">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Nossos Serviços
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Soluções completas e personalizadas para transformar sua empresa
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Estratégia Empresarial</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Planejamento estratégico</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de mercado</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Definição de objetivos</li>
+          </ul>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-cogs text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Otimização Operacional</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Melhoria contínua dos processos para aumentar eficiência e reduzir custos operacionais.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Mapeamento de processos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Automação inteligente</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Redução de desperdícios</li>
+          </ul>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-users text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Gestão de Pessoas</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Desenvolvimento de equipes de alta performance e cultura organizacional sólida.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Desenvolvimento de liderança</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Cultura organizacional</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Gestão de talentos</li>
+          </ul>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-rocket text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Transformação Digital</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Implementação de tecnologias inovadoras para modernizar e digitalizar operações.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Digitalização de processos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Implementação de sistemas</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de dados</li>
+          </ul>
+        </div>
+
+        <!-- Service 5 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-dollar-sign text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Gestão Financeira</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Otimização da gestão financeira para maximizar rentabilidade e controlar riscos.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Planejamento financeiro</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Controle de custos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de investimentos</li>
+          </ul>
+        </div>
+
+        <!-- Service 6 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-bullseye text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Marketing & Vendas</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Estratégias de marketing e vendas para aumentar market share e fidelizar clientes.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Estratégias de marketing</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Otimização de vendas</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Experiência do cliente</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-white"></div>
+
+  <!-- Methodology Section -->
+  <section id="methodology" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Nossa Metodologia
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Processo estruturado e comprovado para garantir resultados excepcionais
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Step 1 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            1
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Diagnóstico</h3>
+          <p class="text-gray-600">
+            Análise profunda da situação atual da empresa e identificação de oportunidades.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="text-center">
+          <div class="bg-[#003366] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            2
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Planejamento</h3>
+          <p class="text-gray-600">
+            Desenvolvimento de estratégias customizadas e plano de ação detalhado.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="bg-[#0066CC] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            3
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Implementação</h3>
+          <p class="text-gray-600">
+            Execução das soluções com acompanhamento próximo e ajustes contínuos.
+          </p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="text-center">
+          <div class="bg-[#0080FF] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            4
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Monitoramento</h3>
+          <p class="text-gray-600">
+            Acompanhamento dos resultados e otimização contínua dos processos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-white"></div>
+
+  <!-- Results Section -->
+  <section id="results" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Resultados Comprovados
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Números que demonstram o impacto real das nossas consultorias
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <!-- Stat 1 -->
+        <div class="text-center">
+          <div id="stat-1" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">
+            +150%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Aumento de Receita</h3>
+          <p class="text-gray-600">Média de crescimento dos nossos clientes</p>
+        </div>
+
+        <!-- Stat 2 -->
+        <div class="text-center">
+          <div id="stat-2" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">
+            -40%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Redução de Custos</h3>
+          <p class="text-gray-600">Otimização operacional implementada</p>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="text-center">
+          <div id="stat-3" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">
+            98%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Satisfação</h3>
+          <p class="text-gray-600">Taxa de satisfação dos clientes</p>
+        </div>
+
+        <!-- Stat 4 -->
+        <div class="text-center">
+          <div id="stat-4" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">
+            500+
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Projetos</h3>
+          <p class="text-gray-600">Consultorias realizadas com sucesso</p>
+        </div>
+      </div>
+
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          O que nossos clientes dizem
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Depoimentos reais de empresários que transformaram seus negócios
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              M
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">Maria Silva</h4>
+              <p class="text-gray-600 text-sm">CEO, TechCorp</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "A CONCEITO transformou completamente nossa operação. Aumentamos nossa receita em 180% em apenas 8 meses."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              J
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">João Santos</h4>
+              <p class="text-gray-600 text-sm">Diretor, InnovaCorp</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "Metodologia excepcional e resultados surpreendentes. Nossa eficiência operacional melhorou drasticamente."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              A
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">Ana Costa</h4>
+              <p class="text-gray-600 text-sm">Fundadora, StartupX</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "Profissionais excepcionais! Nos ajudaram a escalar de 10 para 100 funcionários sem perder qualidade."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 hero-gradient">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-6" style="font-family: 'Bebas Neue';">
+          Vamos Transformar Sua Empresa
+        </h2>
+        <p class="text-xl text-white max-w-3xl mx-auto">
+          Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl p-8 shadow-2xl">
+          <h3 class="text-2xl font-bold text-[#001F3F] mb-6">Solicite uma Consultoria</h3>
+          <form id="contact-form" class="space-y-6">
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Nome Completo</label>
+              <input type="text" id="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Email</label>
+              <input type="email" id="email-form" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Empresa</label>
+              <input type="text" id="company" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Telefone</label>
+              <input type="tel" id="phone-form" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Mensagem</label>
+              <textarea id="message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#0066CC] hover:bg-[#0052A3] text-white py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 shadow-lg">
+              Enviar Solicitação
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="text-white">
+          <h3 class="text-2xl font-bold mb-8">Informações de Contato</h3>
+          
+          <div class="space-y-6">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-phone text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Telefone</h4>
+                <p id="contact-phone" class="text-gray-200 editable" data-field="phone">(11) 9999-9999</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-envelope text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Email</h4>
+                <p id="contact-email" class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-map-marker-alt text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Endereço</h4>
+                <p id="contact-address" class="text-gray-200 editable" data-field="address">São Paulo, SP - Brasil</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-clock text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Horário</h4>
+                <p class="text-gray-200">Segunda a Sexta: 8h às 18h</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-12">
+            <h4 class="font-semibold mb-4">Siga-nos nas redes sociais</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-linkedin text-white"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-instagram text-white"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-facebook text-white"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#001F3F] text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <div id="footer-company-name" class="text-3xl font-black mb-4 editable" style="font-family: 'Bebas Neue';" data-field="companyName">
+            CONCEITO
+          </div>
+          <p class="text-gray-300 mb-4">
+            Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">Serviços</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li>Estratégia Empresarial</li>
+            <li>Otimização Operacional</li>
+            <li>Gestão de Pessoas</li>
+            <li>Transformação Digital</li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">Contato</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li id="footer-email" class="editable" data-field="email">contato@conceito.com.br</li>
+            <li id="footer-phone" class="editable" data-field="phone">(11) 9999-9999</li>
+            <li id="footer-address" class="editable" data-field="address">São Paulo, SP</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2024 <span id="footer-company-name-2" class="editable" data-field="companyName">CONCEITO</span> Consultoria. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    // ... (todo o JavaScript anterior permanece igual, exceto pela remoção do manipulador do formulário de currículo)
-    // Removemos completamente o event listener do formulário de currículo
-    // para permitir o envio nativo pelo navegador
+    // Global variables
+    let isLoggedIn = false;
+    let siteData = {};
+
+    // Authentication
+    function toggleAdmin() {
+      if (!isLoggedIn) {
+        document.getElementById('loginModal').style.display = 'flex';
+      } else {
+        document.getElementById('adminPanel').classList.toggle('open');
+      }
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+      
+      if (username === 'Admin' && password === 'Euvou*1717') {
+        isLoggedIn = true;
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('adminPanel').classList.add('open');
+        document.body.classList.add('admin-logged-in');
+        loadData();
+      } else {
+        alert('Credenciais inválidas!');
+      }
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminPanel').classList.remove('open');
+    }
+
+    // Data persistence functions (Netlify Functions integration)
+    async function fetchSiteData() {
+      try {
+        const res = await fetch('/.netlify/functions/siteData');
+        if (res.ok) {
+          const data = await res.json();
+          return data;
+        }
+        throw new Error('Erro ao buscar dados do backend');
+      } catch (e) {
+        // fallback para localStorage se offline
+        const savedData = JSON.parse(localStorage.getItem('siteData')) || {};
+        return savedData;
+      }
+    }
+
+    async function saveSiteData(data) {
+      try {
+        const res = await fetch('/.netlify/functions/siteData', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Falha ao salvar no backend');
+        return true;
+      } catch (e) {
+        // fallback para localStorage se offline
+        localStorage.setItem('siteData', JSON.stringify(data));
+        return false;
+      }
+    }
+
+    // Load data from backend
+    async function loadData() {
+      try {
+        const loadedData = await fetchSiteData();
+        
+        // Merge with default data
+        siteData = { ...siteData, ...loadedData };
+        
+        // Update form fields
+        Object.keys(siteData).forEach(key => {
+          const input = document.getElementById(key);
+          if (input) {
+            input.value = siteData[key];
+          }
+        });
+        
+        // Update page content
+        updatePageContent();
+        
+        console.log('Dados carregados com sucesso:', siteData);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        // Use default data if loading fails
+        updatePageContent();
+      }
+    }
+
+    // Save changes to backend
+    async function saveChanges() {
+      try {
+        const success = await saveSiteData(siteData);
+        if (success) {
+          alert('Alterações salvas com sucesso no servidor!');
+        } else {
+          alert('Alterações salvas localmente (offline)');
+        }
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        alert('Erro ao salvar alterações');
+      }
+    }
+
+    // Update content when form fields change
+    function updateContent(field, value) {
+      siteData[field] = value;
+      
+      // Update all elements with this field
+      const elements = document.querySelectorAll(`[data-field="${field}"]`);
+      elements.forEach(element => {
+        if (element.tagName === 'IMG') {
+          element.src = value;
+          // Update alt text if it's an alt field or if there's a corresponding alt field
+          const altField = element.getAttribute('data-alt-field');
+          if (field.includes('Alt')) {
+            element.alt = value;
+          } else if (altField && siteData[altField]) {
+            element.alt = siteData[altField];
+          }
+        } else {
+          element.innerHTML = value;
+        }
+      });
+      
+      // Also update the admin panel input
+      const adminInput = document.getElementById(field);
+      if (adminInput) {
+        adminInput.value = value;
+      }
+    }
+
+    // Update page content from loaded data
+    function updatePageContent() {
+      Object.keys(siteData).forEach(field => {
+        const elements = document.querySelectorAll(`[data-field="${field}"]`);
+        elements.forEach(element => {
+          if (element.tagName === 'IMG') {
+            element.src = siteData[field];
+            // Update alt text properly
+            const altField = element.getAttribute('data-alt-field');
+            if (field.includes('Alt')) {
+              element.alt = siteData[field];
+            } else if (altField && siteData[altField]) {
+              element.alt = siteData[altField];
+            }
+          } else {
+            element.innerHTML = siteData[field];
+          }
+        });
+      });
+    }
+
+    // Make elements editable on click
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('editable') && isLoggedIn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const field = e.target.getAttribute('data-field');
+        const currentValue = e.target.textContent.trim() || e.target.src;
+        
+        if (e.target.tagName === 'IMG') {
+          const altField = e.target.getAttribute('data-alt-field');
+          const currentAlt = altField ? siteData[altField] || '' : '';
+          
+          const action = confirm('Clique OK para fazer upload de uma nova imagem ou Cancelar para editar a URL/descrição');
+          
+          if (action) {
+            // Create file input for image upload
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = function() {
+              handleImageUpload(field, this);
+            };
+            fileInput.click();
+          } else {
+            // Edit URL and description
+            const newUrl = prompt('Digite a nova URL da imagem:', currentValue);
+            if (newUrl !== null && newUrl.trim() !== '') {
+              updateContent(field, newUrl.trim());
+              siteData[field] = newUrl.trim();
+            }
+            
+            if (altField) {
+              const newAlt = prompt('Digite a descrição da imagem (Alt Text):', currentAlt);
+              if (newAlt !== null) {
+                updateContent(altField, newAlt.trim());
+                siteData[altField] = newAlt.trim();
+              }
+            }
+          }
+        } else {
+          // Create inline editor
+          const originalElement = e.target;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = currentValue;
+          input.className = 'edit-input';
+          input.style.fontSize = window.getComputedStyle(originalElement).fontSize;
+          input.style.fontWeight = window.getComputedStyle(originalElement).fontWeight;
+          input.style.fontFamily = window.getComputedStyle(originalElement).fontFamily;
+          
+          // Replace element with input
+          originalElement.style.display = 'none';
+          originalElement.parentNode.insertBefore(input, originalElement);
+          input.focus();
+          input.select();
+          
+          function saveEdit() {
+            const newValue = input.value.trim();
+            if (newValue !== '' && newValue !== currentValue) {
+              updateContent(field, newValue);
+              siteData[field] = newValue;
+            }
+            // Restore original element
+            originalElement.style.display = '';
+            input.remove();
+          }
+          
+          input.addEventListener('blur', saveEdit);
+          input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+              saveEdit();
+            }
+            if (event.key === 'Escape') {
+              originalElement.style.display = '';
+              input.remove();
+            }
+          });
+        }
+      }
+    });
+
+    // Handle image upload from local files
+    function handleImageUpload(field, fileInput) {
+      const file = fileInput.files[0];
+      if (file) {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Arquivo muito grande! Máximo 5MB permitido.');
+          fileInput.value = '';
+          return;
+        }
+        
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+          alert('Por favor, selecione apenas arquivos de imagem.');
+          fileInput.value = '';
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageDataUrl = e.target.result;
+          updateContent(field, imageDataUrl);
+          siteData[field] = imageDataUrl;
+          
+          // Update the URL input field as well
+          const urlInput = document.getElementById(field);
+          if (urlInput) {
+            urlInput.value = imageDataUrl;
+          }
+          
+          alert('Imagem carregada com sucesso!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Initialize default data
+    function initializeData() {
+      siteData = {
+        companyName: 'CONCEITO',
+        version: 'v24',
+        heroTitle: 'TRANSFORME SEU NEGÓCIO COM CONSULTORIA PREMIUM',
+        heroSubtitle: 'Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.',
+        heroImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        heroImageAlt: 'Business growth',
+        phone: '(11) 9999-9999',
+        email: 'contato@conceito.com.br',
+        address: 'São Paulo, SP - Brasil',
+        stat1: '+150%',
+        stat2: '-40%',
+        stat3: '98%',
+        stat4: '500+'
+      };
+    }
+
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Smooth scrolling for navigation links
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      const navHeight = 64; // Height of fixed navigation
+      const elementPosition = element.offsetTop - navHeight;
+      
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+    }
+
+    // Add click handlers to navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute('href').substring(1);
+        scrollToSection(sectionId);
+        
+        // Close mobile menu if open
+        document.getElementById('mobile-menu').classList.add('hidden');
+      });
+    });
+
+    // Contact form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form data
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email-form').value,
+        company: document.getElementById('company').value,
+        phone: document.getElementById('phone-form').value,
+        message: document.getElementById('message').value
+      };
+      
+      // Show success message
+      alert('Obrigado pelo seu interesse! Entraremos em contato em breve.');
+      
+      // Reset form
+      this.reset();
+    });
+
+    // Add scroll effect to navigation
+    window.addEventListener('scroll', function() {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('shadow-xl');
+      } else {
+        nav.classList.remove('shadow-xl');
+      }
+    });
+
+    // Animate elements on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all service cards and methodology steps
+    document.querySelectorAll('.card-hover, .text-center').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Make elements editable on click
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('editable') && isLoggedIn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const field = e.target.getAttribute('data-field');
+        const currentValue = e.target.textContent.trim() || e.target.src;
+        
+        if (e.target.tagName === 'IMG') {
+          const altField = e.target.getAttribute('data-alt-field');
+          const currentAlt = altField ? siteData[altField] || '' : '';
+          
+          const action = confirm('Clique OK para fazer upload de uma nova imagem ou Cancelar para editar a URL/descrição');
+          
+          if (action) {
+            // Create file input for image upload
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = function() {
+              handleImageUpload(field, this);
+            };
+            fileInput.click();
+          } else {
+            // Edit URL and description
+            const newUrl = prompt('Digite a nova URL da imagem:', currentValue);
+            if (newUrl !== null && newUrl.trim() !== '') {
+              updateContent(field, newUrl.trim());
+              siteData[field] = newUrl.trim();
+            }
+            
+            if (altField) {
+              const newAlt = prompt('Digite a descrição da imagem (Alt Text):', currentAlt);
+              if (newAlt !== null) {
+                updateContent(altField, newAlt.trim());
+                siteData[altField] = newAlt.trim();
+              }
+            }
+          }
+        } else {
+          // Create inline editor
+          const originalElement = e.target;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = currentValue;
+          input.className = 'edit-input';
+          input.style.fontSize = window.getComputedStyle(originalElement).fontSize;
+          input.style.fontWeight = window.getComputedStyle(originalElement).fontWeight;
+          input.style.fontFamily = window.getComputedStyle(originalElement).fontFamily;
+          
+          // Replace element with input
+          originalElement.style.display = 'none';
+          originalElement.parentNode.insertBefore(input, originalElement);
+          input.focus();
+          input.select();
+          
+          function saveEdit() {
+            const newValue = input.value.trim();
+            if (newValue !== '' && newValue !== currentValue) {
+              updateContent(field, newValue);
+              siteData[field] = newValue;
+            }
+            // Restore original element
+            originalElement.style.display = '';
+            input.remove();
+          }
+          
+          input.addEventListener('blur', saveEdit);
+          input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+              saveEdit();
+            }
+            if (event.key === 'Escape') {
+              originalElement.style.display = '';
+              input.remove();
+            }
+          });
+        }
+      }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeData();
+      updatePageContent(); // Show default data immediately
+      loadData(); // Then load saved data
+    });
+
+    // Close login modal when clicking outside
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeData();
+      updatePageContent(); // Show default data immediately
+      loadData(); // Then load saved data
+    });
+
+    // Close login modal when clicking outside
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  </script>
+
+  <!-- Netlify Functions Script -->
+  <script type="text/javascript">
+    // Additional GitHub integration functions can be added here
+    // This script handles the communication with Netlify Functions
+    
+    // Function to handle GitHub image uploads (if needed)
+    async function uploadImageToGitHub(imageFile, filename) {
+      try {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('filename', filename);
+        
+        const response = await fetch('/.netlify/functions/github-images', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          return result.url;
+        }
+        throw new Error('Falha no upload da imagem');
+      } catch (error) {
+        console.error('Erro no upload:', error);
+        return null;
+      }
+    }
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96615b3401ecf069',t:'MTc1MzY3NDAzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="CONCEITO Consultoria">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
+  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#001F3F">
+  <link rel="canonical" href="https://conceito.com.br">
+  <title>CONCEITO | Consultoria Empresarial Premium - Versão 24</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" as="style">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Custom CSS for elements that need more specific styling */
+    .hero-gradient {
+      background: linear-gradient(135deg, #001F3F 0%, #003366 50%, #0066CC 100%);
+    }
+    .text-outline {
+      text-shadow: -1px -1px 0 #001F3F, 1px -1px 0 #001F3F, -1px 1px 0 #001F3F, 1px 1px 0 #001F3F;
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    .card-hover:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .transition-all {
+      transition: all 0.3s ease;
+    }
+    .pulse-slow {
+      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #0066CC;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .service-icon {
+      background: linear-gradient(135deg, #0066CC, #003366);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-divider {
+      height: 100px;
+      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
+    }
+    .testimonial-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+    
+    /* Admin Panel Styles */
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .admin-panel.open {
+      right: 0;
+    }
+    .admin-toggle {
+      position: fixed;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: #001F3F;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .editable {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 20px;
+      display: inline-block;
+    }
+    .admin-logged-in .editable:hover {
+      outline: 2px dashed #0066CC;
+      outline-offset: 2px;
+      background-color: rgba(0, 102, 204, 0.1);
+    }
+    .edit-overlay {
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: #0066CC;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .admin-logged-in .editable:hover .edit-overlay {
+      opacity: 1;
+    }
+    .admin-logged-in .editable::after {
+      content: '✏️';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #0066CC;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      opacity: 0.8;
+      z-index: 101;
+    }
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .login-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 300px;
+    }
+    .edit-input {
+      background: white;
+      border: 2px solid #0066CC;
+      padding: 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      width: 100%;
+      min-width: 200px;
+    }
+  </style>
+</head>
+<body class="font-['Montserrat'] bg-gray-50">
+  <!-- Admin Toggle Button -->
+  <button class="admin-toggle" onclick="toggleAdmin()">
+    <i class="fas fa-cog"></i>
+  </button>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="login-modal" style="display: none;">
+    <div class="login-form">
+      <h3 class="text-xl font-bold mb-4">Acesso Administrativo</h3>
+      <form onsubmit="handleLogin(event)">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Login:</label>
+          <input type="text" id="loginUser" class="w-full px-3 py-2 border rounded" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Senha:</label>
+          <input type="password" id="loginPass" class="w-full px-3 py-2 border rounded" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="p-4 border-b bg-gray-50">
+      <h3 class="text-lg font-bold">Painel Administrativo</h3>
+      <button onclick="closeAdmin()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="p-4">
+      <div class="mb-6">
+        <button onclick="saveChanges()" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 mb-2">
+          <i class="fas fa-save mr-2"></i>Salvar Alterações
+        </button>
+        <button onclick="loadData()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+          <i class="fas fa-refresh mr-2"></i>Recarregar Dados
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="font-semibold mb-2">Configurações Gerais</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Nome da Empresa:</label>
+              <input type="text" id="companyName" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('companyName', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Versão:</label>
+              <input type="text" id="version" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('version', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Hero Section</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Título Principal:</label>
+              <textarea id="heroTitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroTitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Subtítulo:</label>
+              <textarea id="heroSubtitle" class="w-full px-2 py-1 border rounded text-sm" rows="2" onchange="updateContent('heroSubtitle', this.value)"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Imagem Principal:</label>
+              <input type="file" id="heroImageFile" accept="image/*" class="w-full px-2 py-1 border rounded text-sm mb-2" onchange="handleImageUpload('heroImage', this)">
+              <input type="url" id="heroImage" placeholder="Ou cole uma URL de imagem" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImage', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Descrição da Imagem (Alt Text):</label>
+              <input type="text" id="heroImageAlt" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('heroImageAlt', this.value)" placeholder="Descreva a imagem para acessibilidade">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Contato</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="block text-sm text-gray-600">Telefone:</label>
+              <input type="text" id="phone" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('phone', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Email:</label>
+              <input type="email" id="email" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('email', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Endereço:</label>
+              <input type="text" id="address" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('address', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2">Estatísticas</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-sm text-gray-600">Aumento Receita:</label>
+              <input type="text" id="stat1" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat1', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Redução Custos:</label>
+              <input type="text" id="stat2" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat2', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Satisfação:</label>
+              <input type="text" id="stat3" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat3', this.value)">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Projetos:</label>
+              <input type="text" id="stat4" class="w-full px-2 py-1 border rounded text-sm" onchange="updateContent('stat4', this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="fixed w-full bg-white shadow-md z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center">
+          <a href="#" class="flex items-center">
+            <span id="nav-company-name" class="text-3xl font-bold text-blue-900 editable" style="font-family: 'Bebas Neue';" data-field="companyName">CONCEITO</span>
+            <span id="nav-version" class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
+          </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="#services" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Serviços</a>
+          <a href="#methodology" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Metodologia</a>
+          <a href="#results" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Sobre Nós</a>
+          <a href="#testimonials" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Depoimentos</a>
+          <a href="#contact" class="text-blue-900 hover:text-blue-600 font-medium transition-colors">Contato</a>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-blue-900 hover:text-blue-600">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Serviços</a>
+        <a href="#methodology" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Metodologia</a>
+        <a href="#results" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Sobre Nós</a>
+        <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Depoimentos</a>
+        <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-blue-900 hover:text-blue-600 hover:bg-blue-50">Contato</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-32 pb-20 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex items-center justify-between">
+        <div class="md:w-1/2 mb-12 md:mb-0">
+          <h1 id="hero-title" class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle">
+            <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
+            <div class="edit-overlay">Clique para editar</div>
+          </h1>
+          <p id="hero-subtitle" class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">
+            Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
+            <div class="edit-overlay">Clique para editar</div>
+          </p>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center">
+              Fale com um especialista
+            </a>
+            <a href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center">
+              Conheça nossa metodologia
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Business growth" class="rounded-lg shadow-2xl floating max-w-full h-auto editable" data-field="heroImage" data-alt-field="heroImageAlt">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Nossos Serviços
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Soluções completas e personalizadas para transformar sua empresa
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Estratégia Empresarial</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Planejamento estratégico</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de mercado</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Definição de objetivos</li>
+          </ul>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-cogs text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Otimização Operacional</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Melhoria contínua dos processos para aumentar eficiência e reduzir custos operacionais.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Mapeamento de processos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Automação inteligente</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Redução de desperdícios</li>
+          </ul>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-users text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Gestão de Pessoas</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Desenvolvimento de equipes de alta performance e cultura organizacional sólida.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Desenvolvimento de liderança</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Cultura organizacional</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Gestão de talentos</li>
+          </ul>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-rocket text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Transformação Digital</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Implementação de tecnologias inovadoras para modernizar e digitalizar operações.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Digitalização de processos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Implementação de sistemas</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de dados</li>
+          </ul>
+        </div>
+
+        <!-- Service 5 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-dollar-sign text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Gestão Financeira</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Otimização da gestão financeira para maximizar rentabilidade e controlar riscos.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Planejamento financeiro</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Controle de custos</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Análise de investimentos</li>
+          </ul>
+        </div>
+
+        <!-- Service 6 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-bullseye text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4">Marketing & Vendas</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Estratégias de marketing e vendas para aumentar market share e fidelizar clientes.
+          </p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Estratégias de marketing</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Otimização de vendas</li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i>Experiência do cliente</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-white"></div>
+
+  <!-- Methodology Section -->
+  <section id="methodology" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Nossa Metodologia
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Processo estruturado e comprovado para garantir resultados excepcionais
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Step 1 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            1
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Diagnóstico</h3>
+          <p class="text-gray-600">
+            Análise profunda da situação atual da empresa e identificação de oportunidades.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="text-center">
+          <div class="bg-[#003366] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            2
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Planejamento</h3>
+          <p class="text-gray-600">
+            Desenvolvimento de estratégias customizadas e plano de ação detalhado.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="bg-[#0066CC] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            3
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Implementação</h3>
+          <p class="text-gray-600">
+            Execução das soluções com acompanhamento próximo e ajustes contínuos.
+          </p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="text-center">
+          <div class="bg-[#0080FF] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            4
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4">Monitoramento</h3>
+          <p class="text-gray-600">
+            Acompanhamento dos resultados e otimização contínua dos processos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-white"></div>
+
+  <!-- Results Section -->
+  <section id="results" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          Resultados Comprovados
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Números que demonstram o impacto real das nossas consultorias
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <!-- Stat 1 -->
+        <div class="text-center">
+          <div id="stat-1" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">
+            +150%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Aumento de Receita</h3>
+          <p class="text-gray-600">Média de crescimento dos nossos clientes</p>
+        </div>
+
+        <!-- Stat 2 -->
+        <div class="text-center">
+          <div id="stat-2" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">
+            -40%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Redução de Custos</h3>
+          <p class="text-gray-600">Otimização operacional implementada</p>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="text-center">
+          <div id="stat-3" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">
+            98%
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Satisfação</h3>
+          <p class="text-gray-600">Taxa de satisfação dos clientes</p>
+        </div>
+
+        <!-- Stat 4 -->
+        <div class="text-center">
+          <div id="stat-4" class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">
+            500+
+            <div class="edit-overlay">Clique para editar</div>
+          </div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2">Projetos</h3>
+          <p class="text-gray-600">Consultorias realizadas com sucesso</p>
+        </div>
+      </div>
+
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6" style="font-family: 'Bebas Neue';">
+          O que nossos clientes dizem
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Depoimentos reais de empresários que transformaram seus negócios
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              M
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">Maria Silva</h4>
+              <p class="text-gray-600 text-sm">CEO, TechCorp</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "A CONCEITO transformou completamente nossa operação. Aumentamos nossa receita em 180% em apenas 8 meses."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              J
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">João Santos</h4>
+              <p class="text-gray-600 text-sm">Diretor, InnovaCorp</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "Metodologia excepcional e resultados surpreendentes. Nossa eficiência operacional melhorou drasticamente."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card rounded-xl p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+              A
+            </div>
+            <div>
+              <h4 class="font-bold text-[#001F3F]">Ana Costa</h4>
+              <p class="text-gray-600 text-sm">Fundadora, StartupX</p>
+            </div>
+          </div>
+          <p class="text-gray-700 italic mb-4">
+            "Profissionais excepcionais! Nos ajudaram a escalar de 10 para 100 funcionários sem perder qualidade."
+          </p>
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 hero-gradient">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-6" style="font-family: 'Bebas Neue';">
+          Vamos Transformar Sua Empresa
+        </h2>
+        <p class="text-xl text-white max-w-3xl mx-auto">
+          Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl p-8 shadow-2xl">
+          <h3 class="text-2xl font-bold text-[#001F3F] mb-6">Solicite uma Consultoria</h3>
+          <form id="contact-form" class="space-y-6">
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Nome Completo</label>
+              <input type="text" id="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Email</label>
+              <input type="email" id="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Empresa</label>
+              <input type="text" id="company" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Telefone</label>
+              <input type="tel" id="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all">
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Mensagem</label>
+              <textarea id="message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent transition-all resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#0066CC] hover:bg-[#0052A3] text-white py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 shadow-lg">
+              Enviar Solicitação
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="text-white">
+          <h3 class="text-2xl font-bold mb-8">Informações de Contato</h3>
+          
+          <div class="space-y-6">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-phone text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Telefone</h4>
+                <p id="contact-phone" class="text-gray-200 editable" data-field="phone">(11) 9999-9999</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-envelope text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Email</h4>
+                <p id="contact-email" class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-map-marker-alt text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Endereço</h4>
+                <p id="contact-address" class="text-gray-200 editable" data-field="address">São Paulo, SP - Brasil</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-clock text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold">Horário</h4>
+                <p class="text-gray-200">Segunda a Sexta: 8h às 18h</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-12">
+            <h4 class="font-semibold mb-4">Siga-nos nas redes sociais</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-linkedin text-white"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-instagram text-white"></i>
+              </a>
+              <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all">
+                <i class="fab fa-facebook text-white"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#001F3F] text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <div id="footer-company-name" class="text-3xl font-black mb-4 editable" style="font-family: 'Bebas Neue';" data-field="companyName">
+            CONCEITO
+          </div>
+          <p class="text-gray-300 mb-4">
+            Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">Serviços</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li>Estratégia Empresarial</li>
+            <li>Otimização Operacional</li>
+            <li>Gestão de Pessoas</li>
+            <li>Transformação Digital</li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-4">Contato</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li id="footer-email" class="editable" data-field="email">contato@conceito.com.br</li>
+            <li id="footer-phone" class="editable" data-field="phone">(11) 9999-9999</li>
+            <li id="footer-address" class="editable" data-field="address">São Paulo, SP</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2024 <span id="footer-company-name-2" class="editable" data-field="companyName">CONCEITO</span> Consultoria. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Global variables
+    let isLoggedIn = false;
+    let siteData = {};
+
+    // Authentication
+    function toggleAdmin() {
+      if (!isLoggedIn) {
+        document.getElementById('loginModal').style.display = 'flex';
+      } else {
+        document.getElementById('adminPanel').classList.toggle('open');
+      }
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+      
+      if (username === 'Admin' && password === 'Euvou*1717') {
+        isLoggedIn = true;
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('adminPanel').classList.add('open');
+        document.body.classList.add('admin-logged-in');
+        loadData();
+      } else {
+        alert('Credenciais inválidas!');
+      }
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminPanel').classList.remove('open');
+    }
+
+    // Data persistence functions
+    async function fetchSiteData() {
+      try {
+        const savedData = JSON.parse(localStorage.getItem('siteData')) || {};
+        return savedData;
+      } catch (e) {
+        return {};
+      }
+    }
+
+    async function saveSiteData(data) {
+      try {
+        localStorage.setItem('siteData', JSON.stringify(data));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Load data
+    async function loadData() {
+      try {
+        const loadedData = await fetchSiteData();
+        siteData = { ...siteData, ...loadedData };
+        
+        // Update form fields
+        Object.keys(siteData).forEach(key => {
+          const input = document.getElementById(key);
+          if (input) {
+            input.value = siteData[key];
+          }
+        });
+        
+        updatePageContent();
+        console.log('Dados carregados:', siteData);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        updatePageContent();
+      }
+    }
+
+    // Save changes
+    async function saveChanges() {
+      try {
+        const success = await saveSiteData(siteData);
+        if (success) {
+          alert('Alterações salvas com sucesso!');
+        } else {
+          alert('Erro ao salvar alterações');
+        }
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        alert('Erro ao salvar alterações');
+      }
+    }
+
+    // Update content when form fields change
+    function updateContent(field, value) {
+      siteData[field] = value;
+      
+      // Update all elements with this field
+      const elements = document.querySelectorAll(`[data-field="${field}"]`);
+      elements.forEach(element => {
+        if (element.tagName === 'IMG') {
+          element.src = value;
+          // Update alt text if it's an alt field or if there's a corresponding alt field
+          const altField = element.getAttribute('data-alt-field');
+          if (field.includes('Alt')) {
+            element.alt = value;
+          } else if (altField && siteData[altField]) {
+            element.alt = siteData[altField];
+          }
+        } else {
+          element.innerHTML = value;
+        }
+      });
+      
+      // Also update the admin panel input
+      const adminInput = document.getElementById(field);
+      if (adminInput) {
+        adminInput.value = value;
+      }
+    }
+
+    // Update page content from loaded data
+    function updatePageContent() {
+      Object.keys(siteData).forEach(field => {
+        const elements = document.querySelectorAll(`[data-field="${field}"]`);
+        elements.forEach(element => {
+          if (element.tagName === 'IMG') {
+            element.src = siteData[field];
+            // Update alt text properly
+            const altField = element.getAttribute('data-alt-field');
+            if (field.includes('Alt')) {
+              element.alt = siteData[field];
+            } else if (altField && siteData[altField]) {
+              element.alt = siteData[altField];
+            }
+          } else {
+            element.innerHTML = siteData[field];
+          }
+        });
+      });
+    }
+
+    // Handle image upload from local files
+    function handleImageUpload(field, fileInput) {
+      const file = fileInput.files[0];
+      if (file) {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Arquivo muito grande! Máximo 5MB permitido.');
+          fileInput.value = '';
+          return;
+        }
+        
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+          alert('Por favor, selecione apenas arquivos de imagem.');
+          fileInput.value = '';
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageDataUrl = e.target.result;
+          updateContent(field, imageDataUrl);
+          siteData[field] = imageDataUrl;
+          
+          // Update the URL input field as well
+          const urlInput = document.getElementById(field);
+          if (urlInput) {
+            urlInput.value = imageDataUrl;
+          }
+          
+          alert('Imagem carregada com sucesso!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Initialize default data
+    function initializeData() {
+      siteData = {
+        companyName: 'CONCEITO',
+        version: 'v24',
+        heroTitle: 'TRANSFORME SEU NEGÓCIO COM CONSULTORIA PREMIUM',
+        heroSubtitle: 'Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.',
+        heroImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        heroImageAlt: 'Business growth',
+        phone: '(11) 9999-9999',
+        email: 'contato@conceito.com.br',
+        address: 'São Paulo, SP - Brasil',
+        stat1: '+150%',
+        stat2: '-40%',
+        stat3: '98%',
+        stat4: '500+'
+      };
+    }
+
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Smooth scrolling for navigation links
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      const navHeight = 64; // Height of fixed navigation
+      const elementPosition = element.offsetTop - navHeight;
+      
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+    }
+
+    // Add click handlers to navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute('href').substring(1);
+        scrollToSection(sectionId);
+        
+        // Close mobile menu if open
+        document.getElementById('mobile-menu').classList.add('hidden');
+      });
+    });
+
+    // Contact form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form data
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        company: document.getElementById('company').value,
+        phone: document.getElementById('phone').value,
+        message: document.getElementById('message').value
+      };
+      
+      // Show success message
+      alert('Obrigado pelo seu interesse! Entraremos em contato em breve.');
+      
+      // Reset form
+      this.reset();
+    });
+
+    // Add scroll effect to navigation
+    window.addEventListener('scroll', function() {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('shadow-xl');
+      } else {
+        nav.classList.remove('shadow-xl');
+      }
+    });
+
+    // Animate elements on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all service cards and methodology steps
+    document.querySelectorAll('.card-hover, .text-center').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Make elements editable on click
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('editable') && isLoggedIn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const field = e.target.getAttribute('data-field');
+        const currentValue = e.target.textContent.trim() || e.target.src;
+        
+        if (e.target.tagName === 'IMG') {
+          const altField = e.target.getAttribute('data-alt-field');
+          const currentAlt = altField ? siteData[altField] || '' : '';
+          
+          const action = confirm('Clique OK para fazer upload de uma nova imagem ou Cancelar para editar a URL/descrição');
+          
+          if (action) {
+            // Create file input for image upload
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = function() {
+              handleImageUpload(field, this);
+            };
+            fileInput.click();
+          } else {
+            // Edit URL and description
+            const newUrl = prompt('Digite a nova URL da imagem:', currentValue);
+            if (newUrl !== null && newUrl.trim() !== '') {
+              updateContent(field, newUrl.trim());
+              siteData[field] = newUrl.trim();
+            }
+            
+            if (altField) {
+              const newAlt = prompt('Digite a descrição da imagem (Alt Text):', currentAlt);
+              if (newAlt !== null) {
+                updateContent(altField, newAlt.trim());
+                siteData[altField] = newAlt.trim();
+              }
+            }
+          }
+        } else {
+          // Create inline editor
+          const originalElement = e.target;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = currentValue;
+          input.className = 'edit-input';
+          input.style.fontSize = window.getComputedStyle(originalElement).fontSize;
+          input.style.fontWeight = window.getComputedStyle(originalElement).fontWeight;
+          input.style.fontFamily = window.getComputedStyle(originalElement).fontFamily;
+          
+          // Replace element with input
+          originalElement.style.display = 'none';
+          originalElement.parentNode.insertBefore(input, originalElement);
+          input.focus();
+          input.select();
+          
+          function saveEdit() {
+            const newValue = input.value.trim();
+            if (newValue !== '' && newValue !== currentValue) {
+              updateContent(field, newValue);
+              siteData[field] = newValue;
+            }
+            // Restore original element
+            originalElement.style.display = '';
+            input.remove();
+          }
+          
+          input.addEventListener('blur', saveEdit);
+          input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+              saveEdit();
+            }
+            if (event.key === 'Escape') {
+              originalElement.style.display = '';
+              input.remove();
+            }
+          });
+        }
+      }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeData();
+      updatePageContent(); // Show default data immediately
+      loadData(); // Then load saved data
+    });
+
+    // Close login modal when clicking outside
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+
+          // Convert sheet to JSON to filter blank rows
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          // Filter out blank rows (rows where all cells are empty, null, or undefined)
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+
+          // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          // Fallback
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+
+          // Convert filtered JSON back to CSV
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
   </script>
 </body>
 </html>
