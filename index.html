@@ -18,6 +18,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
   <style>
     :root {
       --primary: #001F3F;
@@ -148,25 +153,64 @@
       border-color: #0066CC;
       box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
     }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: #001F3F;
+      color: white;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
   </style>
 </head>
 
 <body class="bg-gray-50">
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
   <!-- Modal de Login -->
   <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg p-8 max-w-md w-full">
       <h3 class="text-2xl font-bold text-[#001F3F] mb-6 text-center">Acesso Administrativo</h3>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium mb-1">Usuário</label>
-          <input type="text" id="adminUser" class="w-full p-2 border rounded">
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input type="email" id="adminEmail" class="w-full p-2 border rounded" placeholder="seu@email.com">
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Senha</label>
-          <input type="password" id="adminPass" class="w-full p-2 border rounded">
+          <input type="password" id="adminPass" class="w-full p-2 border rounded" placeholder="••••••••">
         </div>
-        <button id="loginButton" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded">
-          Entrar
+        <div id="loginError" class="text-red-500 text-sm hidden"></div>
+        <button id="loginButton" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded flex items-center justify-center">
+          <span id="loginButtonText">Entrar</span>
+          <span id="loginSpinner" class="loading-spinner ml-2 hidden"></span>
         </button>
       </div>
     </div>
@@ -193,6 +237,9 @@
         </button>
         <button id="resetAll" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
           <i class="fas fa-undo mr-2"></i>Restaurar Padrão
+        </button>
+        <button id="logoutButton" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
+          <i class="fas fa-sign-out-alt mr-2"></i>Sair
         </button>
       </div>
       
@@ -304,6 +351,17 @@
       
       <!-- Configurações -->
       <div id="settings-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Firebase Config</h4>
+          <div class="bg-gray-100 p-3 rounded mb-4 overflow-x-auto">
+            <pre id="firebaseConfigStatus" class="text-xs"></pre>
+          </div>
+          <div class="text-sm text-gray-600">
+            <p class="mb-2">Status da conexão: <span id="firebaseConnectionStatus" class="font-medium"></span></p>
+            <p>Última sincronização: <span id="lastSyncTime" class="font-medium"></span></p>
+          </div>
+        </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Idioma</h4>
           <select id="siteLanguage" class="w-full p-2 border rounded">
@@ -1020,15 +1078,28 @@
 
   <!-- Scripts -->
   <script>
-    // Sistema CMS Completo
+    // Configuração do Firebase - Substitua com suas credenciais
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      databaseURL: "https://SEU_PROJETO.firebaseio.com",
+      projectId: "SEU_PROJETO",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "SEU_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+
+    // Inicializa o Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    // Sistema CMS Completo com Firebase
     class SiteCMS {
       constructor() {
         this.isAdmin = false;
         this.isAuthenticated = false;
-        this.adminCredentials = {
-          user: "admin", // Isso deve ser substituído por um hash em produção
-          pass: "conceito123" // Nunca armazene senhas em texto puro em produção
-        };
+        this.user = null;
         this.siteData = {
           content: {},
           media: {
@@ -1041,89 +1112,252 @@
       }
       
       init() {
-        this.loadData();
+        this.setupFirebaseListeners();
         this.setupEventListeners();
-        this.renderContent();
+        this.checkAuthState();
       }
       
-      loadData() {
-        // Tenta carregar do localStorage
-        const savedData = localStorage.getItem('siteData');
-        if (savedData) {
-          this.siteData = JSON.parse(savedData);
-        } else {
-          // Carrega dados padrão dos elementos editáveis
-          document.querySelectorAll('[data-field]').forEach(el => {
-            const field = el.getAttribute('data-field');
-            if (el.tagName === 'IMG') {
-              this.siteData.content[field] = el.src;
-              if (el.alt && el.getAttribute('data-alt-field')) {
-                this.siteData.content[el.getAttribute('data-alt-field')] = el.alt;
-              }
-            } else {
-              this.siteData.content[field] = el.textContent;
-            }
-          });
+      setupFirebaseListeners() {
+        // Monitora estado de autenticação
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            this.user = user;
+            this.isAuthenticated = true;
+            this.loadData();
+            this.showToast("Conectado ao Firebase", "success");
+            document.getElementById('firebaseConnectionStatus').textContent = "Conectado";
+            document.getElementById('firebaseConnectionStatus').className = "text-green-600";
+          } else {
+            this.user = null;
+            this.isAuthenticated = false;
+            document.getElementById('firebaseConnectionStatus').textContent = "Desconectado";
+            document.getElementById('firebaseConnectionStatus').className = "text-red-600";
+          }
+        });
+        
+        // Monitora conexão com o Firebase
+        database.ref('.info/connected').on('value', (snapshot) => {
+          if (snapshot.val() === true) {
+            document.getElementById('firebaseConnectionStatus').textContent = "Conectado";
+            document.getElementById('firebaseConnectionStatus').className = "text-green-600";
+          } else {
+            document.getElementById('firebaseConnectionStatus').textContent = "Desconectado";
+            document.getElementById('firebaseConnectionStatus').className = "text-red-600";
+            this.showToast("Conexão perdida, usando armazenamento local", "warning");
+          }
+        });
+      }
+      
+      async checkAuthState() {
+        try {
+          // Mostra status da configuração
+          document.getElementById('firebaseConfigStatus').textContent = JSON.stringify(firebaseConfig, null, 2);
           
-          // Inicializa arrays vazios
-          this.siteData.media.gallery = [];
-          this.siteData.media.videos = [];
-          this.siteData.testimonials = [];
+          // Tenta carregar do localStorage enquanto não autenticado
+          if (!this.isAuthenticated) {
+            this.loadFromLocalStorage();
+          }
+        } catch (error) {
+          console.error("Erro ao verificar estado de autenticação:", error);
+          this.showToast("Erro ao verificar autenticação", "error");
         }
       }
       
-      saveData() {
-        localStorage.setItem('siteData', JSON.stringify(this.siteData));
-        console.log('Dados salvos com sucesso!');
-        
-        // Atualiza a visualização
-        this.renderContent();
-        
-        // Aqui você pode adicionar uma chamada para salvar no servidor
-        // this.saveToServer();
+      async loadData() {
+        try {
+          // Mostra loading
+          this.showToast("Carregando dados...", "info");
+          
+          // Tenta carregar do Firebase
+          const snapshot = await database.ref('siteData').once('value');
+          
+          if (snapshot.exists()) {
+            this.siteData = snapshot.val();
+            this.showToast("Dados carregados do Firebase", "success");
+            console.log("Dados carregados do Firebase");
+          } else {
+            // Carrega dados padrão se não existir no Firebase
+            this.loadDefaultData();
+            await this.saveData(); // Salva os dados padrão no Firebase
+            this.showToast("Dados padrão carregados", "info");
+          }
+          
+          // Atualiza a visualização
+          this.renderContent();
+          
+          // Atualiza último sync
+          const now = new Date();
+          document.getElementById('lastSyncTime').textContent = now.toLocaleString();
+          
+          // Faz backup no localStorage
+          this.saveToLocalStorage();
+        } catch (error) {
+          console.error("Erro ao carregar do Firebase:", error);
+          this.showToast("Erro ao carregar do Firebase", "error");
+          // Fallback para localStorage
+          this.loadFromLocalStorage();
+        }
       }
       
-      setupEventListeners() {
-        // Painel admin
-        document.getElementById('adminToggle').addEventListener('click', () => this.toggleAdmin());
-        document.getElementById('closeAdmin').addEventListener('click', () => this.toggleAdmin(false));
-        document.getElementById('saveAll').addEventListener('click', () => this.saveData());
-        
-        // Login
-        document.getElementById('loginButton').addEventListener('click', () => {
-          const user = document.getElementById('adminUser').value;
-          const pass = document.getElementById('adminPass').value;
-          this.authenticate(user, pass);
-        });
-        
-        // Permitir login com Enter
-        document.getElementById('adminPass').addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
-            this.authenticate(user, pass);
+      loadDefaultData() {
+        // Carrega dados padrão dos elementos editáveis
+        document.querySelectorAll('[data-field]').forEach(el => {
+          const field = el.getAttribute('data-field');
+          if (el.tagName === 'IMG') {
+            this.siteData.content[field] = el.src;
+            if (el.alt && el.getAttribute('data-alt-field')) {
+              this.siteData.content[el.getAttribute('data-alt-field')] = el.alt;
+            }
+          } else {
+            this.siteData.content[field] = el.textContent;
           }
         });
         
-        // Tabs
-        document.querySelectorAll('.admin-tab').forEach(tab => {
-          tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('data-tab');
-            this.switchTab(tabId);
-          });
-        });
+        // Inicializa arrays vazios
+        this.siteData.media.gallery = [];
+        this.siteData.media.videos = [];
+        this.siteData.testimonials = [];
+      }
+      
+      loadFromLocalStorage() {
+        const savedData = localStorage.getItem('siteData');
+        if (savedData) {
+          this.siteData = JSON.parse(savedData);
+          this.showToast("Dados carregados do armazenamento local", "info");
+          console.log("Dados carregados do localStorage");
+          this.renderContent();
+        } else {
+          this.loadDefaultData();
+          this.showToast("Dados padrão carregados", "info");
+        }
+      }
+      
+      saveToLocalStorage() {
+        localStorage.setItem('siteData', JSON.stringify(this.siteData));
+      }
+      
+      async saveData() {
+        try {
+          // Mostra indicador de carregamento
+          const saveButton = document.getElementById('saveAll');
+          const originalText = saveButton.innerHTML;
+          saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+          saveButton.disabled = true;
+          
+          // Salva no Firebase
+          await database.ref('siteData').set(this.siteData);
+          this.showToast("Dados salvos com sucesso!", "success");
+          console.log("Dados salvos no Firebase");
+          
+          // Atualiza último sync
+          const now = new Date();
+          document.getElementById('lastSyncTime').textContent = now.toLocaleString();
+          
+          // Faz backup no localStorage
+          this.saveToLocalStorage();
+          
+          // Atualiza a visualização
+          this.renderContent();
+          
+          // Restaura botão
+          setTimeout(() => {
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+          }, 1000);
+        } catch (error) {
+          console.error("Erro ao salvar no Firebase:", error);
+          this.showToast("Erro ao salvar no Firebase", "error");
+          
+          // Fallback para localStorage
+          this.saveToLocalStorage();
+          this.showToast("Dados salvos localmente", "warning");
+          
+          // Restaura botão com mensagem de erro
+          saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
+          setTimeout(() => {
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+          }, 2000);
+        }
+      }
+      
+      async authenticate(email, password) {
+        try {
+          // Mostra loading
+          document.getElementById('loginButtonText').textContent = "Autenticando...";
+          document.getElementById('loginSpinner').classList.remove('hidden');
+          document.getElementById('loginError').classList.add('hidden');
+          
+          // Faz login com Firebase Auth
+          await auth.signInWithEmailAndPassword(email, password);
+          this.showToast("Login realizado com sucesso", "success");
+          
+          // Esconde modal
+          this.hideLoginModal();
+          
+          // Atualiza estado
+          this.isAuthenticated = true;
+          this.toggleAdmin(true);
+        } catch (error) {
+          console.error("Erro de autenticação:", error);
+          document.getElementById('loginError').textContent = this.getAuthErrorMessage(error.code);
+          document.getElementById('loginError').classList.remove('hidden');
+          this.showToast("Erro ao fazer login", "error");
+        } finally {
+          document.getElementById('loginButtonText').textContent = "Entrar";
+          document.getElementById('loginSpinner').classList.add('hidden');
+        }
+      }
+      
+      getAuthErrorMessage(errorCode) {
+        const messages = {
+          'auth/invalid-email': 'Email inválido',
+          'auth/user-disabled': 'Usuário desativado',
+          'auth/user-not-found': 'Usuário não encontrado',
+          'auth/wrong-password': 'Senha incorreta',
+          'auth/too-many-requests': 'Muitas tentativas. Tente mais tarde.',
+          'auth/network-request-failed': 'Erro de conexão'
+        };
+        return messages[errorCode] || 'Erro ao fazer login';
+      }
+      
+      async logout() {
+        try {
+          await auth.signOut();
+          this.isAuthenticated = false;
+          this.toggleAdmin(false);
+          this.showLoginModal();
+          this.showToast("Logout realizado", "info");
+        } catch (error) {
+          console.error("Erro ao fazer logout:", error);
+          this.showToast("Erro ao fazer logout", "error");
+        }
+      }
+      
+      showToast(message, type = "info") {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast';
         
-        // Edição inline
-        document.addEventListener('dblclick', (e) => {
-          if (this.isAdmin && e.target.classList.contains('editable')) {
-            this.enableInlineEdit(e.target);
-          }
-        });
+        // Define cor baseada no tipo
+        const colors = {
+          success: '#4CAF50',
+          error: '#F44336',
+          warning: '#FF9800',
+          info: '#2196F3'
+        };
         
-        // Upload de imagem hero
-        document.getElementById('heroImageUpload').addEventListener('change', (e) => {
-          this.handleImageUpload(e.target.files[0], 'heroImage');
-        });
+        toast.style.backgroundColor = colors[type] || colors.info;
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
+        
+        // Esconde após 5 segundos
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => {
+            toast.classList.add('hidden');
+          }, 300);
+        }, 5000);
       }
       
       toggleAdmin(show = null) {
@@ -1163,23 +1397,11 @@
       
       showLoginModal() {
         document.getElementById('loginModal').classList.remove('hidden');
-        document.getElementById('adminUser').focus();
+        document.getElementById('adminEmail').focus();
       }
       
       hideLoginModal() {
         document.getElementById('loginModal').classList.add('hidden');
-      }
-      
-      authenticate(user, pass) {
-        // Em produção, isso deve ser uma chamada ao servidor com hash de senha
-        if (user === this.adminCredentials.user && pass === this.adminCredentials.pass) {
-          this.isAuthenticated = true;
-          this.hideLoginModal();
-          this.toggleAdmin(true);
-          return true;
-        }
-        alert('Credenciais inválidas!');
-        return false;
       }
       
       switchTab(tabId) {
@@ -1381,6 +1603,7 @@
               desc: desc
             });
             this.saveData();
+            this.showToast("Imagem adicionada à galeria", "success");
           };
           reader.readAsDataURL(file);
         };
@@ -1391,6 +1614,7 @@
         if (confirm('Remover esta imagem da galeria?')) {
           this.siteData.media.gallery.splice(index, 1);
           this.saveData();
+          this.showToast("Imagem removida da galeria", "info");
         }
       }
       
@@ -1409,8 +1633,10 @@
             desc: desc
           });
           this.saveData();
+          this.showToast("Vídeo adicionado com sucesso", "success");
         } else {
           alert('URL do YouTube inválida!');
+          this.showToast("URL do YouTube inválida", "error");
         }
       }
       
@@ -1418,6 +1644,7 @@
         if (confirm('Remover este vídeo?')) {
           this.siteData.media.videos.splice(index, 1);
           this.saveData();
+          this.showToast("Vídeo removido", "info");
         }
       }
       
@@ -1434,12 +1661,14 @@
           initials: initials
         });
         this.saveData();
+        this.showToast("Depoimento adicionado", "success");
       }
       
       removeTestimonial(index) {
         if (confirm('Remover este depoimento?')) {
           this.siteData.testimonials.splice(index, 1);
           this.saveData();
+          this.showToast("Depoimento removido", "info");
         }
       }
     }
@@ -1448,17 +1677,69 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.siteCMS = new SiteCMS();
       
-      // Adiciona evento para o botão de adicionar vídeo
-      document.getElementById('addVideo').addEventListener('click', () => {
-        siteCMS.addVideo();
+      // Configura eventos
+      document.getElementById('loginButton').addEventListener('click', () => {
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPass').value;
+        siteCMS.authenticate(email, password);
       });
       
-      // Adiciona evento para o botão de adicionar depoimento
-      if (document.getElementById('addTestimonialBtn')) {
-        document.getElementById('addTestimonialBtn').addEventListener('click', () => {
-          siteCMS.addTestimonial();
+      document.getElementById('logoutButton').addEventListener('click', () => {
+        siteCMS.logout();
+      });
+      
+      // Enter no campo de senha
+      document.getElementById('adminPass').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const email = document.getElementById('adminEmail').value;
+          const password = document.getElementById('adminPass').value;
+          siteCMS.authenticate(email, password);
+        }
+      });
+      
+      // Botão admin toggle
+      document.getElementById('adminToggle').addEventListener('click', () => {
+        siteCMS.toggleAdmin();
+      });
+      
+      // Fechar painel admin
+      document.getElementById('closeAdmin').addEventListener('click', () => {
+        siteCMS.toggleAdmin(false);
+      });
+      
+      // Salvar tudo
+      document.getElementById('saveAll').addEventListener('click', () => {
+        siteCMS.saveData();
+      });
+      
+      // Resetar tudo
+      document.getElementById('resetAll').addEventListener('click', () => {
+        if (confirm('Restaurar todos os dados para os valores padrão? Isso não pode ser desfeito.')) {
+          siteCMS.loadDefaultData();
+          siteCMS.saveData();
+          siteCMS.showToast("Dados restaurados para os valores padrão", "info");
+        }
+      });
+      
+      // Trocar abas
+      document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabId = tab.getAttribute('data-tab');
+          siteCMS.switchTab(tabId);
         });
-      }
+      });
+      
+      // Edição inline
+      document.addEventListener('dblclick', (e) => {
+        if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
+          siteCMS.enableInlineEdit(e.target);
+        }
+      });
+      
+      // Upload de imagem hero
+      document.getElementById('heroImageUpload').addEventListener('change', (e) => {
+        siteCMS.handleImageUpload(e.target.files[0], 'heroImage');
+      });
     });
 
     // Funções globais para chamadas a partir do HTML
