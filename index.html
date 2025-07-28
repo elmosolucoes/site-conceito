@@ -1349,6 +1349,164 @@
         return null;
       }
     }
-  </script>
+    
+<!-- ... (todo o seu HTML acima permanece igual) ... -->
+
+<script>
+/* ====== PERSISTÊNCIA REAL COM NETLIFY FUNCTIONS ====== */
+// Liste todos os campos editáveis do seu site (data-field)
+const editableFields = [
+  "companyName", "version", "heroTitle", "heroSubtitle", "heroImage", "heroImageAlt",
+  "phone", "email", "address", "stat1", "stat2", "stat3", "stat4"
+  // Adicione outros campos editáveis se necessário
+];
+
+let siteData = {};
+
+// Carrega dados persistentes do backend
+async function fetchSiteData() {
+  try {
+    const res = await fetch('/.netlify/functions/siteData');
+    if (res.ok) return await res.json();
+    throw new Error('Erro ao buscar dados do backend');
+  } catch (e) {
+    // fallback para localStorage se offline
+    return JSON.parse(localStorage.getItem('siteData')) || {};
+  }
+}
+
+// Salva dados persistentes no backend
+async function saveSiteData(data) {
+  try {
+    const res = await fetch('/.netlify/functions/siteData', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Falha ao salvar no backend');
+    return true;
+  } catch (e) {
+    localStorage.setItem('siteData', JSON.stringify(data));
+    return false;
+  }
+}
+
+// Atualiza todos os campos editáveis na página
+function updatePageContent() {
+  editableFields.forEach(field => {
+    const elements = document.querySelectorAll(`[data-field="${field}"]`);
+    elements.forEach(element => {
+      if (element.tagName === 'IMG') {
+        if (siteData[field]) element.src = siteData[field];
+        const altField = element.getAttribute('data-alt-field');
+        if (altField && siteData[altField]) element.alt = siteData[altField];
+      } else {
+        if (siteData[field] !== undefined) element.innerHTML = siteData[field];
+      }
+    });
+    // Atualiza painel admin se existir
+    const adminInput = document.getElementById(field);
+    if (adminInput && siteData[field] !== undefined) adminInput.value = siteData[field];
+  });
+}
+
+// Carrega dados ao iniciar
+async function loadData() {
+  const loadedData = await fetchSiteData();
+  siteData = { ...siteData, ...loadedData };
+  updatePageContent();
+}
+
+// Salva alterações do painel admin
+async function saveChanges() {
+  await saveSiteData(siteData);
+  alert('Alterações salvas!');
+}
+
+// Atualiza conteúdo ao editar no painel admin
+function updateContent(field, value) {
+  siteData[field] = value;
+  updatePageContent();
+}
+
+// Edição inline para admin (duplo clique)
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializa siteData com valores do HTML
+  editableFields.forEach(field => {
+    const el = document.querySelector(`[data-field="${field}"]`);
+    if (el) {
+      if (el.tagName === "IMG") siteData[field] = el.src;
+      else siteData[field] = el.textContent;
+    }
+  });
+  updatePageContent();
+  loadData();
+
+  // Edição inline (admin)
+  document.querySelectorAll('.editable').forEach(el => {
+    el.addEventListener('dblclick', function() {
+      if (!document.body.classList.contains('admin-logged-in')) return;
+      const field = el.getAttribute('data-field');
+      const oldValue = el.textContent;
+      el.setAttribute('contenteditable', 'true');
+      el.focus();
+      el.onblur = function() {
+        el.removeAttribute('contenteditable');
+        const newValue = el.textContent;
+        if (newValue !== oldValue) {
+          updateContent(field, newValue);
+        }
+      };
+    });
+  });
+  document.querySelectorAll('.editable-img').forEach(el => {
+    el.addEventListener('click', function() {
+      if (!document.body.classList.contains('admin-logged-in')) return;
+      const field = el.getAttribute('data-field');
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = function() { handleImageUpload(field, this); };
+      fileInput.click();
+    });
+  });
+});
+
+// Upload de imagem (opcional, se quiser persistir imagens no backend)
+async function handleImageUpload(field, fileInput) {
+  const file = fileInput.files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Arquivo muito grande! Máximo 5MB permitido.');
+      fileInput.value = '';
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor, selecione apenas arquivos de imagem.');
+      fileInput.value = '';
+      return;
+    }
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('filename', file.name);
+    try {
+      const response = await fetch('/.netlify/functions/github-images', {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        const result = await response.json();
+        updateContent(field, result.url);
+        siteData[field] = result.url;
+        alert('Imagem enviada e salva com sucesso!');
+      } else {
+        throw new Error('Falha no upload da imagem');
+      }
+    } catch (error) {
+      alert('Erro ao enviar imagem para o servidor.');
+    }
+  }
+}
+</script>
 </body>
 </html>
