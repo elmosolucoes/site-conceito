@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CONCEITO | Consultoria Empresarial</title>
+  <title id="pageTitle">CONCEITO | Consultoria Empresarial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.css" rel="stylesheet">
@@ -33,12 +33,16 @@
     .client-logo { max-height: 80px; max-width: 150px; object-fit: contain; }
     .testimonial-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .star-rating { color: #F59E0B; font-size: 1.2rem; }
-    .media-thumbnail { position: relative; cursor: pointer; }
+    .media-thumbnail { position: relative; cursor: pointer; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+    .media-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
     .media-thumbnail i { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; }
     .form-section { margin-bottom: 2rem; }
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+    #siteLogo { object-fit: contain; background: transparent; }
+    .nav-item { display: flex; align-items: center; margin-bottom: 0.5rem; }
+    .nav-item input { flex: 1; margin-right: 0.5rem; }
   </style>
 </head>
 <body class="font-sans antialiased text-gray-800">
@@ -50,14 +54,8 @@
           <img id="siteLogo" src="" alt="Logo" class="h-10 mr-4 hidden">
           <div class="text-3xl font-bold text-blue-900" id="companyName">CONCEITO</div>
         </div>
-        <nav class="hidden md:flex space-x-8">
-          <a href="#servicos" class="text-blue-900 hover:text-blue-600">Serviços</a>
-          <a href="#sobre" class="text-blue-900 hover:text-blue-600">Sobre Nós</a>
-          <a href="#clientes" class="text-blue-900 hover:text-blue-600">Clientes</a>
-          <a href="#depoimentos" class="text-blue-900 hover:text-blue-600">Depoimentos</a>
-          <a href="#contato" class="text-blue-900 hover:text-blue-600">Contato</a>
-          <a href="#trabalhe-conosco" class="text-blue-900 hover:text-blue-600">Trabalhe Conosco</a>
-          <a href="#" id="adminLink" class="text-yellow-500 hover:text-yellow-600 font-bold">Admin</a>
+        <nav class="hidden md:flex space-x-8" id="mainNav">
+          <!-- Menu será renderizado dinamicamente -->
         </nav>
       </div>
     </div>
@@ -69,14 +67,17 @@
       <div class="container mx-auto px-4">
         <h1 class="text-4xl md:text-6xl font-bold mb-6" id="heroTitle">Transforme Seu Negócio</h1>
         <p class="text-xl mb-8 max-w-lg" id="heroDescription">Soluções empresariais premium para crescimento sustentável</p>
-        <button class="bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg" id="ctaButton">Fale Conosco</button>
+        <div>
+          <a href="#contato" id="ctaButton" class="inline-block bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg">Fale Conosco</a>
+          <a href="#servicos" id="secondaryButton" class="inline-block ml-4 border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-blue-900 transition">Nossos Serviços</a>
+        </div>
       </div>
     </section>
 
     <!-- Serviços -->
     <section id="servicos" class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="servicesDescription">Nossos Serviços</h2>
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="servicesTitle">Nossos Serviços</h2>
         <div class="grid md:grid-cols-3 gap-8" id="servicesList">
           <!-- Serviços serão renderizados aqui -->
         </div>
@@ -86,7 +87,7 @@
     <!-- Clientes -->
     <section id="clientes" class="py-16">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Nossos Clientes</h2>
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="clientsTitle">Nossos Clientes</h2>
         <div class="flex flex-wrap justify-center gap-8" id="clientsList">
           <!-- Logos de clientes serão renderizadas aqui -->
         </div>
@@ -96,7 +97,7 @@
     <!-- Depoimentos -->
     <section id="depoimentos" class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Depoimentos</h2>
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="testimonialsTitle">Depoimentos</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsList">
           <!-- Depoimentos serão renderizados aqui -->
         </div>
@@ -106,7 +107,7 @@
     <!-- Galeria de Mídia -->
     <section id="midia" class="py-16">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Galeria</h2>
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="mediaTitle">Galeria</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="mediaGallery">
           <!-- Mídias serão renderizadas aqui -->
         </div>
@@ -126,7 +127,7 @@
     <!-- Trabalhe Conosco -->
     <section id="trabalhe-conosco" class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Trabalhe Conosco</h2>
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="workWithUsTitle">Trabalhe Conosco</h2>
         <div class="max-w-4xl mx-auto">
           <form id="curriculumForm" name="curriculum" data-netlify="true" method="POST" class="space-y-4">
             <input type="hidden" name="form-name" value="curriculum">
@@ -190,7 +191,7 @@
   <!-- Footer -->
   <footer class="bg-blue-900 text-white py-8">
     <div class="container mx-auto px-4 text-center">
-      <div id="footerDescription">© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</div>
+      <div id="footerContent">© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</div>
     </div>
   </footer>
 
@@ -215,6 +216,8 @@
     </div>
     <div class="flex border-b overflow-x-auto">
       <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-geral">Geral</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-menu">Menu</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-botoes">Botões</button>
       <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-servicos">Serviços</button>
       <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-clientes">Clientes</button>
       <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-depoimentos">Depoimentos</button>
@@ -225,26 +228,86 @@
     <div class="p-4">
       <!-- Aba Geral -->
       <div class="tab-content" id="tab-geral">
+        <label class="block mb-2 font-bold">Título da Página</label>
+        <input type="text" id="inputPageTitle" class="border p-2 w-full mb-4">
+        
         <label class="block mb-2 font-bold">Logo do Site</label>
         <input type="file" id="inputSiteLogo" accept="image/*" class="mb-4">
         <div class="flex items-center mb-4">
           <img id="logoPreview" src="" alt="Preview" class="h-20 mr-4 hidden">
           <button id="removeLogo" class="bg-red-500 text-white px-3 py-1 rounded hidden">Remover Logo</button>
         </div>
-        <label class="block mb-2 font-bold">Nome da Empresa</label>
+        <label class="block mb-2 font-bold">Tamanho da Logo</label>
+        <input type="range" id="logoSizeSlider" min="20" max="150" value="60" class="w-full mb-2">
+        <div class="flex justify-between">
+          <span>Pequeno</span>
+          <span>Grande</span>
+        </div>
+        <label class="block mb-2 font-bold mt-4">Nome da Empresa</label>
         <input type="text" id="inputCompanyName" class="border p-2 w-full mb-4">
         <label class="block mb-2 font-bold">Título do Hero</label>
         <input type="text" id="inputHeroTitle" class="border p-2 w-full mb-4">
         <label class="block mb-2 font-bold">Descrição do Hero</label>
         <textarea id="inputHeroDescription" class="border p-2 w-full mb-4"></textarea>
-        <label class="block mb-2 font-bold">Texto do Botão Hero</label>
-        <input type="text" id="inputCtaButton" class="border p-2 w-full mb-4">
+      </div>
+
+      <!-- Aba Menu -->
+      <div class="tab-content" id="tab-menu">
+        <h3 class="text-lg font-bold mb-4">Itens do Menu</h3>
+        <div id="menuItemsList" class="mb-4">
+          <!-- Itens do menu serão renderizados aqui -->
+        </div>
+        <div class="border-t pt-4">
+          <div class="flex mb-2">
+            <input type="text" id="newMenuItemText" placeholder="Texto do item" class="border p-2 flex-1 mr-2">
+            <input type="text" id="newMenuItemLink" placeholder="Link (#secao ou URL)" class="border p-2 flex-1">
+          </div>
+          <button id="addMenuItem" class="bg-blue-900 text-white px-4 py-2 rounded">Adicionar Item</button>
+        </div>
+      </div>
+
+      <!-- Aba Botões -->
+      <div class="tab-content" id="tab-botoes">
+        <h3 class="text-lg font-bold mb-4">Botão Principal</h3>
+        <div class="form-group">
+          <label>Texto do Botão</label>
+          <input type="text" id="inputCtaButton" class="border p-2 w-full mb-2">
+        </div>
+        <div class="form-group">
+          <label>Link do Botão</label>
+          <input type="text" id="inputCtaButtonLink" class="border p-2 w-full mb-2" placeholder="Ex: #contato ou https://...">
+        </div>
+        <div class="form-group">
+          <label>Cor de Fundo</label>
+          <input type="color" id="inputCtaButtonBg" value="#f59e0b" class="w-full h-10">
+        </div>
+        <div class="form-group">
+          <label>Cor do Texto</label>
+          <input type="color" id="inputCtaButtonText" value="#1e3a8a" class="w-full h-10">
+        </div>
+
+        <h3 class="text-lg font-bold mb-4 mt-8">Botão Secundário</h3>
+        <div class="form-group">
+          <label>Texto do Botão</label>
+          <input type="text" id="inputSecondaryButton" class="border p-2 w-full mb-2">
+        </div>
+        <div class="form-group">
+          <label>Link do Botão</label>
+          <input type="text" id="inputSecondaryButtonLink" class="border p-2 w-full mb-2" placeholder="Ex: #servicos ou https://...">
+        </div>
+        <div class="form-group">
+          <label>Mostrar Botão Secundário?</label>
+          <select id="inputShowSecondaryButton" class="border p-2 w-full">
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
+        </div>
       </div>
 
       <!-- Aba Serviços -->
       <div class="tab-content" id="tab-servicos">
-        <label class="block mb-2 font-bold">Descrição dos Serviços</label>
-        <input type="text" id="inputServicesDescription" class="border p-2 w-full mb-4">
+        <label class="block mb-2 font-bold">Título da Seção</label>
+        <input type="text" id="inputServicesTitle" class="border p-2 w-full mb-4">
         <div id="servicesAdminList"></div>
         <button id="addService" class="bg-blue-900 text-white px-4 py-2 rounded mt-2">Adicionar Serviço</button>
       </div>
@@ -252,7 +315,7 @@
       <!-- Aba Clientes -->
       <div class="tab-content" id="tab-clientes">
         <label class="block mb-2 font-bold">Título da Seção</label>
-        <input type="text" id="inputClientsTitle" class="border p-2 w-full mb-4" value="Nossos Clientes">
+        <input type="text" id="inputClientsTitle" class="border p-2 w-full mb-4">
         <div id="clientsAdminList"></div>
         <div class="mt-4 border-t pt-4">
           <label class="block mb-2 font-bold">Adicionar Novo Cliente</label>
@@ -265,7 +328,7 @@
       <!-- Aba Depoimentos -->
       <div class="tab-content" id="tab-depoimentos">
         <label class="block mb-2 font-bold">Título da Seção</label>
-        <input type="text" id="inputTestimonialsTitle" class="border p-2 w-full mb-4" value="Depoimentos">
+        <input type="text" id="inputTestimonialsTitle" class="border p-2 w-full mb-4">
         <div id="testimonialsAdminList"></div>
         <div class="mt-4 border-t pt-4">
           <label class="block mb-2 font-bold">Adicionar Novo Depoimento</label>
@@ -290,7 +353,7 @@
       <!-- Aba Mídia -->
       <div class="tab-content" id="tab-midia">
         <label class="block mb-2 font-bold">Título da Seção</label>
-        <input type="text" id="inputMediaTitle" class="border p-2 w-full mb-4" value="Galeria">
+        <input type="text" id="inputMediaTitle" class="border p-2 w-full mb-4">
         <div id="mediaAdminList"></div>
         <div class="mt-4 border-t pt-4">
           <label class="block mb-2 font-bold">Adicionar Nova Mídia</label>
@@ -319,8 +382,8 @@
 
       <!-- Aba Rodapé -->
       <div class="tab-content" id="tab-footer">
-        <label class="block mb-2 font-bold">Descrição do Rodapé</label>
-        <input type="text" id="inputFooterDescription" class="border p-2 w-full mb-4">
+        <label class="block mb-2 font-bold">Conteúdo do Rodapé</label>
+        <textarea id="inputFooterContent" class="border p-2 w-full mb-4"></textarea>
       </div>
 
       <button id="saveChanges" class="bg-green-600 text-white px-4 py-2 rounded w-full mt-4">Salvar Alterações</button>
@@ -334,7 +397,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.js"></script>
   <script>
-    // Persistência real via Netlify Functions
+    // Persistência via Netlify Functions ou localStorage
     async function fetchSiteData() {
       try {
         const res = await fetch('/.netlify/functions/siteData');
@@ -344,7 +407,6 @@
         }
         throw new Error('Erro ao buscar dados do backend');
       } catch (e) {
-        // fallback para localStorage se offline
         const savedData = JSON.parse(localStorage.getItem('siteData')) || {};
         return savedData;
       }
@@ -360,7 +422,6 @@
         if (!res.ok) throw new Error('Falha ao salvar no backend');
         return true;
       } catch (e) {
-        // fallback para localStorage se offline
         localStorage.setItem('siteData', JSON.stringify(data));
         return false;
       }
@@ -368,11 +429,32 @@
 
     let isAuthenticated = false;
     const staticData = {
+      pageTitle: "CONCEITO | Consultoria Empresarial",
       companyName: "CONCEITO",
       heroTitle: "Transforme Seu Negócio",
       heroDescription: "Soluções empresariais premium para crescimento sustentável",
-      ctaButton: "Fale Conosco",
-      servicesDescription: "Nossos Serviços",
+      buttons: {
+        primary: {
+          text: "Fale Conosco",
+          link: "#contato",
+          bgColor: "#f59e0b",
+          textColor: "#1e3a8a"
+        },
+        secondary: {
+          text: "Nossos Serviços",
+          link: "#servicos",
+          show: true
+        }
+      },
+      menuItems: [
+        { text: "Serviços", link: "#servicos" },
+        { text: "Sobre Nós", link: "#sobre" },
+        { text: "Clientes", link: "#clientes" },
+        { text: "Depoimentos", link: "#depoimentos" },
+        { text: "Contato", link: "#contato" },
+        { text: "Trabalhe Conosco", link: "#trabalhe-conosco" }
+      ],
+      servicesTitle: "Nossos Serviços",
       services: [
         { title: "Consultoria Estratégica", text: "Planejamento e execução de estratégias para crescimento sustentável." },
         { title: "Gestão de Processos", text: "Otimização de processos internos para máxima eficiência operacional." },
@@ -387,74 +469,96 @@
       aboutTitle: "Sobre Nós",
       aboutContent: "Somos uma consultoria empresarial com mais de 15 anos de experiência, ajudando empresas a crescerem de forma sustentável e inovadora.",
       contactTitle: "Fale Conosco",
-      footerDescription: "© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.",
-      siteLogo: null
+      workWithUsTitle: "Trabalhe Conosco",
+      footerContent: "© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.",
+      siteLogo: null,
+      logoSize: 60
     };
 
-    function base64ToBlob(base64, mimeType) {
-      const byteCharacters = atob(base64.split(',')[1]);
-      const byteArrays = [];
+    // Funções para renderizar conteúdo
+    function renderAllContent() {
+      // Título da página
+      document.getElementById('pageTitle').textContent = staticData.pageTitle;
       
-      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-        const slice = byteCharacters.slice(offset, offset + 512);
-        const byteNumbers = new Array(slice.length);
-        
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
-        }
-        
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+      // Logo e nome da empresa
+      const siteLogo = document.getElementById('siteLogo');
+      if (staticData.siteLogo) {
+        siteLogo.src = staticData.siteLogo;
+        siteLogo.style.height = `${staticData.logoSize}px`;
+        siteLogo.classList.remove('hidden');
+      } else {
+        siteLogo.classList.add('hidden');
       }
+      document.getElementById('companyName').textContent = staticData.companyName;
       
-      return new Blob(byteArrays, { type: mimeType });
+      // Seção Hero
+      document.getElementById('heroTitle').textContent = staticData.heroTitle;
+      document.getElementById('heroDescription').textContent = staticData.heroDescription;
+      
+      // Botões
+      const ctaButton = document.getElementById('ctaButton');
+      ctaButton.textContent = staticData.buttons.primary.text;
+      ctaButton.href = staticData.buttons.primary.link;
+      ctaButton.style.backgroundColor = staticData.buttons.primary.bgColor;
+      ctaButton.style.color = staticData.buttons.primary.textColor;
+      
+      const secondaryButton = document.getElementById('secondaryButton');
+      secondaryButton.textContent = staticData.buttons.secondary.text;
+      secondaryButton.href = staticData.buttons.secondary.link;
+      secondaryButton.classList.toggle('hidden', !staticData.buttons.secondary.show);
+      
+      // Menu
+      renderMenu();
+      
+      // Serviços
+      document.getElementById('servicesTitle').textContent = staticData.servicesTitle;
+      renderServices();
+      
+      // Clientes
+      document.getElementById('clientsTitle').textContent = staticData.clientsTitle;
+      renderClients();
+      
+      // Depoimentos
+      document.getElementById('testimonialsTitle').textContent = staticData.testimonialsTitle;
+      renderTestimonials();
+      
+      // Mídia
+      document.getElementById('mediaTitle').textContent = staticData.mediaTitle;
+      renderMedia();
+      
+      // Sobre
+      document.getElementById('aboutTitle').textContent = staticData.aboutTitle;
+      document.getElementById('aboutContent').textContent = staticData.aboutContent;
+      
+      // Trabalhe Conosco
+      document.getElementById('workWithUsTitle').textContent = staticData.workWithUsTitle;
+      
+      // Contato
+      document.getElementById('contactTitle').textContent = staticData.contactTitle;
+      
+      // Rodapé
+      document.getElementById('footerContent').textContent = staticData.footerContent;
     }
 
-    async function loadData() {
-      try {
-        const savedData = await fetchSiteData();
-        Object.assign(staticData, savedData && Object.keys(savedData).length ? savedData : staticData);
-
-        // Atualizar elementos da página
-        document.getElementById('companyName').textContent = staticData.companyName;
-        document.getElementById('heroTitle').textContent = staticData.heroTitle;
-        document.getElementById('heroDescription').textContent = staticData.heroDescription;
-        document.getElementById('ctaButton').textContent = staticData.ctaButton;
-        document.getElementById('servicesDescription').textContent = staticData.servicesDescription;
-        document.getElementById('aboutTitle').textContent = staticData.aboutTitle;
-        document.getElementById('aboutContent').textContent = staticData.aboutContent;
-        document.getElementById('contactTitle').textContent = staticData.contactTitle;
-        document.getElementById('footerDescription').textContent = staticData.footerDescription;
-
-        // Logo do site
-        const siteLogo = document.getElementById('siteLogo');
-        if (staticData.siteLogo) {
-          siteLogo.src = staticData.siteLogo;
-          siteLogo.classList.remove('hidden');
-        } else {
-          siteLogo.classList.add('hidden');
-        }
-
-        // Renderizar seções dinâmicas
-        renderServices();
-        renderClients();
-        renderTestimonials();
-        renderMedia();
-        renderServicesAdmin();
-        renderClientsAdmin();
-        renderTestimonialsAdmin();
-        renderMediaAdmin();
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-      }
-    }
-
-    async function saveData() {
-      try {
-        await saveSiteData(staticData);
-      } catch (error) {
-        console.error('Erro ao salvar dados:', error);
-      }
+    function renderMenu() {
+      const nav = document.getElementById('mainNav');
+      nav.innerHTML = '';
+      
+      staticData.menuItems.forEach(item => {
+        const link = document.createElement('a');
+        link.href = item.link;
+        link.className = "text-blue-900 hover:text-blue-600";
+        link.textContent = item.text;
+        nav.appendChild(link);
+      });
+      
+      // Adicionar link admin
+      const adminLink = document.createElement('a');
+      adminLink.href = "#";
+      adminLink.id = "adminLink";
+      adminLink.className = "text-yellow-500 hover:text-yellow-600 font-bold";
+      adminLink.textContent = "Admin";
+      nav.appendChild(adminLink);
     }
 
     function renderServices() {
@@ -511,14 +615,13 @@
         
         if (item.type === 'image') {
           div.innerHTML = `
-            <img src="${item.url}" alt="${item.caption || 'Imagem'}" class="w-full h-40 object-cover">
+            <img src="${item.url}" alt="${item.caption || 'Imagem'}" class="w-full h-full object-cover">
             ${item.caption ? `<p class="text-center mt-2">${item.caption}</p>` : ''}
           `;
         } else if (item.type === 'video') {
-          // Extrair ID do vídeo do YouTube
           const videoId = item.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)[1];
           div.innerHTML = `
-            <div class="relative w-full h-40 bg-black">
+            <div class="relative w-full h-full bg-black">
               <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="Thumbnail" class="w-full h-full object-cover opacity-70">
               <i class="fas fa-play"></i>
             </div>
@@ -528,39 +631,131 @@
             window.open(item.url, '_blank');
           });
         }
-        
         mediaGallery.appendChild(div);
+      });
+    }
+
+    // Funções para renderizar as edições no painel admin
+    function renderAdminPanel() {
+      // Geral
+      document.getElementById('inputPageTitle').value = staticData.pageTitle;
+      document.getElementById('inputCompanyName').value = staticData.companyName;
+      document.getElementById('inputHeroTitle').value = staticData.heroTitle;
+      document.getElementById('inputHeroDescription').value = staticData.heroDescription;
+      
+      // Logo
+      const logoPreview = document.getElementById('logoPreview');
+      if (staticData.siteLogo) {
+        logoPreview.src = staticData.siteLogo;
+        logoPreview.style.height = `${staticData.logoSize}px`;
+        logoPreview.classList.remove('hidden');
+        document.getElementById('removeLogo').classList.remove('hidden');
+      } else {
+        logoPreview.classList.add('hidden');
+        document.getElementById('removeLogo').classList.add('hidden');
+      }
+      document.getElementById('logoSizeSlider').value = staticData.logoSize;
+      
+      // Botões
+      document.getElementById('inputCtaButton').value = staticData.buttons.primary.text;
+      document.getElementById('inputCtaButtonLink').value = staticData.buttons.primary.link;
+      document.getElementById('inputCtaButtonBg').value = staticData.buttons.primary.bgColor;
+      document.getElementById('inputCtaButtonText').value = staticData.buttons.primary.textColor;
+      document.getElementById('inputSecondaryButton').value = staticData.buttons.secondary.text;
+      document.getElementById('inputSecondaryButtonLink').value = staticData.buttons.secondary.link;
+      document.getElementById('inputShowSecondaryButton').value = staticData.buttons.secondary.show.toString();
+      
+      // Menu
+      renderMenuAdmin();
+      
+      // Serviços
+      document.getElementById('inputServicesTitle').value = staticData.servicesTitle;
+      renderServicesAdmin();
+      
+      // Clientes
+      document.getElementById('inputClientsTitle').value = staticData.clientsTitle;
+      renderClientsAdmin();
+      
+      // Depoimentos
+      document.getElementById('inputTestimonialsTitle').value = staticData.testimonialsTitle;
+      renderTestimonialsAdmin();
+      
+      // Mídia
+      document.getElementById('inputMediaTitle').value = staticData.mediaTitle;
+      renderMediaAdmin();
+      
+      // Sobre
+      document.getElementById('inputAboutTitle').value = staticData.aboutTitle;
+      document.getElementById('inputAboutContent').value = staticData.aboutContent;
+      
+      // Rodapé
+      document.getElementById('inputFooterContent').value = staticData.footerContent;
+    }
+
+    function renderMenuAdmin() {
+      const menuList = document.getElementById('menuItemsList');
+      menuList.innerHTML = '';
+      
+      staticData.menuItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = "nav-item";
+        div.innerHTML = `
+          <input type="text" value="${item.text}" data-index="${index}" data-field="text" class="border p-2" placeholder="Texto">
+          <input type="text" value="${item.link}" data-index="${index}" data-field="link" class="border p-2" placeholder="Link">
+          <button class="bg-red-500 text-white px-2 py-1 rounded removeMenuItem" data-index="${index}">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        menuList.appendChild(div);
+      });
+      
+      // Event listeners para edição
+      menuList.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          const field = this.getAttribute('data-field');
+          staticData.menuItems[index][field] = this.value;
+        });
+      });
+      
+      // Event listeners para remoção
+      menuList.querySelectorAll('.removeMenuItem').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.menuItems.splice(index, 1);
+          renderMenuAdmin();
+        });
       });
     }
 
     function renderServicesAdmin() {
       const adminList = document.getElementById('servicesAdminList');
       adminList.innerHTML = '';
-      staticData.services.forEach((service, idx) => {
+      
+      staticData.services.forEach((service, index) => {
         const wrapper = document.createElement('div');
         wrapper.className = "mb-4 border p-2 rounded";
         wrapper.innerHTML = `
-          <input type="text" class="border p-1 w-full mb-1" value="${service.title}" data-idx="${idx}" data-field="title" placeholder="Título do Serviço">
-          <textarea class="border p-1 w-full" data-idx="${idx}" data-field="text" placeholder="Descrição">${service.text}</textarea>
-          <button class="bg-red-500 text-white px-2 py-1 rounded mt-1 removeService" data-idx="${idx}">Remover</button>
+          <input type="text" class="border p-1 w-full mb-1" value="${service.title}" data-index="${index}" data-field="title" placeholder="Título do Serviço">
+          <textarea class="border p-1 w-full" data-index="${index}" data-field="text" placeholder="Descrição">${service.text}</textarea>
+          <button class="bg-red-500 text-white px-2 py-1 rounded mt-1 removeService" data-index="${index}">Remover</button>
         `;
         adminList.appendChild(wrapper);
       });
-
-      // Listeners para inputs
-      adminList.querySelectorAll('input,textarea').forEach(el => {
-        el.addEventListener('input', e => {
-          const idx = +el.getAttribute('data-idx');
-          const field = el.getAttribute('data-field');
-          staticData.services[idx][field] = el.value;
+      
+      // Event listeners
+      adminList.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          const field = this.getAttribute('data-field');
+          staticData.services[index][field] = this.value;
         });
       });
-
-      // Remover serviço
+      
       adminList.querySelectorAll('.removeService').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const idx = +btn.getAttribute('data-idx');
-          staticData.services.splice(idx, 1);
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.services.splice(index, 1);
           renderServicesAdmin();
         });
       });
@@ -569,30 +764,33 @@
     function renderClientsAdmin() {
       const adminList = document.getElementById('clientsAdminList');
       adminList.innerHTML = '';
-      staticData.clients.forEach((client, idx) => {
+      
+      staticData.clients.forEach((client, index) => {
         const wrapper = document.createElement('div');
         wrapper.className = "mb-4 border p-2 rounded flex items-center";
         wrapper.innerHTML = `
           <img src="${client.logo}" alt="${client.name}" class="h-12 w-12 object-contain mr-4">
           <div class="flex-1">
-            <input type="text" class="border p-1 w-full mb-1" value="${client.name}" data-idx="${idx}" placeholder="Nome do Cliente">
+            <input type="text" class="border p-1 w-full" value="${client.name}" data-index="${index}" placeholder="Nome do Cliente">
           </div>
-          <button class="bg-red-500 text-white px-2 py-1 rounded removeClient" data-idx="${idx}">Remover</button>
+          <button class="bg-red-500 text-white px-2 py-1 rounded removeClient" data-index="${index}">
+            <i class="fas fa-trash"></i>
+          </button>
         `;
         adminList.appendChild(wrapper);
-
-        // Listener para input
-        wrapper.querySelector('input').addEventListener('input', e => {
-          const idx = +e.target.getAttribute('data-idx');
-          staticData.clients[idx].name = e.target.value;
+        
+        // Event listener
+        wrapper.querySelector('input').addEventListener('input', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.clients[index].name = this.value;
         });
       });
-
-      // Remover cliente
+      
+      // Event listeners para remoção
       adminList.querySelectorAll('.removeClient').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const idx = +btn.getAttribute('data-idx');
-          staticData.clients.splice(idx, 1);
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.clients.splice(index, 1);
           renderClientsAdmin();
         });
       });
@@ -601,44 +799,47 @@
     function renderTestimonialsAdmin() {
       const adminList = document.getElementById('testimonialsAdminList');
       adminList.innerHTML = '';
-      staticData.testimonials.forEach((testimonial, idx) => {
+      
+      staticData.testimonials.forEach((testimonial, index) => {
         const wrapper = document.createElement('div');
         wrapper.className = "mb-4 border p-2 rounded";
         wrapper.innerHTML = `
           <div class="flex items-center mb-2">
             ${testimonial.photo ? `<img src="${testimonial.photo}" alt="${testimonial.name}" class="w-10 h-10 rounded-full mr-2">` : ''}
             <div class="flex-1">
-              <input type="text" class="border p-1 w-full mb-1" value="${testimonial.name}" data-idx="${idx}" data-field="name" placeholder="Nome">
-              <input type="text" class="border p-1 w-full" value="${testimonial.role}" data-idx="${idx}" data-field="role" placeholder="Cargo/Empresa">
+              <input type="text" class="border p-1 w-full mb-1" value="${testimonial.name}" data-index="${index}" data-field="name" placeholder="Nome">
+              <input type="text" class="border p-1 w-full" value="${testimonial.role}" data-index="${index}" data-field="role" placeholder="Cargo/Empresa">
             </div>
           </div>
-          <select class="border p-1 w-full mb-2" data-idx="${idx}" data-field="rating">
+          <select class="border p-1 w-full mb-2" data-index="${index}" data-field="rating">
             <option value="5" ${testimonial.rating === 5 ? 'selected' : ''}>5 Estrelas</option>
             <option value="4" ${testimonial.rating === 4 ? 'selected' : ''}>4 Estrelas</option>
             <option value="3" ${testimonial.rating === 3 ? 'selected' : ''}>3 Estrelas</option>
             <option value="2" ${testimonial.rating === 2 ? 'selected' : ''}>2 Estrelas</option>
             <option value="1" ${testimonial.rating === 1 ? 'selected' : ''}>1 Estrela</option>
           </select>
-          <textarea class="border p-1 w-full mb-2" data-idx="${idx}" data-field="text" placeholder="Depoimento">${testimonial.text}</textarea>
-          <button class="bg-red-500 text-white px-2 py-1 rounded removeTestimonial" data-idx="${idx}">Remover</button>
+          <textarea class="border p-1 w-full mb-2" data-index="${index}" data-field="text" placeholder="Depoimento">${testimonial.text}</textarea>
+          <button class="bg-red-500 text-white px-2 py-1 rounded removeTestimonial" data-index="${index}">
+            <i class="fas fa-trash"></i>
+          </button>
         `;
         adminList.appendChild(wrapper);
-
-        // Listeners para inputs
-        wrapper.querySelectorAll('input,textarea,select').forEach(el => {
-          el.addEventListener('change', e => {
-            const idx = +el.getAttribute('data-idx');
-            const field = el.getAttribute('data-field');
-            staticData.testimonials[idx][field] = el.value;
-          });
+      });
+      
+      // Event listeners
+      adminList.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('change', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          const field = this.getAttribute('data-field');
+          staticData.testimonials[index][field] = this.value;
         });
       });
-
-      // Remover depoimento
+      
+      // Event listeners para remoção
       adminList.querySelectorAll('.removeTestimonial').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const idx = +btn.getAttribute('data-idx');
-          staticData.testimonials.splice(idx, 1);
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.testimonials.splice(index, 1);
           renderTestimonialsAdmin();
         });
       });
@@ -647,7 +848,8 @@
     function renderMediaAdmin() {
       const adminList = document.getElementById('mediaAdminList');
       adminList.innerHTML = '';
-      staticData.media.forEach((item, idx) => {
+      
+      staticData.media.forEach((item, index) => {
         const wrapper = document.createElement('div');
         wrapper.className = "mb-4 border p-2 rounded";
         
@@ -655,84 +857,51 @@
           wrapper.innerHTML = `
             <div class="flex items-center mb-2">
               <img src="${item.url}" alt="Preview" class="w-16 h-16 object-cover mr-2">
-              <input type="text" class="border p-1 flex-1" value="${item.caption || ''}" data-idx="${idx}" data-field="caption" placeholder="Legenda">
+              <input type="text" class="border p-1 flex-1" value="${item.caption || ''}" data-index="${index}" data-field="caption" placeholder="Legenda">
             </div>
             <div class="flex justify-between">
               <span>Tipo: Imagem</span>
-              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-idx="${idx}">Remover</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-index="${index}">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           `;
         } else if (item.type === 'video') {
           wrapper.innerHTML = `
             <div class="mb-2">
               <p class="text-sm text-gray-600 mb-1">Vídeo: ${item.url}</p>
-              <input type="text" class="border p-1 w-full" value="${item.caption || ''}" data-idx="${idx}" data-field="caption" placeholder="Legenda">
+              <input type="text" class="border p-1 w-full" value="${item.caption || ''}" data-index="${index}" data-field="caption" placeholder="Legenda">
             </div>
             <div class="flex justify-between">
               <span>Tipo: Vídeo</span>
-              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-idx="${idx}">Remover</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-index="${index}">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           `;
         }
         
         adminList.appendChild(wrapper);
-
-        // Listener para input de legenda
-        wrapper.querySelector('input')?.addEventListener('input', e => {
-          const idx = +e.target.getAttribute('data-idx');
-          staticData.media[idx].caption = e.target.value;
+        
+        // Event listener para legendas
+        wrapper.querySelector('input')?.addEventListener('input', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.media[index].caption = this.value;
         });
       });
-
-      // Remover mídia
+      
+      // Event listeners para remoção
       adminList.querySelectorAll('.removeMedia').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const idx = +btn.getAttribute('data-idx');
-          staticData.media.splice(idx, 1);
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          staticData.media.splice(index, 1);
           renderMediaAdmin();
         });
       });
     }
 
-    function updateData() {
-      staticData.companyName = document.getElementById('inputCompanyName').value;
-      staticData.heroTitle = document.getElementById('inputHeroTitle').value;
-      staticData.heroDescription = document.getElementById('inputHeroDescription').value;
-      staticData.ctaButton = document.getElementById('inputCtaButton').value;
-      staticData.servicesDescription = document.getElementById('inputServicesDescription').value;
-      staticData.clientsTitle = document.getElementById('inputClientsTitle').value;
-      staticData.testimonialsTitle = document.getElementById('inputTestimonialsTitle').value;
-      staticData.mediaTitle = document.getElementById('inputMediaTitle').value;
-      staticData.aboutTitle = document.getElementById('inputAboutTitle').value;
-      staticData.aboutContent = document.getElementById('inputAboutContent').value;
-      staticData.footerDescription = document.getElementById('inputFooterDescription').value;
-    }
-
-    function fillAdminPanel() {
-      document.getElementById('inputCompanyName').value = staticData.companyName;
-      document.getElementById('inputHeroTitle').value = staticData.heroTitle;
-      document.getElementById('inputHeroDescription').value = staticData.heroDescription;
-      document.getElementById('inputCtaButton').value = staticData.ctaButton;
-      document.getElementById('inputServicesDescription').value = staticData.servicesDescription;
-      document.getElementById('inputClientsTitle').value = staticData.clientsTitle;
-      document.getElementById('inputTestimonialsTitle').value = staticData.testimonialsTitle;
-      document.getElementById('inputMediaTitle').value = staticData.mediaTitle;
-      document.getElementById('inputAboutTitle').value = staticData.aboutTitle;
-      document.getElementById('inputAboutContent').value = staticData.aboutContent;
-      document.getElementById('inputFooterDescription').value = staticData.footerDescription;
-
-      const logoPreview = document.getElementById('logoPreview');
-      if (staticData.siteLogo) {
-        logoPreview.src = staticData.siteLogo;
-        logoPreview.classList.remove('hidden');
-        document.getElementById('removeLogo').classList.remove('hidden');
-      } else {
-        logoPreview.classList.add('hidden');
-        document.getElementById('removeLogo').classList.add('hidden');
-      }
-    }
-
-    function readFileAsDataURL(file) {
+    // Funções para processar imagens
+    async function readFileAsDataURL(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
@@ -741,20 +910,88 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadData();
+    async function processImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo transparente
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+            ctx.fillRect(0, 0, 1080, 1080);
+            
+            // Calcular dimensões para manter aspect ratio
+            const ratio = Math.min(1080 / img.width, 1080 / img.height);
+            const width = img.width * ratio;
+            const height = img.height * ratio;
+            const x = (1080 - width) / 2;
+            const y = (1080 - height) / 2;
+            
+            // Desenhar imagem centralizada
+            ctx.drawImage(img, x, y, width, height);
+            
+            resolve(canvas.toDataURL('image/png'));
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
 
-      // Botão flutuante para abrir painel admin
+    // Função para atualizar dados
+    function updateData() {
+      staticData.pageTitle = document.getElementById('inputPageTitle').value;
+      staticData.companyName = document.getElementById('inputCompanyName').value;
+      staticData.heroTitle = document.getElementById('inputHeroTitle').value;
+      staticData.heroDescription = document.getElementById('inputHeroDescription').value;
+      staticData.logoSize = parseInt(document.getElementById('logoSizeSlider').value);
+      
+      // Botões
+      staticData.buttons.primary.text = document.getElementById('inputCtaButton').value;
+      staticData.buttons.primary.link = document.getElementById('inputCtaButtonLink').value;
+      staticData.buttons.primary.bgColor = document.getElementById('inputCtaButtonBg').value;
+      staticData.buttons.primary.textColor = document.getElementById('inputCtaButtonText').value;
+      staticData.buttons.secondary.text = document.getElementById('inputSecondaryButton').value;
+      staticData.buttons.secondary.link = document.getElementById('inputSecondaryButtonLink').value;
+      staticData.buttons.secondary.show = document.getElementById('inputShowSecondaryButton').value === 'true';
+      
+      // Títulos das seções
+      staticData.servicesTitle = document.getElementById('inputServicesTitle').value;
+      staticData.clientsTitle = document.getElementById('inputClientsTitle').value;
+      staticData.testimonialsTitle = document.getElementById('inputTestimonialsTitle').value;
+      staticData.mediaTitle = document.getElementById('inputMediaTitle').value;
+      staticData.aboutTitle = document.getElementById('inputAboutTitle').value;
+      staticData.aboutContent = document.getElementById('inputAboutContent').value;
+      staticData.footerContent = document.getElementById('inputFooterContent').value;
+    }
+
+    // Event listeners principais
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Carregar dados
+      try {
+        const savedData = await fetchSiteData();
+        Object.assign(staticData, savedData && Object.keys(savedData).length ? savedData : staticData);
+        renderAllContent();
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+
+      // Botão flutuante admin
       document.getElementById('adminFloatBtn').addEventListener('click', function() {
         if (!isAuthenticated) {
           document.getElementById('adminModal').classList.add('show');
         } else {
           document.getElementById('adminPanel').classList.remove('hidden');
-          fillAdminPanel();
+          renderAdminPanel();
         }
       });
 
-      // Admin login
+      // Login admin
       document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const username = document.getElementById('adminUsername').value;
@@ -763,20 +1000,22 @@
           isAuthenticated = true;
           document.getElementById('adminModal').classList.remove('show');
           document.getElementById('adminPanel').classList.remove('hidden');
-          fillAdminPanel();
+          renderAdminPanel();
         } else {
           document.getElementById('loginError').classList.remove('hidden');
         }
       });
 
-      // Abrir painel admin pelo link do menu
-      document.getElementById('adminLink').addEventListener('click', function(e) {
-        e.preventDefault();
-        if (!isAuthenticated) {
-          document.getElementById('adminModal').classList.add('show');
-        } else {
-          document.getElementById('adminPanel').classList.remove('hidden');
-          fillAdminPanel();
+      // Link admin no menu
+      document.addEventListener('click', function(e) {
+        if (e.target.id === 'adminLink') {
+          e.preventDefault();
+          if (!isAuthenticated) {
+            document.getElementById('adminModal').classList.add('show');
+          } else {
+            document.getElementById('adminPanel').classList.remove('hidden');
+            renderAdminPanel();
+          }
         }
       });
 
@@ -793,6 +1032,68 @@
       // Ativar primeira aba
       document.querySelector('.tab').classList.add('active');
       document.querySelector('.tab-content').classList.add('active');
+
+      // Upload de logo
+      document.getElementById('inputSiteLogo').addEventListener('change', async function() {
+        if (this.files[0]) {
+          try {
+            const logoData = await processImage(this.files[0]);
+            staticData.siteLogo = logoData;
+            
+            const logoPreview = document.getElementById('logoPreview');
+            logoPreview.src = logoData;
+            logoPreview.style.height = `${staticData.logoSize}px`;
+            logoPreview.classList.remove('hidden');
+            document.getElementById('removeLogo').classList.remove('hidden');
+            
+            // Atualizar logo no site
+            const siteLogo = document.getElementById('siteLogo');
+            siteLogo.src = logoData;
+            siteLogo.style.height = `${staticData.logoSize}px`;
+            siteLogo.classList.remove('hidden');
+          } catch (error) {
+            console.error('Erro ao processar logo:', error);
+            alert('Erro ao processar a imagem');
+          }
+        }
+      });
+
+      // Remover logo
+      document.getElementById('removeLogo').addEventListener('click', function() {
+        staticData.siteLogo = null;
+        document.getElementById('logoPreview').classList.add('hidden');
+        this.classList.add('hidden');
+        document.getElementById('inputSiteLogo').value = '';
+        
+        const siteLogo = document.getElementById('siteLogo');
+        siteLogo.classList.add('hidden');
+      });
+
+      // Tamanho da logo
+      document.getElementById('logoSizeSlider').addEventListener('input', function() {
+        staticData.logoSize = parseInt(this.value);
+        const logoPreview = document.getElementById('logoPreview');
+        logoPreview.style.height = `${staticData.logoSize}px`;
+        
+        const siteLogo = document.getElementById('siteLogo');
+        siteLogo.style.height = `${staticData.logoSize}px`;
+      });
+
+      // Adicionar item de menu
+      document.getElementById('addMenuItem').addEventListener('click', function() {
+        const text = document.getElementById('newMenuItemText').value.trim();
+        const link = document.getElementById('newMenuItemLink').value.trim();
+        
+        if (text && link) {
+          staticData.menuItems.push({ text, link });
+          renderMenuAdmin();
+          renderMenu();
+          
+          // Limpar campos
+          document.getElementById('newMenuItemText').value = '';
+          document.getElementById('newMenuItemLink').value = '';
+        }
+      });
 
       // Adicionar serviço
       document.getElementById('addService').addEventListener('click', function() {
@@ -825,6 +1126,7 @@
           logoInput.value = '';
           nameInput.value = '';
           renderClientsAdmin();
+          renderClients();
         } catch (error) {
           console.error('Erro ao adicionar cliente:', error);
           alert('Erro ao processar a imagem');
@@ -854,7 +1156,7 @@
         
         try {
           if (photoInput.files[0]) {
-            testimonial.photo = await readFileAsDataURL(photoInput.files[0]);
+            testimonial.photo = await processImage(photoInput.files[0]);
           }
           
           staticData.testimonials.push(testimonial);
@@ -866,6 +1168,7 @@
           photoInput.value = '';
           
           renderTestimonialsAdmin();
+          renderTestimonials();
         } catch (error) {
           console.error('Erro ao adicionar depoimento:', error);
           alert('Erro ao processar a foto');
@@ -885,7 +1188,7 @@
           }
           
           try {
-            const imageData = await readFileAsDataURL(imageInput.files[0]);
+            const imageData = await processImage(imageInput.files[0]);
             staticData.media.push({
               type: 'image',
               url: imageData,
@@ -895,6 +1198,7 @@
             imageInput.value = '';
             captionInput.value = '';
             renderMediaAdmin();
+            renderMedia();
           } catch (error) {
             console.error('Erro ao adicionar imagem:', error);
             alert('Erro ao processar a imagem');
@@ -906,7 +1210,6 @@
             return;
           }
           
-          // Validar URL do YouTube
           if (!videoUrlInput.value.includes('youtube.com') && !videoUrlInput.value.includes('youtu.be')) {
             alert('Por favor, insira uma URL válida do YouTube');
             return;
@@ -921,6 +1224,7 @@
           videoUrlInput.value = '';
           captionInput.value = '';
           renderMediaAdmin();
+          renderMedia();
         }
       });
 
@@ -929,40 +1233,6 @@
         const type = this.value;
         document.getElementById('mediaImageUpload').classList.toggle('hidden', type !== 'image');
         document.getElementById('mediaVideoInput').classList.toggle('hidden', type !== 'video');
-      });
-
-      // Upload de logo do site
-      document.getElementById('inputSiteLogo').addEventListener('change', async function() {
-        if (this.files[0]) {
-          try {
-            const logoData = await readFileAsDataURL(this.files[0]);
-            staticData.siteLogo = logoData;
-            
-            const logoPreview = document.getElementById('logoPreview');
-            logoPreview.src = logoData;
-            logoPreview.classList.remove('hidden');
-            document.getElementById('removeLogo').classList.remove('hidden');
-            
-            // Atualizar logo no site imediatamente
-            const siteLogo = document.getElementById('siteLogo');
-            siteLogo.src = logoData;
-            siteLogo.classList.remove('hidden');
-          } catch (error) {
-            console.error('Erro ao carregar logo:', error);
-            alert('Erro ao processar a imagem');
-          }
-        }
-      });
-
-      // Remover logo do site
-      document.getElementById('removeLogo').addEventListener('click', function() {
-        staticData.siteLogo = null;
-        document.getElementById('logoPreview').classList.add('hidden');
-        this.classList.add('hidden');
-        document.getElementById('inputSiteLogo').value = '';
-        
-        // Atualizar logo no site imediatamente
-        document.getElementById('siteLogo').classList.add('hidden');
       });
 
       // Salvar alterações
@@ -974,8 +1244,8 @@
         }
         
         updateData();
-        await saveData();
-        await loadData();
+        await saveSiteData(staticData);
+        renderAllContent();
         showModal('Alterações salvas com sucesso!');
       });
 
@@ -994,12 +1264,11 @@
         if (e.target === this) this.classList.remove('show');
       });
 
-      // Formulário de currículo (Netlify)
+      // Formulário de currículo
       document.getElementById('curriculumForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const form = e.target;
         
-        // Simular envio para Netlify
         fetch('/', {
           method: 'POST',
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
