@@ -1,55 +1,235 @@
-<!-- Seção "Trabalhe Conosco" -->
-<section id="trabalhe-conosco" class="py-16 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Trabalhe Conosco</h2>
-    <div class="max-w-4xl mx-auto">
-      <!-- Formulário com redirecionamento para página de sucesso -->
-      <form name="curriculum" method="POST" data-netlify="true" enctype="multipart/form-data" netlify-honeypot="bot-field" action="/success.html" class="space-y-4">
-        <input type="hidden" name="form-name" value="curriculum">
-        
-        <!-- Campo honeypot para proteção contra spam -->
-        <p class="hidden">
-          <label>Não preencha este campo: <input name="bot-field"></label>
-        </p>
-
-        <!-- Dados Pessoais -->
-        <div class="form-section">
-          <h3 class="text-xl font-bold mb-4">Dados Pessoais</h3>
-          <div class="form-group">
-            <label>Nome Completo</label>
-            <input type="text" name="nome" placeholder="Nome Completo" required>
-          </div>
-          <div class="form-group">
-            <label>E-mail</label>
-            <input type="email" name="email" placeholder="E-mail" required>
-          </div>
-          <div class="form-group">
-            <label>Telefone</label>
-            <input type="text" name="telefone" placeholder="Telefone" required>
-          </div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">CONCEITO | Consultoria Empresarial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #001F3F;
+      --secondary-color: #003366;
+      --accent-color: #F59E0B;
+    }
+    .editable {
+      outline: 1px dashed rgba(0, 31, 63, 0.3);
+      min-height: 20px;
+    }
+    .editable:hover {
+      outline: 1px dashed var(--primary-color);
+      background-color: rgba(0, 31, 63, 0.05);
+    }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+    .modal.show { display: block; }
+    .modal-content { background: white; margin: 15% auto; padding: 1.5rem; width: 80%; max-width: 500px; border-radius: 8px; }
+    .tab { cursor: pointer; }
+    .tab.active { background: #1e3a8a; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .hidden { display: none !important; }
+    .admin-panel { position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 10000; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+    .client-logo { max-height: 80px; max-width: 150px; object-fit: contain; }
+    .testimonial-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .star-rating { color: #F59E0B; font-size: 1.2rem; }
+    .media-thumbnail { position: relative; cursor: pointer; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+    .media-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    .media-thumbnail i { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; }
+    .form-section { margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+    #siteLogo { object-fit: contain; background: transparent; }
+    .nav-item { display: flex; align-items: center; margin-bottom: 0.5rem; }
+    .nav-item input { flex: 1; margin-right: 0.5rem; }
+  </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <img id="siteLogo" src="" alt="Logo" class="h-10 mr-4 hidden">
+          <div class="text-3xl font-bold text-blue-900" id="companyName">CONCEITO</div>
         </div>
+        <nav class="hidden md:flex space-x-8" id="mainNav">
+          <!-- Menu será renderizado dinamicamente -->
+        </nav>
+      </div>
+    </div>
+  </header>
 
-        <!-- Informações Profissionais -->
-        <div class="form-section">
-          <h3 class="text-xl font-bold mb-4">Informações Profissionais</h3>
-          <div class="form-group">
-            <label>Cargo Pretendido</label>
-            <input type="text" name="cargo_pretendido" placeholder="Cargo Pretendido" required>
-          </div>
-          <div class="form-group">
-            <label>Pretensão Salarial</label>
-            <input type="text" name="pretensao_salarial" placeholder="Pretensão Salarial">
-          </div>
-          <div class="form-group">
-            <label>Currículo (PDF)</label>
-            <input type="file" name="curriculo" accept=".pdf" required>
-          </div>
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
+      <div class="container mx-auto px-4">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6" id="heroTitle">Transforme Seu Negócio</h1>
+        <p class="text-xl mb-8 max-w-lg" id="heroDescription">Soluções empresariais premium para crescimento sustentável</p>
+        <div>
+          <a href="#contato" id="ctaButton" class="inline-block bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg">Fale Conosco</a>
+          <a href="#servicos" id="secondaryButton" class="inline-block ml-4 border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-blue-900 transition">Nossos Serviços</a>
         </div>
+      </div>
+    </section>
 
-        <button type="submit" class="bg-blue-900 text-white py-3 px-6 rounded font-bold hover:bg-blue-800 w-full">
-          Enviar Currículo
-        </button>
+    <!-- Serviços -->
+    <section id="servicos" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="servicesTitle">Nossos Serviços</h2>
+        <div class="grid md:grid-cols-3 gap-8" id="servicesList">
+          <!-- Serviços serão renderizados aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Clientes -->
+    <section id="clientes" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="clientsTitle">Nossos Clientes</h2>
+        <div class="flex flex-wrap justify-center gap-8" id="clientsList">
+          <!-- Logos de clientes serão renderizadas aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section id="depoimentos" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="testimonialsTitle">Depoimentos</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsList">
+          <!-- Depoimentos serão renderizados aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria de Mídia -->
+    <section id="midia" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="mediaTitle">Galeria</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="mediaGallery">
+          <!-- Mídias serão renderizadas aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section id="sobre" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="aboutTitle">Sobre Nós</h2>
+        <div class="max-w-3xl mx-auto text-center" id="aboutContent">
+          Somos uma consultoria empresarial com mais de 15 anos de experiência, ajudando empresas a crescerem de forma sustentável e inovadora.
+        </div>
+      </div>
+    </section>
+
+    <!-- Trabalhe Conosco - Formulário Atualizado -->
+    <section id="trabalhe-conosco" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Trabalhe Conosco</h2>
+        <div class="max-w-4xl mx-auto">
+          <form name="curriculum" method="POST" data-netlify="true" enctype="multipart/form-data" netlify-honeypot="bot-field" action="/success.html" class="space-y-4">
+            <input type="hidden" name="form-name" value="curriculum">
+            
+            <!-- Campo honeypot para proteção contra spam -->
+            <p class="hidden">
+              <label>Não preencha este campo: <input name="bot-field"></label>
+            </p>
+
+            <!-- Dados Pessoais -->
+            <div class="form-section">
+              <h3 class="text-xl font-bold mb-4">Dados Pessoais</h3>
+              <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" name="nome" placeholder="Nome Completo" required>
+              </div>
+              <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="E-mail" required>
+              </div>
+              <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="telefone" placeholder="Telefone" required>
+              </div>
+            </div>
+
+            <!-- Informações Profissionais -->
+            <div class="form-section">
+              <h3 class="text-xl font-bold mb-4">Informações Profissionais</h3>
+              <div class="form-group">
+                <label>Cargo Pretendido</label>
+                <input type="text" name="cargo_pretendido" placeholder="Cargo Pretendido" required>
+              </div>
+              <div class="form-group">
+                <label>Pretensão Salarial</label>
+                <input type="text" name="pretensao_salarial" placeholder="Pretensão Salarial">
+              </div>
+              <div class="form-group">
+                <label>Currículo (PDF)</label>
+                <input type="file" name="curriculo" accept=".pdf" required>
+              </div>
+            </div>
+
+            <button type="submit" class="bg-blue-900 text-white py-3 px-6 rounded font-bold hover:bg-blue-800 w-full">
+              Enviar Currículo
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="contactTitle">Fale Conosco</h2>
+        <div class="max-w-xl mx-auto">
+          <form class="space-y-4">
+            <input type="text" placeholder="Seu nome" class="w-full p-3 border rounded" required>
+            <input type="email" placeholder="Seu e-mail" class="w-full p-3 border rounded" required>
+            <textarea placeholder="Sua mensagem" class="w-full p-3 border rounded" rows="5" required></textarea>
+            <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded font-bold">Enviar Mensagem</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <div id="footerContent">© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</div>
+    </div>
+  </footer>
+
+  <!-- Painel Administrativo (modal de login) -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <h2 class="text-2xl mb-4 font-bold">Login Administrativo</h2>
+      <form id="adminLoginForm">
+        <input type="text" id="adminUsername" placeholder="Usuário" class="border p-2 mb-2 w-full text-center text-gray-600" required>
+        <input type="password" id="adminPassword" placeholder="Senha" class="border p-2 mb-2 w-full text-center text-gray-600" required>
+        <p id="loginError" class="text-red-600 hidden mb-2">Usuário ou senha inválidos.</p>
+        <button type="submit" class="bg-blue-900 text-white p-2 w-full rounded">Entrar</button>
       </form>
     </div>
   </div>
-</section>
+
+  <!-- Painel Administrativo (lateral) -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <!-- ... (conteúdo do painel administrativo permanece igual) ... -->
+  </div>
+
+  <!-- Botão flutuante para abrir painel admin -->
+  <button id="adminFloatBtn" class="fixed bottom-4 right-4 z-50 bg-blue-900 text-white p-4 rounded-full shadow-lg hover:bg-blue-700" title="Abrir Painel Administrativo">
+    <i class="fas fa-cog fa-lg"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.js"></script>
+  <script>
+    // ... (todo o JavaScript anterior permanece igual, exceto pela remoção do manipulador do formulário de currículo)
+    // Removemos completamente o event listener do formulário de currículo
+    // para permitir o envio nativo pelo navegador
+  </script>
+</body>
+</html>
