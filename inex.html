@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONCEITO | Consultoria Empresarial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #001F3F;
+      --secondary-color: #003366;
+      --accent-color: #F59E0B;
+    }
+    .editable {
+      outline: 1px dashed rgba(0, 31, 63, 0.3);
+      min-height: 20px;
+    }
+    .editable:hover {
+      outline: 1px dashed var(--primary-color);
+      background-color: rgba(0, 31, 63, 0.05);
+    }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+    .modal.show { display: block; }
+    .modal-content { background: white; margin: 15% auto; padding: 1.5rem; width: 80%; max-width: 500px; border-radius: 8px; }
+    .tab { cursor: pointer; }
+    .tab.active { background: #1e3a8a; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .hidden { display: none !important; }
+    .admin-panel { position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 10000; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+    .client-logo { max-height: 80px; max-width: 150px; object-fit: contain; }
+    .testimonial-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .star-rating { color: #F59E0B; font-size: 1.2rem; }
+    .media-thumbnail { position: relative; cursor: pointer; }
+    .media-thumbnail i { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; }
+    .form-section { margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+  </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <img id="siteLogo" src="" alt="Logo" class="h-10 mr-4 hidden">
+          <div class="text-3xl font-bold text-blue-900" id="companyName">CONCEITO</div>
+        </div>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#servicos" class="text-blue-900 hover:text-blue-600">Serviços</a>
+          <a href="#sobre" class="text-blue-900 hover:text-blue-600">Sobre Nós</a>
+          <a href="#clientes" class="text-blue-900 hover:text-blue-600">Clientes</a>
+          <a href="#depoimentos" class="text-blue-900 hover:text-blue-600">Depoimentos</a>
+          <a href="#contato" class="text-blue-900 hover:text-blue-600">Contato</a>
+          <a href="#trabalhe-conosco" class="text-blue-900 hover:text-blue-600">Trabalhe Conosco</a>
+          <a href="#" id="adminLink" class="text-yellow-500 hover:text-yellow-600 font-bold">Admin</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
+      <div class="container mx-auto px-4">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6" id="heroTitle">Transforme Seu Negócio</h1>
+        <p class="text-xl mb-8 max-w-lg" id="heroDescription">Soluções empresariais premium para crescimento sustentável</p>
+        <button class="bg-yellow-400 text-blue-900 font-bold py-3 px-8 rounded-lg" id="ctaButton">Fale Conosco</button>
+      </div>
+    </section>
+
+    <!-- Serviços -->
+    <section id="servicos" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="servicesDescription">Nossos Serviços</h2>
+        <div class="grid md:grid-cols-3 gap-8" id="servicesList">
+          <!-- Serviços serão renderizados aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Clientes -->
+    <section id="clientes" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Nossos Clientes</h2>
+        <div class="flex flex-wrap justify-center gap-8" id="clientsList">
+          <!-- Logos de clientes serão renderizadas aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section id="depoimentos" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Depoimentos</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsList">
+          <!-- Depoimentos serão renderizados aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria de Mídia -->
+    <section id="midia" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Galeria</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="mediaGallery">
+          <!-- Mídias serão renderizadas aqui -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section id="sobre" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="aboutTitle">Sobre Nós</h2>
+        <div class="max-w-3xl mx-auto text-center" id="aboutContent">
+          Somos uma consultoria empresarial com mais de 15 anos de experiência, ajudando empresas a crescerem de forma sustentável e inovadora.
+        </div>
+      </div>
+    </section>
+
+    <!-- Trabalhe Conosco -->
+    <section id="trabalhe-conosco" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center">Trabalhe Conosco</h2>
+        <div class="max-w-4xl mx-auto">
+          <form id="curriculumForm" name="curriculum" data-netlify="true" method="POST" class="space-y-4">
+            <input type="hidden" name="form-name" value="curriculum">
+
+            <!-- Dados Pessoais -->
+            <div class="form-section">
+              <h3 class="text-xl font-bold mb-4">Dados Pessoais</h3>
+              <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" name="nome" placeholder="Nome Completo" required>
+              </div>
+              <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="E-mail" required>
+              </div>
+              <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="telefone" placeholder="Telefone" required>
+              </div>
+            </div>
+
+            <!-- Informações Profissionais -->
+            <div class="form-section">
+              <h3 class="text-xl font-bold mb-4">Informações Profissionais</h3>
+              <div class="form-group">
+                <label>Cargo Pretendido</label>
+                <input type="text" name="cargo_pretendido" placeholder="Cargo Pretendido" required>
+              </div>
+              <div class="form-group">
+                <label>Pretensão Salarial</label>
+                <input type="text" name="pretensao_salarial" placeholder="Pretensão Salarial">
+              </div>
+              <div class="form-group">
+                <label>Currículo (PDF)</label>
+                <input type="file" name="curriculo" accept=".pdf">
+              </div>
+            </div>
+
+            <button type="submit" class="bg-blue-900 text-white py-3 px-6 rounded font-bold hover:bg-blue-800">Enviar Currículo</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-8 text-center" id="contactTitle">Fale Conosco</h2>
+        <div class="max-w-xl mx-auto">
+          <form class="space-y-4">
+            <input type="text" placeholder="Seu nome" class="w-full p-3 border rounded" required>
+            <input type="email" placeholder="Seu e-mail" class="w-full p-3 border rounded" required>
+            <textarea placeholder="Sua mensagem" class="w-full p-3 border rounded" rows="5" required></textarea>
+            <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded font-bold">Enviar Mensagem</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <div id="footerDescription">© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</div>
+    </div>
+  </footer>
+
+  <!-- Painel Administrativo (modal de login) -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <h2 class="text-2xl mb-4 font-bold">Login Administrativo</h2>
+      <form id="adminLoginForm">
+        <input type="text" id="adminUsername" placeholder="Usuário" class="border p-2 mb-2 w-full text-center text-gray-600" required>
+        <input type="password" id="adminPassword" placeholder="Senha" class="border p-2 mb-2 w-full text-center text-gray-600" required>
+        <p id="loginError" class="text-red-600 hidden mb-2">Usuário ou senha inválidos.</p>
+        <button type="submit" class="bg-blue-900 text-white p-2 w-full rounded">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Painel Administrativo (lateral) -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
+      <h3 class="text-xl font-bold">Painel Administrativo</h3>
+      <button id="logout" class="text-red-600 font-bold">Sair</button>
+    </div>
+    <div class="flex border-b overflow-x-auto">
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-geral">Geral</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-servicos">Serviços</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-clientes">Clientes</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-depoimentos">Depoimentos</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-midia">Mídia</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-sobre">Sobre</button>
+      <button class="tab flex-1 py-2 px-4 whitespace-nowrap" data-tab="tab-footer">Rodapé</button>
+    </div>
+    <div class="p-4">
+      <!-- Aba Geral -->
+      <div class="tab-content" id="tab-geral">
+        <label class="block mb-2 font-bold">Logo do Site</label>
+        <input type="file" id="inputSiteLogo" accept="image/*" class="mb-4">
+        <div class="flex items-center mb-4">
+          <img id="logoPreview" src="" alt="Preview" class="h-20 mr-4 hidden">
+          <button id="removeLogo" class="bg-red-500 text-white px-3 py-1 rounded hidden">Remover Logo</button>
+        </div>
+        <label class="block mb-2 font-bold">Nome da Empresa</label>
+        <input type="text" id="inputCompanyName" class="border p-2 w-full mb-4">
+        <label class="block mb-2 font-bold">Título do Hero</label>
+        <input type="text" id="inputHeroTitle" class="border p-2 w-full mb-4">
+        <label class="block mb-2 font-bold">Descrição do Hero</label>
+        <textarea id="inputHeroDescription" class="border p-2 w-full mb-4"></textarea>
+        <label class="block mb-2 font-bold">Texto do Botão Hero</label>
+        <input type="text" id="inputCtaButton" class="border p-2 w-full mb-4">
+      </div>
+
+      <!-- Aba Serviços -->
+      <div class="tab-content" id="tab-servicos">
+        <label class="block mb-2 font-bold">Descrição dos Serviços</label>
+        <input type="text" id="inputServicesDescription" class="border p-2 w-full mb-4">
+        <div id="servicesAdminList"></div>
+        <button id="addService" class="bg-blue-900 text-white px-4 py-2 rounded mt-2">Adicionar Serviço</button>
+      </div>
+
+      <!-- Aba Clientes -->
+      <div class="tab-content" id="tab-clientes">
+        <label class="block mb-2 font-bold">Título da Seção</label>
+        <input type="text" id="inputClientsTitle" class="border p-2 w-full mb-4" value="Nossos Clientes">
+        <div id="clientsAdminList"></div>
+        <div class="mt-4 border-t pt-4">
+          <label class="block mb-2 font-bold">Adicionar Novo Cliente</label>
+          <input type="file" id="newClientLogo" accept="image/*" class="mb-2">
+          <input type="text" id="newClientName" placeholder="Nome do Cliente" class="border p-2 w-full mb-2">
+          <button id="addClient" class="bg-blue-900 text-white px-4 py-2 rounded">Adicionar Cliente</button>
+        </div>
+      </div>
+
+      <!-- Aba Depoimentos -->
+      <div class="tab-content" id="tab-depoimentos">
+        <label class="block mb-2 font-bold">Título da Seção</label>
+        <input type="text" id="inputTestimonialsTitle" class="border p-2 w-full mb-4" value="Depoimentos">
+        <div id="testimonialsAdminList"></div>
+        <div class="mt-4 border-t pt-4">
+          <label class="block mb-2 font-bold">Adicionar Novo Depoimento</label>
+          <input type="text" id="newTestimonialName" placeholder="Nome" class="border p-2 w-full mb-2">
+          <input type="text" id="newTestimonialRole" placeholder="Cargo/Empresa" class="border p-2 w-full mb-2">
+          <div class="mb-2">
+            <label class="block mb-1">Avaliação</label>
+            <select id="newTestimonialRating" class="border p-2 w-full">
+              <option value="5">5 Estrelas</option>
+              <option value="4">4 Estrelas</option>
+              <option value="3">3 Estrelas</option>
+              <option value="2">2 Estrelas</option>
+              <option value="1">1 Estrela</option>
+            </select>
+          </div>
+          <textarea id="newTestimonialText" placeholder="Depoimento" class="border p-2 w-full mb-2" rows="3"></textarea>
+          <input type="file" id="newTestimonialPhoto" accept="image/*" class="mb-2">
+          <button id="addTestimonial" class="bg-blue-900 text-white px-4 py-2 rounded">Adicionar Depoimento</button>
+        </div>
+      </div>
+
+      <!-- Aba Mídia -->
+      <div class="tab-content" id="tab-midia">
+        <label class="block mb-2 font-bold">Título da Seção</label>
+        <input type="text" id="inputMediaTitle" class="border p-2 w-full mb-4" value="Galeria">
+        <div id="mediaAdminList"></div>
+        <div class="mt-4 border-t pt-4">
+          <label class="block mb-2 font-bold">Adicionar Nova Mídia</label>
+          <select id="newMediaType" class="border p-2 w-full mb-2">
+            <option value="image">Imagem</option>
+            <option value="video">Vídeo (YouTube)</option>
+          </select>
+          <div id="mediaImageUpload" class="mb-2">
+            <input type="file" id="newMediaImage" accept="image/*" class="mb-2">
+          </div>
+          <div id="mediaVideoInput" class="mb-2 hidden">
+            <input type="text" id="newMediaVideoUrl" placeholder="URL do YouTube" class="border p-2 w-full">
+          </div>
+          <input type="text" id="newMediaCaption" placeholder="Legenda (opcional)" class="border p-2 w-full mb-2">
+          <button id="addMedia" class="bg-blue-900 text-white px-4 py-2 rounded">Adicionar Mídia</button>
+        </div>
+      </div>
+
+      <!-- Aba Sobre -->
+      <div class="tab-content" id="tab-sobre">
+        <label class="block mb-2 font-bold">Título Sobre</label>
+        <input type="text" id="inputAboutTitle" class="border p-2 w-full mb-4">
+        <label class="block mb-2 font-bold">Descrição Sobre</label>
+        <textarea id="inputAboutContent" class="border p-2 w-full mb-4"></textarea>
+      </div>
+
+      <!-- Aba Rodapé -->
+      <div class="tab-content" id="tab-footer">
+        <label class="block mb-2 font-bold">Descrição do Rodapé</label>
+        <input type="text" id="inputFooterDescription" class="border p-2 w-full mb-4">
+      </div>
+
+      <button id="saveChanges" class="bg-green-600 text-white px-4 py-2 rounded w-full mt-4">Salvar Alterações</button>
+    </div>
+  </div>
+
+  <!-- Botão flutuante para abrir painel admin -->
+  <button id="adminFloatBtn" class="fixed bottom-4 right-4 z-50 bg-blue-900 text-white p-4 rounded-full shadow-lg hover:bg-blue-700" title="Abrir Painel Administrativo">
+    <i class="fas fa-cog fa-lg"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/star-rating.js@4.3.0/dist/star-rating.min.js"></script>
+  <script>
+    // Persistência real via Netlify Functions
+    async function fetchSiteData() {
+      try {
+        const res = await fetch('/.netlify/functions/siteData');
+        if (res.ok) {
+          const data = await res.json();
+          return data;
+        }
+        throw new Error('Erro ao buscar dados do backend');
+      } catch (e) {
+        // fallback para localStorage se offline
+        const savedData = JSON.parse(localStorage.getItem('siteData')) || {};
+        return savedData;
+      }
+    }
+
+    async function saveSiteData(data) {
+      try {
+        const res = await fetch('/.netlify/functions/siteData', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Falha ao salvar no backend');
+        return true;
+      } catch (e) {
+        // fallback para localStorage se offline
+        localStorage.setItem('siteData', JSON.stringify(data));
+        return false;
+      }
+    }
+
+    let isAuthenticated = false;
+    const staticData = {
+      companyName: "CONCEITO",
+      heroTitle: "Transforme Seu Negócio",
+      heroDescription: "Soluções empresariais premium para crescimento sustentável",
+      ctaButton: "Fale Conosco",
+      servicesDescription: "Nossos Serviços",
+      services: [
+        { title: "Consultoria Estratégica", text: "Planejamento e execução de estratégias para crescimento sustentável." },
+        { title: "Gestão de Processos", text: "Otimização de processos internos para máxima eficiência operacional." },
+        { title: "Transformação Digital", text: "Implementação de soluções tecnológicas para inovação e competitividade." }
+      ],
+      clientsTitle: "Nossos Clientes",
+      clients: [],
+      testimonialsTitle: "Depoimentos",
+      testimonials: [],
+      mediaTitle: "Galeria",
+      media: [],
+      aboutTitle: "Sobre Nós",
+      aboutContent: "Somos uma consultoria empresarial com mais de 15 anos de experiência, ajudando empresas a crescerem de forma sustentável e inovadora.",
+      contactTitle: "Fale Conosco",
+      footerDescription: "© 2024 CONCEITO Consultoria Empresarial. Todos os direitos reservados.",
+      siteLogo: null
+    };
+
+    function base64ToBlob(base64, mimeType) {
+      const byteCharacters = atob(base64.split(',')[1]);
+      const byteArrays = [];
+      
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+        const byteNumbers = new Array(slice.length);
+        
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+      
+      return new Blob(byteArrays, { type: mimeType });
+    }
+
+    async function loadData() {
+      try {
+        const savedData = await fetchSiteData();
+        Object.assign(staticData, savedData && Object.keys(savedData).length ? savedData : staticData);
+
+        // Atualizar elementos da página
+        document.getElementById('companyName').textContent = staticData.companyName;
+        document.getElementById('heroTitle').textContent = staticData.heroTitle;
+        document.getElementById('heroDescription').textContent = staticData.heroDescription;
+        document.getElementById('ctaButton').textContent = staticData.ctaButton;
+        document.getElementById('servicesDescription').textContent = staticData.servicesDescription;
+        document.getElementById('aboutTitle').textContent = staticData.aboutTitle;
+        document.getElementById('aboutContent').textContent = staticData.aboutContent;
+        document.getElementById('contactTitle').textContent = staticData.contactTitle;
+        document.getElementById('footerDescription').textContent = staticData.footerDescription;
+
+        // Logo do site
+        const siteLogo = document.getElementById('siteLogo');
+        if (staticData.siteLogo) {
+          siteLogo.src = staticData.siteLogo;
+          siteLogo.classList.remove('hidden');
+        } else {
+          siteLogo.classList.add('hidden');
+        }
+
+        // Renderizar seções dinâmicas
+        renderServices();
+        renderClients();
+        renderTestimonials();
+        renderMedia();
+        renderServicesAdmin();
+        renderClientsAdmin();
+        renderTestimonialsAdmin();
+        renderMediaAdmin();
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    }
+
+    async function saveData() {
+      try {
+        await saveSiteData(staticData);
+      } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+      }
+    }
+
+    function renderServices() {
+      const servicesList = document.getElementById('servicesList');
+      servicesList.innerHTML = '';
+      staticData.services.forEach(service => {
+        const div = document.createElement('div');
+        div.className = "bg-white p-6 rounded-lg shadow";
+        div.innerHTML = `<h3 class="text-xl font-bold mb-2">${service.title}</h3><p>${service.text}</p>`;
+        servicesList.appendChild(div);
+      });
+    }
+
+    function renderClients() {
+      const clientsList = document.getElementById('clientsList');
+      clientsList.innerHTML = '';
+      staticData.clients.forEach(client => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-center p-4";
+        div.innerHTML = `<img src="${client.logo}" alt="${client.name}" class="client-logo">`;
+        clientsList.appendChild(div);
+      });
+    }
+
+    function renderTestimonials() {
+      const testimonialsList = document.getElementById('testimonialsList');
+      testimonialsList.innerHTML = '';
+      staticData.testimonials.forEach(testimonial => {
+        const div = document.createElement('div');
+        div.className = "testimonial-card";
+        div.innerHTML = `
+          <div class="flex items-center mb-4">
+            ${testimonial.photo ? `<img src="${testimonial.photo}" alt="${testimonial.name}" class="w-12 h-12 rounded-full mr-4">` : ''}
+            <div>
+              <h4 class="font-bold">${testimonial.name}</h4>
+              <p class="text-sm text-gray-600">${testimonial.role}</p>
+            </div>
+          </div>
+          <div class="star-rating mb-2">
+            ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5 - testimonial.rating)}
+          </div>
+          <p class="italic">"${testimonial.text}"</p>
+        `;
+        testimonialsList.appendChild(div);
+      });
+    }
+
+    function renderMedia() {
+      const mediaGallery = document.getElementById('mediaGallery');
+      mediaGallery.innerHTML = '';
+      staticData.media.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "media-thumbnail overflow-hidden rounded-lg";
+        
+        if (item.type === 'image') {
+          div.innerHTML = `
+            <img src="${item.url}" alt="${item.caption || 'Imagem'}" class="w-full h-40 object-cover">
+            ${item.caption ? `<p class="text-center mt-2">${item.caption}</p>` : ''}
+          `;
+        } else if (item.type === 'video') {
+          // Extrair ID do vídeo do YouTube
+          const videoId = item.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)[1];
+          div.innerHTML = `
+            <div class="relative w-full h-40 bg-black">
+              <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="Thumbnail" class="w-full h-full object-cover opacity-70">
+              <i class="fas fa-play"></i>
+            </div>
+            ${item.caption ? `<p class="text-center mt-2">${item.caption}</p>` : ''}
+          `;
+          div.addEventListener('click', () => {
+            window.open(item.url, '_blank');
+          });
+        }
+        
+        mediaGallery.appendChild(div);
+      });
+    }
+
+    function renderServicesAdmin() {
+      const adminList = document.getElementById('servicesAdminList');
+      adminList.innerHTML = '';
+      staticData.services.forEach((service, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "mb-4 border p-2 rounded";
+        wrapper.innerHTML = `
+          <input type="text" class="border p-1 w-full mb-1" value="${service.title}" data-idx="${idx}" data-field="title" placeholder="Título do Serviço">
+          <textarea class="border p-1 w-full" data-idx="${idx}" data-field="text" placeholder="Descrição">${service.text}</textarea>
+          <button class="bg-red-500 text-white px-2 py-1 rounded mt-1 removeService" data-idx="${idx}">Remover</button>
+        `;
+        adminList.appendChild(wrapper);
+      });
+
+      // Listeners para inputs
+      adminList.querySelectorAll('input,textarea').forEach(el => {
+        el.addEventListener('input', e => {
+          const idx = +el.getAttribute('data-idx');
+          const field = el.getAttribute('data-field');
+          staticData.services[idx][field] = el.value;
+        });
+      });
+
+      // Remover serviço
+      adminList.querySelectorAll('.removeService').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = +btn.getAttribute('data-idx');
+          staticData.services.splice(idx, 1);
+          renderServicesAdmin();
+        });
+      });
+    }
+
+    function renderClientsAdmin() {
+      const adminList = document.getElementById('clientsAdminList');
+      adminList.innerHTML = '';
+      staticData.clients.forEach((client, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "mb-4 border p-2 rounded flex items-center";
+        wrapper.innerHTML = `
+          <img src="${client.logo}" alt="${client.name}" class="h-12 w-12 object-contain mr-4">
+          <div class="flex-1">
+            <input type="text" class="border p-1 w-full mb-1" value="${client.name}" data-idx="${idx}" placeholder="Nome do Cliente">
+          </div>
+          <button class="bg-red-500 text-white px-2 py-1 rounded removeClient" data-idx="${idx}">Remover</button>
+        `;
+        adminList.appendChild(wrapper);
+
+        // Listener para input
+        wrapper.querySelector('input').addEventListener('input', e => {
+          const idx = +e.target.getAttribute('data-idx');
+          staticData.clients[idx].name = e.target.value;
+        });
+      });
+
+      // Remover cliente
+      adminList.querySelectorAll('.removeClient').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = +btn.getAttribute('data-idx');
+          staticData.clients.splice(idx, 1);
+          renderClientsAdmin();
+        });
+      });
+    }
+
+    function renderTestimonialsAdmin() {
+      const adminList = document.getElementById('testimonialsAdminList');
+      adminList.innerHTML = '';
+      staticData.testimonials.forEach((testimonial, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "mb-4 border p-2 rounded";
+        wrapper.innerHTML = `
+          <div class="flex items-center mb-2">
+            ${testimonial.photo ? `<img src="${testimonial.photo}" alt="${testimonial.name}" class="w-10 h-10 rounded-full mr-2">` : ''}
+            <div class="flex-1">
+              <input type="text" class="border p-1 w-full mb-1" value="${testimonial.name}" data-idx="${idx}" data-field="name" placeholder="Nome">
+              <input type="text" class="border p-1 w-full" value="${testimonial.role}" data-idx="${idx}" data-field="role" placeholder="Cargo/Empresa">
+            </div>
+          </div>
+          <select class="border p-1 w-full mb-2" data-idx="${idx}" data-field="rating">
+            <option value="5" ${testimonial.rating === 5 ? 'selected' : ''}>5 Estrelas</option>
+            <option value="4" ${testimonial.rating === 4 ? 'selected' : ''}>4 Estrelas</option>
+            <option value="3" ${testimonial.rating === 3 ? 'selected' : ''}>3 Estrelas</option>
+            <option value="2" ${testimonial.rating === 2 ? 'selected' : ''}>2 Estrelas</option>
+            <option value="1" ${testimonial.rating === 1 ? 'selected' : ''}>1 Estrela</option>
+          </select>
+          <textarea class="border p-1 w-full mb-2" data-idx="${idx}" data-field="text" placeholder="Depoimento">${testimonial.text}</textarea>
+          <button class="bg-red-500 text-white px-2 py-1 rounded removeTestimonial" data-idx="${idx}">Remover</button>
+        `;
+        adminList.appendChild(wrapper);
+
+        // Listeners para inputs
+        wrapper.querySelectorAll('input,textarea,select').forEach(el => {
+          el.addEventListener('change', e => {
+            const idx = +el.getAttribute('data-idx');
+            const field = el.getAttribute('data-field');
+            staticData.testimonials[idx][field] = el.value;
+          });
+        });
+      });
+
+      // Remover depoimento
+      adminList.querySelectorAll('.removeTestimonial').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = +btn.getAttribute('data-idx');
+          staticData.testimonials.splice(idx, 1);
+          renderTestimonialsAdmin();
+        });
+      });
+    }
+
+    function renderMediaAdmin() {
+      const adminList = document.getElementById('mediaAdminList');
+      adminList.innerHTML = '';
+      staticData.media.forEach((item, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "mb-4 border p-2 rounded";
+        
+        if (item.type === 'image') {
+          wrapper.innerHTML = `
+            <div class="flex items-center mb-2">
+              <img src="${item.url}" alt="Preview" class="w-16 h-16 object-cover mr-2">
+              <input type="text" class="border p-1 flex-1" value="${item.caption || ''}" data-idx="${idx}" data-field="caption" placeholder="Legenda">
+            </div>
+            <div class="flex justify-between">
+              <span>Tipo: Imagem</span>
+              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-idx="${idx}">Remover</button>
+            </div>
+          `;
+        } else if (item.type === 'video') {
+          wrapper.innerHTML = `
+            <div class="mb-2">
+              <p class="text-sm text-gray-600 mb-1">Vídeo: ${item.url}</p>
+              <input type="text" class="border p-1 w-full" value="${item.caption || ''}" data-idx="${idx}" data-field="caption" placeholder="Legenda">
+            </div>
+            <div class="flex justify-between">
+              <span>Tipo: Vídeo</span>
+              <button class="bg-red-500 text-white px-2 py-1 rounded removeMedia" data-idx="${idx}">Remover</button>
+            </div>
+          `;
+        }
+        
+        adminList.appendChild(wrapper);
+
+        // Listener para input de legenda
+        wrapper.querySelector('input')?.addEventListener('input', e => {
+          const idx = +e.target.getAttribute('data-idx');
+          staticData.media[idx].caption = e.target.value;
+        });
+      });
+
+      // Remover mídia
+      adminList.querySelectorAll('.removeMedia').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = +btn.getAttribute('data-idx');
+          staticData.media.splice(idx, 1);
+          renderMediaAdmin();
+        });
+      });
+    }
+
+    function updateData() {
+      staticData.companyName = document.getElementById('inputCompanyName').value;
+      staticData.heroTitle = document.getElementById('inputHeroTitle').value;
+      staticData.heroDescription = document.getElementById('inputHeroDescription').value;
+      staticData.ctaButton = document.getElementById('inputCtaButton').value;
+      staticData.servicesDescription = document.getElementById('inputServicesDescription').value;
+      staticData.clientsTitle = document.getElementById('inputClientsTitle').value;
+      staticData.testimonialsTitle = document.getElementById('inputTestimonialsTitle').value;
+      staticData.mediaTitle = document.getElementById('inputMediaTitle').value;
+      staticData.aboutTitle = document.getElementById('inputAboutTitle').value;
+      staticData.aboutContent = document.getElementById('inputAboutContent').value;
+      staticData.footerDescription = document.getElementById('inputFooterDescription').value;
+    }
+
+    function fillAdminPanel() {
+      document.getElementById('inputCompanyName').value = staticData.companyName;
+      document.getElementById('inputHeroTitle').value = staticData.heroTitle;
+      document.getElementById('inputHeroDescription').value = staticData.heroDescription;
+      document.getElementById('inputCtaButton').value = staticData.ctaButton;
+      document.getElementById('inputServicesDescription').value = staticData.servicesDescription;
+      document.getElementById('inputClientsTitle').value = staticData.clientsTitle;
+      document.getElementById('inputTestimonialsTitle').value = staticData.testimonialsTitle;
+      document.getElementById('inputMediaTitle').value = staticData.mediaTitle;
+      document.getElementById('inputAboutTitle').value = staticData.aboutTitle;
+      document.getElementById('inputAboutContent').value = staticData.aboutContent;
+      document.getElementById('inputFooterDescription').value = staticData.footerDescription;
+
+      const logoPreview = document.getElementById('logoPreview');
+      if (staticData.siteLogo) {
+        logoPreview.src = staticData.siteLogo;
+        logoPreview.classList.remove('hidden');
+        document.getElementById('removeLogo').classList.remove('hidden');
+      } else {
+        logoPreview.classList.add('hidden');
+        document.getElementById('removeLogo').classList.add('hidden');
+      }
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadData();
+
+      // Botão flutuante para abrir painel admin
+      document.getElementById('adminFloatBtn').addEventListener('click', function() {
+        if (!isAuthenticated) {
+          document.getElementById('adminModal').classList.add('show');
+        } else {
+          document.getElementById('adminPanel').classList.remove('hidden');
+          fillAdminPanel();
+        }
+      });
+
+      // Admin login
+      document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        if (username === 'admin' && password === 'Euvou*1717') {
+          isAuthenticated = true;
+          document.getElementById('adminModal').classList.remove('show');
+          document.getElementById('adminPanel').classList.remove('hidden');
+          fillAdminPanel();
+        } else {
+          document.getElementById('loginError').classList.remove('hidden');
+        }
+      });
+
+      // Abrir painel admin pelo link do menu
+      document.getElementById('adminLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!isAuthenticated) {
+          document.getElementById('adminModal').classList.add('show');
+        } else {
+          document.getElementById('adminPanel').classList.remove('hidden');
+          fillAdminPanel();
+        }
+      });
+
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+      });
+
+      // Ativar primeira aba
+      document.querySelector('.tab').classList.add('active');
+      document.querySelector('.tab-content').classList.add('active');
+
+      // Adicionar serviço
+      document.getElementById('addService').addEventListener('click', function() {
+        staticData.services.push({ title: '', text: '' });
+        renderServicesAdmin();
+      });
+
+      // Adicionar cliente
+      document.getElementById('addClient').addEventListener('click', async function() {
+        const logoInput = document.getElementById('newClientLogo');
+        const nameInput = document.getElementById('newClientName');
+        
+        if (!logoInput.files[0]) {
+          alert('Por favor, selecione um logo');
+          return;
+        }
+        
+        if (!nameInput.value.trim()) {
+          alert('Por favor, insira o nome do cliente');
+          return;
+        }
+        
+        try {
+          const logoData = await readFileAsDataURL(logoInput.files[0]);
+          staticData.clients.push({
+            name: nameInput.value.trim(),
+            logo: logoData
+          });
+          
+          logoInput.value = '';
+          nameInput.value = '';
+          renderClientsAdmin();
+        } catch (error) {
+          console.error('Erro ao adicionar cliente:', error);
+          alert('Erro ao processar a imagem');
+        }
+      });
+
+      // Adicionar depoimento
+      document.getElementById('addTestimonial').addEventListener('click', async function() {
+        const nameInput = document.getElementById('newTestimonialName');
+        const roleInput = document.getElementById('newTestimonialRole');
+        const ratingInput = document.getElementById('newTestimonialRating');
+        const textInput = document.getElementById('newTestimonialText');
+        const photoInput = document.getElementById('newTestimonialPhoto');
+        
+        if (!nameInput.value.trim() || !textInput.value.trim()) {
+          alert('Por favor, preencha todos os campos obrigatórios');
+          return;
+        }
+        
+        const testimonial = {
+          name: nameInput.value.trim(),
+          role: roleInput.value.trim(),
+          rating: parseInt(ratingInput.value),
+          text: textInput.value.trim(),
+          photo: null
+        };
+        
+        try {
+          if (photoInput.files[0]) {
+            testimonial.photo = await readFileAsDataURL(photoInput.files[0]);
+          }
+          
+          staticData.testimonials.push(testimonial);
+          
+          // Limpar campos
+          nameInput.value = '';
+          roleInput.value = '';
+          textInput.value = '';
+          photoInput.value = '';
+          
+          renderTestimonialsAdmin();
+        } catch (error) {
+          console.error('Erro ao adicionar depoimento:', error);
+          alert('Erro ao processar a foto');
+        }
+      });
+
+      // Adicionar mídia
+      document.getElementById('addMedia').addEventListener('click', async function() {
+        const typeInput = document.getElementById('newMediaType');
+        const captionInput = document.getElementById('newMediaCaption');
+        
+        if (typeInput.value === 'image') {
+          const imageInput = document.getElementById('newMediaImage');
+          if (!imageInput.files[0]) {
+            alert('Por favor, selecione uma imagem');
+            return;
+          }
+          
+          try {
+            const imageData = await readFileAsDataURL(imageInput.files[0]);
+            staticData.media.push({
+              type: 'image',
+              url: imageData,
+              caption: captionInput.value.trim()
+            });
+            
+            imageInput.value = '';
+            captionInput.value = '';
+            renderMediaAdmin();
+          } catch (error) {
+            console.error('Erro ao adicionar imagem:', error);
+            alert('Erro ao processar a imagem');
+          }
+        } else if (typeInput.value === 'video') {
+          const videoUrlInput = document.getElementById('newMediaVideoUrl');
+          if (!videoUrlInput.value.trim()) {
+            alert('Por favor, insira a URL do vídeo');
+            return;
+          }
+          
+          // Validar URL do YouTube
+          if (!videoUrlInput.value.includes('youtube.com') && !videoUrlInput.value.includes('youtu.be')) {
+            alert('Por favor, insira uma URL válida do YouTube');
+            return;
+          }
+          
+          staticData.media.push({
+            type: 'video',
+            url: videoUrlInput.value.trim(),
+            caption: captionInput.value.trim()
+          });
+          
+          videoUrlInput.value = '';
+          captionInput.value = '';
+          renderMediaAdmin();
+        }
+      });
+
+      // Alternar entre upload de imagem e URL de vídeo
+      document.getElementById('newMediaType').addEventListener('change', function() {
+        const type = this.value;
+        document.getElementById('mediaImageUpload').classList.toggle('hidden', type !== 'image');
+        document.getElementById('mediaVideoInput').classList.toggle('hidden', type !== 'video');
+      });
+
+      // Upload de logo do site
+      document.getElementById('inputSiteLogo').addEventListener('change', async function() {
+        if (this.files[0]) {
+          try {
+            const logoData = await readFileAsDataURL(this.files[0]);
+            staticData.siteLogo = logoData;
+            
+            const logoPreview = document.getElementById('logoPreview');
+            logoPreview.src = logoData;
+            logoPreview.classList.remove('hidden');
+            document.getElementById('removeLogo').classList.remove('hidden');
+            
+            // Atualizar logo no site imediatamente
+            const siteLogo = document.getElementById('siteLogo');
+            siteLogo.src = logoData;
+            siteLogo.classList.remove('hidden');
+          } catch (error) {
+            console.error('Erro ao carregar logo:', error);
+            alert('Erro ao processar a imagem');
+          }
+        }
+      });
+
+      // Remover logo do site
+      document.getElementById('removeLogo').addEventListener('click', function() {
+        staticData.siteLogo = null;
+        document.getElementById('logoPreview').classList.add('hidden');
+        this.classList.add('hidden');
+        document.getElementById('inputSiteLogo').value = '';
+        
+        // Atualizar logo no site imediatamente
+        document.getElementById('siteLogo').classList.add('hidden');
+      });
+
+      // Salvar alterações
+      document.getElementById('saveChanges').addEventListener('click', async function() {
+        if (!isAuthenticated) {
+          showModal('Faça login para salvar alterações.');
+          document.getElementById('adminModal').classList.add('show');
+          return;
+        }
+        
+        updateData();
+        await saveData();
+        await loadData();
+        showModal('Alterações salvas com sucesso!');
+      });
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', function() {
+        isAuthenticated = false;
+        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('adminModal').classList.add('show');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('loginError').classList.add('hidden');
+      });
+
+      // Fechar modal ao clicar fora
+      document.getElementById('adminModal').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('show');
+      });
+
+      // Formulário de currículo (Netlify)
+      document.getElementById('curriculumForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        
+        // Simular envio para Netlify
+        fetch('/', {
+          method: 'POST',
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form)).toString()
+        }).then(() => {
+          showModal('Currículo enviado com sucesso!');
+          form.reset();
+        }).catch(error => {
+          showModal('Erro ao enviar currículo. Por favor, tente novamente.');
+          console.error('Erro no formulário:', error);
+        });
+      });
+    });
+
+    function showModal(message) {
+      const modal = document.createElement('div');
+      modal.className = 'modal show';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <p class="text-center mb-4">${message}</p>
+          <button class="bg-blue-900 text-white p-2 rounded mx-auto">Fechar</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.querySelector('button').addEventListener('click', () => {
+        modal.remove();
+      });
+    }
+  </script>
+</body>
+</html>
