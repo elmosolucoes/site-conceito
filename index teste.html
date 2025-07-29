@@ -31,46 +31,37 @@
       --light: #F8FAFC;
       --dark: #1E293B;
     }
-    
     body {
       font-family: 'Montserrat', sans-serif;
       background-color: #F8FAFC;
     }
-    
     .hero-gradient {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
     }
-    
     .text-outline {
       text-shadow: -1px -1px 0 var(--primary), 1px -1px 0 var(--primary), -1px 1px 0 var(--primary), 1px 1px 0 var(--primary);
     }
-    
     .floating {
       animation: floating 3s ease-in-out infinite;
     }
-    
     @keyframes floating {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
-    
     .card-hover:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
-    
     .service-icon {
       background: linear-gradient(135deg, var(--accent), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
     .section-divider {
       height: 100px;
       background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
     }
-    
     /* Admin Styles */
     .admin-panel {
       width: 400px;
@@ -79,21 +70,17 @@
       transform: translateX(400px);
       transition: transform 0.3s ease;
     }
-    
     .admin-panel.open {
       transform: translateX(0);
     }
-    
     .editable {
       position: relative;
       transition: all 0.2s;
     }
-    
     .admin-logged-in .editable:hover {
       outline: 2px dashed var(--accent);
       background-color: rgba(0, 102, 204, 0.05);
     }
-    
     .edit-badge {
       position: absolute;
       top: -10px;
@@ -110,20 +97,16 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
-    
     .admin-logged-in .editable:hover .edit-badge {
       opacity: 1;
     }
-    
     .testimonial-card {
       background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     }
-    
     .nav-link {
       position: relative;
       overflow: hidden;
     }
-    
     .nav-link::after {
       content: '';
       position: absolute;
@@ -134,26 +117,21 @@
       background-color: var(--accent);
       transition: width 0.3s ease;
     }
-    
     .nav-link:hover::after {
       width: 100%;
     }
-    
     /* Modal de Login */
     #loginModal {
       transition: opacity 0.3s ease;
     }
-    
     #loginModal input {
       border-color: #cbd5e1;
     }
-    
     #loginModal input:focus {
       outline: none;
       border-color: #0066CC;
       box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
     }
-    
     .loading-spinner {
       display: inline-block;
       width: 20px;
@@ -163,11 +141,9 @@
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
     }
-    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    
     .toast {
       position: fixed;
       bottom: 20px;
@@ -182,7 +158,6 @@
       transition: all 0.3s ease;
       z-index: 1000;
     }
-    
     .toast.show {
       transform: translateY(0);
       opacity: 1;
@@ -201,14 +176,14 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Email</label>
-          <input type="email" id="adminEmail" class="w-full p-2 border rounded" placeholder="seu@email.com">
+          <input type="email" id="adminEmail" aria-label="Email do administrador" class="w-full p-2 border rounded" placeholder="seu@email.com">
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Senha</label>
-          <input type="password" id="adminPass" class="w-full p-2 border rounded" placeholder="••••••••">
+          <input type="password" id="adminPass" aria-label="Senha do administrador" class="w-full p-2 border rounded" placeholder="••••••••">
         </div>
         <div id="loginError" class="text-red-500 text-sm hidden"></div>
-        <button id="loginButton" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded flex items-center justify-center">
+        <button id="loginButton" aria-label="Entrar no painel administrativo" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded flex items-center justify-center">
           <span id="loginButtonText">Entrar</span>
           <span id="loginSpinner" class="loading-spinner ml-2 hidden"></span>
         </button>
@@ -217,7 +192,7 @@
   </div>
 
   <!-- Botão Admin -->
-  <button id="adminToggle" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
+  <button id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
     <i class="fas fa-cog"></i>
   </button>
 
@@ -225,29 +200,29 @@
   <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40">
     <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
-      <button id="closeAdmin" class="text-gray-600 hover:text-gray-800">
+      <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
         <i class="fas fa-times"></i>
       </button>
     </div>
     
     <div class="p-4 h-[calc(100%-60px)] overflow-y-auto">
       <div class="mb-6">
-        <button id="saveAll" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
+        <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
           <i class="fas fa-save mr-2"></i>Salvar Tudo
         </button>
-        <button id="resetAll" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
+        <button id="resetAll" aria-label="Restaurar dados padrão" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
           <i class="fas fa-undo mr-2"></i>Restaurar Padrão
         </button>
-        <button id="logoutButton" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
+        <button id="logoutButton" aria-label="Sair do painel administrativo" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
           <i class="fas fa-sign-out-alt mr-2"></i>Sair
         </button>
       </div>
       
       <!-- Abas -->
       <div class="flex border-b mb-4">
-        <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content">Conteúdo</button>
-        <button class="admin-tab px-4 py-2" data-tab="media">Mídia</button>
-        <button class="admin-tab px-4 py-2" data-tab="settings">Configurações</button>
+        <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
+        <button class="admin-tab px-4 py-2" data-tab="media" aria-label="Aba Mídia">Mídia</button>
+        <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
       </div>
       
       <!-- Conteúdo -->
@@ -257,11 +232,11 @@
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium mb-1">Nome da Empresa</label>
-              <input type="text" id="companyName" class="w-full p-2 border rounded">
+              <input type="text" id="companyName" aria-label="Nome da Empresa" class="w-full p-2 border rounded">
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Tagline</label>
-              <input type="text" id="siteTagline" class="w-full p-2 border rounded">
+              <input type="text" id="siteTagline" aria-label="Tagline" class="w-full p-2 border rounded">
             </div>
           </div>
         </div>
@@ -271,19 +246,19 @@
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium mb-1">Título Principal</label>
-              <textarea id="heroTitle" class="w-full p-2 border rounded" rows="3"></textarea>
+              <textarea id="heroTitle" aria-label="Título Principal" class="w-full p-2 border rounded" rows="3"></textarea>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Subtítulo</label>
-              <textarea id="heroSubtitle" class="w-full p-2 border rounded" rows="2"></textarea>
+              <textarea id="heroSubtitle" aria-label="Subtítulo" class="w-full p-2 border rounded" rows="2"></textarea>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Botão Primário</label>
-              <input type="text" id="heroCtaPrimary" class="w-full p-2 border rounded">
+              <input type="text" id="heroCtaPrimary" aria-label="Botão Primário" class="w-full p-2 border rounded">
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Botão Secundário</label>
-              <input type="text" id="heroCtaSecondary" class="w-full p-2 border rounded">
+              <input type="text" id="heroCtaSecondary" aria-label="Botão Secundário" class="w-full p-2 border rounded">
             </div>
           </div>
         </div>
@@ -293,15 +268,15 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium mb-1">Telefone</label>
-              <input type="text" id="phone" class="w-full p-2 border rounded">
+              <input type="text" id="phone" aria-label="Telefone" class="w-full p-2 border rounded">
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Email</label>
-              <input type="email" id="email" class="w-full p-2 border rounded">
+              <input type="email" id="email" aria-label="Email" class="w-full p-2 border rounded">
             </div>
             <div class="col-span-2">
               <label class="block text-sm font-medium mb-1">Endereço</label>
-              <input type="text" id="address" class="w-full p-2 border rounded">
+              <input type="text" id="address" aria-label="Endereço" class="w-full p-2 border rounded">
             </div>
           </div>
         </div>
@@ -312,15 +287,14 @@
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Imagem Hero</h4>
           <input type="file" id="heroImageUpload" accept="image/*" class="hidden">
-          <button onclick="document.getElementById('heroImageUpload').click()" 
-                  class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+          <button onclick="document.getElementById('heroImageUpload').click()" aria-label="Selecionar imagem para o Hero" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
             <i class="fas fa-upload mr-2"></i>Selecionar Imagem
           </button>
           <div class="mt-4">
             <img id="heroImagePreview" class="max-w-full h-auto rounded border hidden">
             <div class="mt-2">
               <label class="block text-sm font-medium mb-1">Texto Alternativo</label>
-              <input type="text" id="heroImageAlt" class="w-full p-2 border rounded">
+              <input type="text" id="heroImageAlt" aria-label="Texto Alternativo da Imagem Hero" class="w-full p-2 border rounded">
             </div>
           </div>
         </div>
@@ -330,7 +304,7 @@
           <div id="galleryItems" class="space-y-4">
             <!-- Itens da galeria serão adicionados aqui -->
           </div>
-          <button onclick="addGalleryImage()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+          <button onclick="addGalleryImage()" aria-label="Adicionar foto à galeria" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
             <i class="fas fa-plus mr-2"></i>Adicionar Foto
           </button>
         </div>
@@ -338,8 +312,8 @@
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Vídeos</h4>
           <div class="flex mb-4">
-            <input type="text" id="youtubeUrl" placeholder="Cole a URL do YouTube" class="flex-1 p-2 border rounded">
-            <button onclick="addVideo()" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <input type="text" id="youtubeUrl" aria-label="URL do vídeo do YouTube" placeholder="Cole a URL do YouTube" class="flex-1 p-2 border rounded">
+            <button onclick="addVideo()" aria-label="Adicionar vídeo à galeria" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
               <i class="fas fa-plus"></i>
             </button>
           </div>
@@ -364,7 +338,7 @@
         
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Idioma</h4>
-          <select id="siteLanguage" class="w-full p-2 border rounded">
+          <select id="siteLanguage" aria-label="Idioma do site" class="w-full p-2 border rounded">
             <option value="pt-BR">Português (Brasil)</option>
             <option value="en-US">English (EUA)</option>
             <option value="es-ES">Español</option>
@@ -374,16 +348,16 @@
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Tema</h4>
           <div class="grid grid-cols-4 gap-2">
-            <button data-theme="blue" class="theme-btn h-10 rounded bg-blue-800 border-2 border-blue-600"></button>
-            <button data-theme="emerald" class="theme-btn h-10 rounded bg-emerald-600"></button>
-            <button data-theme="indigo" class="theme-btn h-10 rounded bg-indigo-600"></button>
-            <button data-theme="rose" class="theme-btn h-10 rounded bg-rose-600"></button>
+            <button data-theme="blue" aria-label="Tema Azul" class="theme-btn h-10 rounded bg-blue-800 border-2 border-blue-600"></button>
+            <button data-theme="emerald" aria-label="Tema Verde" class="theme-btn h-10 rounded bg-emerald-600"></button>
+            <button data-theme="indigo" aria-label="Tema Indigo" class="theme-btn h-10 rounded bg-indigo-600"></button>
+            <button data-theme="rose" aria-label="Tema Rosa" class="theme-btn h-10 rounded bg-rose-600"></button>
           </div>
         </div>
         
         <div class="admin-section">
           <label class="flex items-center">
-            <input type="checkbox" id="darkMode" class="mr-2"> Modo Escuro
+            <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
           </label>
         </div>
       </div>
@@ -408,7 +382,7 @@
           <a href="#contact" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navContact">Contato</a>
         </nav>
         
-        <button id="mobileMenuButton" class="md:hidden text-blue-900 hover:text-blue-600">
+        <button id="mobileMenuButton" aria-label="Abrir menu mobile" class="md:hidden text-blue-900 hover:text-blue-600">
           <i class="fas fa-bars text-2xl"></i>
         </button>
       </div>
@@ -1080,13 +1054,14 @@
   <script>
     // Configuração do Firebase - Substitua com suas credenciais
     const firebaseConfig = {
-      apiKey: process.env.FIREBASE_API_KEY,
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-      databaseURL: process.env.FIREBASE_DATABASE_URL,
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.FIREBASE_APP_ID
+     apiKey: "AIzaSyB9BgXIhAOxJGhUB5-HkVw382mTuOnJx2I",
+  authDomain: "conceito-19d28.firebaseapp.com",
+  databaseURL: "https://conceito-19d28-default-rtdb.firebaseio.com",
+  projectId: "conceito-19d28",
+  storageBucket: "conceito-19d28.firebasestorage.app",
+  messagingSenderId: "549152952403",
+  appId: "1:549152952403:web:8072e708a85f8e18ea36a6",
+  measurementId: "G-X1ZM57VC10"
     };
 
     // Inicializa o Firebase
