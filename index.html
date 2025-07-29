@@ -1058,7 +1058,7 @@
   authDomain: "conceito-19d28.firebaseapp.com",
   databaseURL: "https://conceito-19d28-default-rtdb.firebaseio.com",
   projectId: "conceito-19d28",
-  storageBucket: "conceito-19d28.firebasestorage.app",
+  storageBucket: "conceito-19d28.appspot.com",
   messagingSenderId: "549152952403",
   appId: "1:549152952403:web:8072e708a85f8e18ea36a6",
   measurementId: "G-X1ZM57VC10"
@@ -1146,10 +1146,18 @@
           const snapshot = await database.ref('siteData').once('value');
           
           if (snapshot.exists()) {
-            this.siteData = snapshot.val();
-            this.showToast("Dados carregados do Firebase", "success");
-            console.log("Dados carregados do Firebase");
-          } else {
+  const parsed = snapshot.val();
+  this.siteData = {
+    content: parsed.content || {},
+    media: {
+      gallery: (parsed.media && parsed.media.gallery) || [],
+      videos: (parsed.media && parsed.media.videos) || []
+    },
+    testimonials: parsed.testimonials || []
+  };
+  this.showToast("Dados carregados do Firebase", "success");
+  console.log("Dados carregados do Firebase");
+} else {
             // Carrega dados padrão se não existir no Firebase
             this.loadDefaultData();
             await this.saveData(); // Salva os dados padrão no Firebase
@@ -1193,19 +1201,29 @@
         this.siteData.testimonials = [];
       }
       
-      loadFromLocalStorage() {
-        const savedData = localStorage.getItem('siteData');
-        if (savedData) {
-          this.siteData = JSON.parse(savedData);
-          this.showToast("Dados carregados do armazenamento local", "info");
-          console.log("Dados carregados do localStorage");
-          this.renderContent();
-        } else {
-          this.loadDefaultData();
-          this.showToast("Dados padrão carregados", "info");
-        }
-      }
-      
+     loadFromLocalStorage() {
+  const savedData = localStorage.getItem('siteData');
+  if (savedData) {
+    const parsed = JSON.parse(savedData);
+    // Garante que todas as partes existem
+    this.siteData = {
+      content: parsed.content || {},
+      media: {
+        gallery: (parsed.media && parsed.media.gallery) || [],
+        videos: (parsed.media && parsed.media.videos) || []
+      },
+      testimonials: parsed.testimonials || []
+    };
+    this.showToast("Dados carregados do armazenamento local", "info");
+    console.log("Dados carregados do localStorage");
+    this.renderContent();
+  } else {
+    this.loadDefaultData();
+    this.showToast("Dados padrão carregados", "info");
+  }
+}
+
+           
       saveToLocalStorage() {
         localStorage.setItem('siteData', JSON.stringify(this.siteData));
       }
