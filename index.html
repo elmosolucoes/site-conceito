@@ -1701,17 +1701,24 @@
       
       // Salvar tudo
       document.getElementById('saveAll').addEventListener('click', () => {
-        siteCMS.saveData();
-      });
+  // Atualiza siteData.content com os valores dos inputs do painel admin
+  Object.keys(siteCMS.siteData.content).forEach(field => {
+    const input = document.getElementById(field);
+    if (input) {
+      siteCMS.siteData.content[field] = input.value;
+    }
+  });
+  siteCMS.saveData();
+});
       
-      // Resetar tudo
-      document.getElementById('resetAll').addEventListener('click', () => {
-        if (confirm('Restaurar todos os dados para os valores padrão? Isso não pode ser desfeito.')) {
-          siteCMS.loadDefaultData();
-          siteCMS.saveData();
-          siteCMS.showToast("Dados restaurados para os valores padrão", "info");
-        }
-      });
+     // Resetar tudo
+document.getElementById('resetAll').addEventListener('click', () => {
+  if (confirm('Restaurar todos os dados para os valores padrão? Isso não pode ser desfeito.')) {
+    siteCMS.loadDefaultData();
+    siteCMS.saveData();
+    siteCMS.showToast("Dados restaurados para os valores padrão", "info");
+  }
+});
       
       // Trocar abas
       document.querySelectorAll('.admin-tab').forEach(tab => {
