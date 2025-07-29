@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="CONCEITO Consultoria">
   <meta name="robots" content="index, follow">
@@ -162,9 +162,14 @@
       transform: translateY(0);
       opacity: 1;
     }
+    /* Logo preview admin */
+    #companyLogoPreview {
+      max-height: 48px;
+      max-width: 200px;
+      display: block;
+    }
   </style>
 </head>
-
 <body class="bg-gray-50">
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
@@ -368,25 +373,12 @@
   <div id="site-content">
     <!-- Cabeçalho -->
     <header class="fixed w-full bg-white shadow-md z-30">
-      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center">
-          <h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">CONCEITO</h1>
-          <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
-        </div>
-        
-        <nav class="hidden md:flex space-x-8">
-          <a href="#services" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navServices">Serviços</a>
-          <a href="#methodology" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navMethod">Metodologia</a>
-          <a href="#results" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navResults">Resultados</a>
-          <a href="#testimonials" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navTestimonials">Depoimentos</a>
-          <a href="#contact" class="text-blue-900 hover:text-blue-600 font-medium transition-colors nav-link editable" data-field="navContact">Contato</a>
-        </nav>
-        
-        <button id="mobileMenuButton" aria-label="Abrir menu mobile" class="md:hidden text-blue-900 hover:text-blue-600">
-          <i class="fas fa-bars text-2xl"></i>
-        </button>
-      </div>
-    </header>
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center">
+      <!-- Aqui aparece automaticamente o nome da empresa OU a logo, conforme configurado no painel admin -->
+      <span id="companyNameContainer"></span>
+      <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero-gradient pt-32 pb-20 text-white">
@@ -1468,8 +1460,20 @@
       }
       
       renderContent() {
-        // Atualiza todos os elementos editáveis
+   // Cabeçalho dinâmico: nome ou logo
+        const companyNameContainer = document.getElementById('companyNameContainer');
+        if (companyNameContainer) {
+          const logo = this.siteData.content.companyLogo;
+          const name = this.siteData.content.companyName || "CONCEITO";
+          if (logo) {
+            companyNameContainer.innerHTML = `<img src="${logo}" alt="Logo da empresa" class="h-10 w-auto" style="max-height:40px;display:inline-block;vertical-align:middle;">`;
+          } else {
+            companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}<span class="edit-badge">✏️</span></h1>`;
+          }
+        }
+        // Atualiza todos os elementos editáveis (exceto companyName, que já foi acima)
         Object.keys(this.siteData.content).forEach(field => {
+          if (field === "companyName" || field === "companyLogo") return;
           document.querySelectorAll(`[data-field="${field}"]`).forEach(el => {
             if (el.tagName === 'IMG') {
               el.src = this.siteData.content[field];
@@ -1481,7 +1485,46 @@
             }
           });
         });
-        
+        // Renderiza galeria, vídeos, depoimentos normalmente...
+        this.renderGallery();
+        this.renderVideos();
+        this.renderTestimonials();
+      }
+
+      updateAdminForm() {
+        // Preenche os campos do painel admin com os dados atuais
+        Object.keys(this.siteData.content).forEach(field => {
+          const input = document.getElementById(field);
+          if (input) {
+            input.value = this.siteData.content[field];
+          }
+        });
+        // Atualiza preview da logo
+        const logoPreview = document.getElementById('companyLogoPreview');
+        const removeLogoBtn = document.getElementById('removeCompanyLogo');
+        if (logoPreview && removeLogoBtn) {
+          if (this.siteData.content.companyLogo) {
+            logoPreview.src = this.siteData.content.companyLogo;
+            logoPreview.classList.remove('hidden');
+            removeLogoBtn.classList.remove('hidden');
+          } else {
+            logoPreview.classList.add('hidden');
+            removeLogoBtn.classList.add('hidden');
+          }
+          const logoPreview = document.getElementById('companyLogoPreview');
+const removeLogoBtn = document.getElementById('removeCompanyLogo');
+if (logoPreview && removeLogoBtn) {
+  if (this.siteData.content.companyLogo) {
+    logoPreview.src = this.siteData.content.companyLogo;
+    logoPreview.classList.remove('hidden');
+    removeLogoBtn.classList.remove('hidden');
+  } else {
+    logoPreview.classList.add('hidden');
+    removeLogoBtn.classList.add('hidden');
+  }
+}
+        }
+      }
         // Renderiza galeria de fotos
         this.renderGallery();
         
@@ -1666,7 +1709,7 @@
     }
 
     // Inicializa o CMS quando o DOM estiver pronto
-    document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
       window.siteCMS = new SiteCMS();
       
       // Configura eventos
@@ -1738,6 +1781,28 @@ document.getElementById('resetAll').addEventListener('click', () => {
       // Upload de imagem hero
       document.getElementById('heroImageUpload').addEventListener('change', (e) => {
         siteCMS.handleImageUpload(e.target.files[0], 'heroImage');
+      });
+    });
+ // Upload de logo
+      document.getElementById('companyLogoUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          siteCMS.siteData.content.companyLogo = event.target.result;
+          document.getElementById('companyLogoPreview').src = event.target.result;
+          document.getElementById('companyLogoPreview').classList.remove('hidden');
+          document.getElementById('removeCompanyLogo').classList.remove('hidden');
+          siteCMS.renderContent();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('removeCompanyLogo').addEventListener('click', function() {
+        siteCMS.siteData.content.companyLogo = "";
+        document.getElementById('companyLogoPreview').classList.add('hidden');
+        document.getElementById('removeCompanyLogo').classList.add('hidden');
+        siteCMS.renderContent();
       });
     });
 
