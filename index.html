@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-   <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="CONCEITO Consultoria">
   <meta name="robots" content="index, follow">
@@ -1203,28 +1203,105 @@
         this.siteData.testimonials = [];
       }
       
-      loadFromLocalStorage() {
-        const savedData = localStorage.getItem('siteData');
-        if (savedData) {
-          const parsed = JSON.parse(savedData);
-          this.siteData = {
-            content: parsed.content || {},
+      async saveToLocalStorage() {
+        try {
+          // Cria uma cópia otimizada dos dados para salvar
+          const dataToSave = {
+            content: this.siteData.content,
             media: {
-              gallery: (parsed.media && parsed.media.gallery) || [],
-              videos: (parsed.media && parsed.media.videos) || []
+              // Remove dados binários de imagens da galeria (só mantemos URLs)
+              gallery: this.siteData.media.gallery.map(item => ({
+                url: item.url,
+                desc: item.desc
+              })),
+              videos: this.siteData.media.videos
             },
-            testimonials: parsed.testimonials || []
+            testimonials: this.siteData.testimonials
           };
-          this.showToast("Dados carregados do armazenamento local", "info");
-          this.renderContent();
-        } else {
-          this.loadDefaultData();
-          this.showToast("Dados padrão carregados", "info");
+
+          // Tenta comprimir os dados antes de salvar
+          const compressedData = this.compressData(dataToSave);
+          
+          // Verifica o tamanho aproximado
+          const dataSize = new Blob([compressedData]).size;
+          const maxSize = 4.5 * 1024 * 1024; // 4.5MB (deixamos margem de segurança)
+          
+          if (dataSize > maxSize) {
+            // Se os dados ainda forem muito grandes após compressão, limpamos a galeria
+            if (dataToSave.media.gallery.length > 10) {
+              dataToSave.media.gallery = dataToSave.media.gallery.slice(0, 10);
+              return this.saveToLocalStorage(); // Tenta novamente com menos dados
+            }
+            throw new Error('Dados muito grandes mesmo após otimização');
+          }
+          
+          localStorage.setItem('siteData', compressedData);
+        } catch (error) {
+          console.warn("Não foi possível salvar no localStorage:", error.message);
+          // Implementa fallback: mantém apenas os dados mais críticos
+          const criticalData = {
+            content: this.siteData.content,
+            media: {
+              gallery: [],
+              videos: this.siteData.media.videos
+            },
+            testimonials: this.siteData.testimonials
+          };
+          localStorage.setItem('siteCriticalData', this.compressData(criticalData));
         }
       }
-      
-      saveToLocalStorage() {
-        localStorage.setItem('siteData', JSON.stringify(this.siteData));
+
+      loadFromLocalStorage() {
+        try {
+          // Tenta carregar dados completos primeiro
+          const savedData = localStorage.getItem('siteData') || 
+                          localStorage.getItem('siteCriticalData');
+          
+          if (savedData) {
+            const parsed = this.decompressData(savedData);
+            
+            // Preenche os dados, garantindo que todas as estruturas existam
+            this.siteData = {
+              content: parsed.content || {},
+              media: {
+                gallery: (parsed.media && parsed.media.gallery) || [],
+                videos: (parsed.media && parsed.media.videos) || []
+              },
+              testimonials: parsed.testimonials || []
+            };
+            
+            this.showToast("Dados carregados do armazenamento local", "info");
+            this.renderContent();
+          } else {
+            this.loadDefaultData();
+            this.showToast("Dados padrão carregados", "info");
+          }
+        } catch (error) {
+          console.error("Erro ao carregar do localStorage:", error);
+          this.loadDefaultData();
+        }
+      }
+
+      // Métodos de compressão simples (usando JSON e codificação base64)
+      compressData(data) {
+        try {
+          const jsonString = JSON.stringify(data);
+          return btoa(unescape(encodeURIComponent(jsonString)));
+        } catch (e) {
+          console.warn("Falha na compressão, salvando sem compressão");
+          return JSON.stringify(data);
+        }
+      }
+
+      decompressData(compressed) {
+        try {
+          // Tenta descomprimir como base64 primeiro
+          const jsonString = decodeURIComponent(escape(atob(compressed)));
+          return JSON.parse(jsonString);
+        } catch (e) {
+          // Se falhar, assume que não está comprimido
+          return JSON.parse(compressed);
+        }
       }
       
       async saveData() {
