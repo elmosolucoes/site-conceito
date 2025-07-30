@@ -22,6 +22,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
   <style>
     :root {
@@ -168,6 +169,45 @@
       max-width: 200px;
       display: block;
     }
+    /* Custom sections */
+    .custom-section {
+      padding: 80px 0;
+    }
+    .custom-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: #001F3F;
+      margin-bottom: 1.5rem;
+    }
+    /* Netlify form styles */
+    .netlify-form {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .netlify-form input[type="text"],
+    .netlify-form input[type="email"],
+    .netlify-form input[type="tel"],
+    .netlify-form textarea,
+    .netlify-form input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      margin-bottom: 1rem;
+    }
+    .netlify-form button[type="submit"] {
+      background-color: #0066CC;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .netlify-form button[type="submit"]:hover {
+      background-color: #0055AA;
+    }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -228,6 +268,7 @@
         <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
         <button class="admin-tab px-4 py-2" data-tab="media" aria-label="Aba Mídia">Mídia</button>
         <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
+        <button class="admin-tab px-4 py-2" data-tab="sections" aria-label="Aba Seções">Seções</button>
       </div>
       
       <!-- Conteúdo -->
@@ -242,6 +283,16 @@
             <div>
               <label class="block text-sm font-medium mb-1">Tagline</label>
               <input type="text" id="siteTagline" aria-label="Tagline" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Logo da Empresa</label>
+              <input type="file" id="companyLogoUpload" accept="image/*" class="hidden">
+              <button onclick="document.getElementById('companyLogoUpload').click()" aria-label="Selecionar logo" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-upload mr-2"></i>Selecionar Logo
+              </button>
+              <div class="mt-4">
+                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden" style="max-height: 60px;">
+              </div>
             </div>
           </div>
         </div>
@@ -262,8 +313,16 @@
               <input type="text" id="heroCtaPrimary" aria-label="Botão Primário" class="w-full p-2 border rounded">
             </div>
             <div>
+              <label class="block text-sm font-medium mb-1">Link Botão Primário</label>
+              <input type="text" id="heroCtaPrimaryLink" aria-label="Link Botão Primário" class="w-full p-2 border rounded" placeholder="#contact">
+            </div>
+            <div>
               <label class="block text-sm font-medium mb-1">Botão Secundário</label>
               <input type="text" id="heroCtaSecondary" aria-label="Botão Secundário" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
+              <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
             </div>
           </div>
         </div>
@@ -366,6 +425,42 @@
           </label>
         </div>
       </div>
+      
+      <!-- Seções -->
+      <div id="sections-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Gerenciar Seções</h4>
+          <div id="sectionsList" class="space-y-4 mb-6">
+            <!-- Seções existentes serão listadas aqui -->
+          </div>
+          
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h5 class="font-bold mb-3">Adicionar Nova Seção</h5>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome da Seção</label>
+                <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">ID da Seção (sem espaços)</label>
+                <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Tipo de Seção</label>
+                <select id="newSectionType" class="w-full p-2 border rounded">
+                  <option value="text">Texto Simples</option>
+                  <option value="cards">Cards</option>
+                  <option value="form">Formulário</option>
+                  <option value="gallery">Galeria</option>
+                </select>
+              </div>
+              <button onclick="addNewSection()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-plus mr-2"></i>Adicionar Seção
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -379,11 +474,13 @@
           <span id="companyNameContainer"></span>
           <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
         </div>
-        <nav class="hidden md:flex space-x-8">
+        <nav class="hidden md:flex space-x-8" id="mainNav">
           <a href="#services" class="nav-link text-[#001F3F] font-medium">Serviços</a>
           <a href="#methodology" class="nav-link text-[#001F3F] font-medium">Metodologia</a>
           <a href="#results" class="nav-link text-[#001F3F] font-medium">Resultados</a>
+          <a href="#testimonials" class="nav-link text-[#001F3F] font-medium">Depoimentos</a>
           <a href="#contact" class="nav-link text-[#001F3F] font-medium">Contato</a>
+          <!-- Links dinâmicos para seções adicionadas serão inseridos aqui -->
         </nav>
         <button class="md:hidden text-[#001F3F]">
           <i class="fas fa-bars text-xl"></i>
@@ -405,11 +502,11 @@
               <span class="edit-badge">✏️</span>
             </p>
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <a href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">
+              <a id="heroPrimaryBtn" href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">
                 Fale com um especialista
                 <span class="edit-badge">✏️</span>
               </a>
-              <a href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">
+              <a id="heroSecondaryBtn" href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">
                 Conheça nossa metodologia
                 <span class="edit-badge">✏️</span>
               </a>
@@ -737,7 +834,7 @@
           </p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsContainer">
           <!-- Testimonial 1 -->
           <div class="testimonial-card rounded-xl p-6 shadow-lg relative editable-array" data-array="testimonials" data-index="0">
             <div class="flex items-center mb-4">
@@ -860,6 +957,56 @@
         </div>
       </div>
     </section>
+
+    <!-- Seção "Envie Seu Currículo" -->
+    <section id="careers" class="py-20 bg-white custom-section">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="careersTitle">
+            Envie Seu Currículo
+            <span class="edit-badge">✏️</span>
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="careersSubtitle">
+            Faça parte do nosso time de consultores especializados
+            <span class="edit-badge">✏️</span>
+          </p>
+        </div>
+
+        <div class="max-w-2xl mx-auto netlify-form">
+          <form name="careers" method="POST" data-netlify="true" enctype="multipart/form-data">
+            <input type="hidden" name="form-name" value="careers">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome Completo</label>
+                <input type="text" name="name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input type="email" name="email" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Telefone</label>
+                <input type="tel" name="phone" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Mensagem</label>
+                <textarea name="message" rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Currículo (PDF)</label>
+                <input type="file" name="resume" accept=".pdf" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                Enviar Currículo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seções personalizadas serão inseridas aqui -->
+    <div id="custom-sections-container"></div>
 
     <!-- Contact Section -->
     <section id="contact" class="py-20 hero-gradient">
@@ -1017,12 +1164,13 @@
               Links Rápidos
               <span class="edit-badge">✏️</span>
             </h3>
-            <ul class="space-y-2">
+            <ul class="space-y-2" id="footerLinks">
               <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Serviços</a></li>
               <li><a href="#methodology" class="text-gray-300 hover:text-white transition-colors">Metodologia</a></li>
               <li><a href="#results" class="text-gray-300 hover:text-white transition-colors">Resultados</a></li>
               <li><a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Depoimentos</a></li>
               <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contato</a></li>
+              <!-- Links dinâmicos para seções adicionadas serão inseridos aqui -->
             </ul>
           </div>
           
@@ -1071,6 +1219,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const auth = firebase.auth();
+    const storage = firebase.storage();
 
     // Sistema CMS Completo com Firebase
     class SiteCMS {
@@ -1084,7 +1233,12 @@
             gallery: [],
             videos: []
           },
-          testimonials: []
+          testimonials: [],
+          sections: [],
+          navigation: {
+            main: [],
+            footer: []
+          }
         };
         this.init();
       }
@@ -1156,7 +1310,12 @@
                 gallery: (parsed.media && parsed.media.gallery) || [],
                 videos: (parsed.media && parsed.media.videos) || []
               },
-              testimonials: parsed.testimonials || []
+              testimonials: parsed.testimonials || [],
+              sections: parsed.sections || [],
+              navigation: parsed.navigation || {
+                main: [],
+                footer: []
+              }
             };
             this.showToast("Dados carregados do Firebase", "success");
           } else {
@@ -1192,6 +1351,11 @@
             if (el.alt && el.getAttribute('data-alt-field')) {
               this.siteData.content[el.getAttribute('data-alt-field')] = el.alt;
             }
+          } else if (el.tagName === 'A' && el.hasAttribute('href')) {
+            // Se for um link, armazena o href em um campo especial
+            const linkField = field + 'Link';
+            this.siteData.content[linkField] = el.getAttribute('href');
+            this.siteData.content[field] = el.textContent;
           } else {
             this.siteData.content[field] = el.textContent;
           }
@@ -1201,6 +1365,25 @@
         this.siteData.media.gallery = [];
         this.siteData.media.videos = [];
         this.siteData.testimonials = [];
+        this.siteData.sections = [];
+        
+        // Links de navegação padrão
+        this.siteData.navigation = {
+          main: [
+            { text: "Serviços", href: "#services" },
+            { text: "Metodologia", href: "#methodology" },
+            { text: "Resultados", href: "#results" },
+            { text: "Depoimentos", href: "#testimonials" },
+            { text: "Contato", href: "#contact" }
+          ],
+          footer: [
+            { text: "Serviços", href: "#services" },
+            { text: "Metodologia", href: "#methodology" },
+            { text: "Resultados", href: "#results" },
+            { text: "Depoimentos", href: "#testimonials" },
+            { text: "Contato", href: "#contact" }
+          ]
+        };
       }
       
       async saveToLocalStorage() {
@@ -1216,7 +1399,9 @@
               })),
               videos: this.siteData.media.videos
             },
-            testimonials: this.siteData.testimonials
+            testimonials: this.siteData.testimonials,
+            sections: this.siteData.sections,
+            navigation: this.siteData.navigation
           };
 
           // Tenta comprimir os dados antes de salvar
@@ -1245,7 +1430,9 @@
               gallery: [],
               videos: this.siteData.media.videos
             },
-            testimonials: this.siteData.testimonials
+            testimonials: this.siteData.testimonials,
+            sections: this.siteData.sections,
+            navigation: this.siteData.navigation
           };
           localStorage.setItem('siteCriticalData', this.compressData(criticalData));
         }
@@ -1267,7 +1454,12 @@
                 gallery: (parsed.media && parsed.media.gallery) || [],
                 videos: (parsed.media && parsed.media.videos) || []
               },
-              testimonials: parsed.testimonials || []
+              testimonials: parsed.testimonials || [],
+              sections: parsed.sections || [],
+              navigation: parsed.navigation || {
+                main: [],
+                footer: []
+              }
             };
             
             this.showToast("Dados carregados do armazenamento local", "info");
@@ -1493,8 +1685,17 @@
               document.getElementById('heroImagePreview').src = this.siteData.content[field];
               document.getElementById('heroImagePreview').classList.remove('hidden');
             }
+            
+            // Atualiza preview da logo
+            if (field === 'companyLogo') {
+              document.getElementById('companyLogoPreview').src = this.siteData.content[field];
+              document.getElementById('companyLogoPreview').classList.remove('hidden');
+            }
           }
         });
+        
+        // Atualiza lista de seções
+        this.renderSectionsList();
       }
       
       enableInlineEdit(element) {
@@ -1523,23 +1724,64 @@
         });
       }
       
-      handleImageUpload(file, field) {
+      async handleImageUpload(file, field) {
         if (!file) return;
         
-        // Simulação de upload - na prática, você enviaria para um servidor
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.siteData.content[field] = e.target.result;
-          this.siteData.content['heroImageAlt'] = document.getElementById('heroImageAlt').value || 'Imagem principal';
+        try {
+          this.showToast("Enviando imagem...", "info");
           
-          // Atualiza a visualização
-          document.getElementById('hero-image').src = e.target.result;
-          document.getElementById('heroImagePreview').src = e.target.result;
-          document.getElementById('heroImagePreview').classList.remove('hidden');
+          // Cria um nome único para o arquivo
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${field}-${Date.now()}.${fileExt}`;
           
-          this.saveData();
-        };
-        reader.readAsDataURL(file);
+          // Faz upload para o Firebase Storage
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`images/${fileName}`);
+          const uploadTask = fileRef.put(file);
+          
+          // Monitora progresso
+          uploadTask.on('state_changed', 
+            (snapshot) => {
+              // Progresso do upload
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log(`Upload progress: ${progress}%`);
+            },
+            (error) => {
+              console.error("Erro no upload:", error);
+              this.showToast("Erro ao enviar imagem", "error");
+            },
+            async () => {
+              // Upload completo - obtém URL de download
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              
+              // Atualiza os dados do site
+              this.siteData.content[field] = downloadURL;
+              
+              if (field === 'heroImage') {
+                this.siteData.content['heroImageAlt'] = document.getElementById('heroImageAlt').value || 'Imagem principal';
+              }
+              
+              // Salva os dados
+              await this.saveData();
+              
+              // Atualiza a visualização
+              if (field === 'heroImage') {
+                document.getElementById('hero-image').src = downloadURL;
+                document.getElementById('heroImagePreview').src = downloadURL;
+                document.getElementById('heroImagePreview').classList.remove('hidden');
+              } else if (field === 'companyLogo') {
+                document.getElementById('companyLogoPreview').src = downloadURL;
+                document.getElementById('companyLogoPreview').classList.remove('hidden');
+                this.renderContent(); // Força re-render do cabeçalho
+              }
+              
+              this.showToast("Imagem enviada com sucesso!", "success");
+            }
+          );
+        } catch (error) {
+          console.error("Erro ao processar imagem:", error);
+          this.showToast("Erro ao processar imagem", "error");
+        }
       }
       
       renderContent() {
@@ -1563,6 +1805,18 @@
               if (el.alt && el.getAttribute('data-alt-field')) {
                 el.alt = this.siteData.content[el.getAttribute('data-alt-field')] || '';
               }
+            } else if (el.tagName === 'A' && field.endsWith('Link')) {
+              // Se for um campo de link, atualiza o href
+              const contentField = field.replace('Link', '');
+              const linkText = this.siteData.content[contentField] || '';
+              
+              // Atualiza o texto do botão se existir
+              if (el.textContent !== linkText) {
+                el.textContent = linkText;
+              }
+              
+              // Atualiza o href
+              el.href = this.siteData.content[field] || '#';
             } else {
               el.textContent = this.siteData.content[field];
             }
@@ -1577,6 +1831,12 @@
         
         // Renderiza depoimentos
         this.renderTestimonials();
+        
+        // Renderiza seções personalizadas
+        this.renderCustomSections();
+        
+        // Renderiza navegação
+        this.renderNavigation();
       }
       
       renderGallery() {
@@ -1622,14 +1882,16 @@
       }
       
       renderTestimonials() {
-        const container = document.querySelector('#testimonials .grid');
+        const container = document.getElementById('testimonialsContainer');
         if (!container) return;
         
-        // Mantém o primeiro item como template
-        while (container.children.length > 3) {
-          container.removeChild(container.lastChild);
+        // Limpa apenas os depoimentos dinâmicos (mantendo os 3 primeiros)
+        const children = Array.from(container.children);
+        for (let i = 3; i < children.length; i++) {
+          container.removeChild(children[i]);
         }
         
+        // Adiciona depoimentos adicionais
         this.siteData.testimonials.forEach((testimonial, index) => {
           if (index < 3) return; // Já temos 3 depoimentos iniciais
           
@@ -1659,6 +1921,196 @@
             </div>
             <button class="remove-btn absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hidden" onclick="siteCMS.removeTestimonial(${index})">
               ×
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+      
+      renderCustomSections() {
+        const container = document.getElementById('custom-sections-container');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        this.siteData.sections.forEach((section, index) => {
+          const sectionElement = document.createElement('section');
+          sectionElement.id = section.id;
+          sectionElement.className = 'py-20 bg-white custom-section';
+          
+          // Cria o conteúdo baseado no tipo de seção
+          let sectionContent = '';
+          
+          switch(section.type) {
+            case 'text':
+              sectionContent = `
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="text-center mb-16">
+                    <h2 class="custom-section-title editable" data-field="section-${index}-title">
+                      ${section.title}
+                      <span class="edit-badge">✏️</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
+                      ${section.subtitle}
+                      <span class="edit-badge">✏️</span>
+                    </p>
+                  </div>
+                  <div class="max-w-4xl mx-auto editable" data-field="section-${index}-content">
+                    ${section.content}
+                    <span class="edit-badge">✏️</span>
+                  </div>
+                </div>
+              `;
+              break;
+              
+            case 'cards':
+              sectionContent = `
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="text-center mb-16">
+                    <h2 class="custom-section-title editable" data-field="section-${index}-title">
+                      ${section.title}
+                      <span class="edit-badge">✏️</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
+                      ${section.subtitle}
+                      <span class="edit-badge">✏️</span>
+                    </p>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${section.cards.map((card, cardIndex) => `
+                      <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                        <div class="text-center mb-6">
+                          <i class="${card.icon} text-5xl service-icon mb-4"></i>
+                          <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="section-${index}-card-${cardIndex}-title">
+                            ${card.title}
+                            <span class="edit-badge">✏️</span>
+                          </h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="section-${index}-card-${cardIndex}-content">
+                          ${card.content}
+                          <span class="edit-badge">✏️</span>
+                        </p>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+              break;
+              
+            case 'form':
+              sectionContent = `
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="text-center mb-16">
+                    <h2 class="custom-section-title editable" data-field="section-${index}-title">
+                      ${section.title}
+                      <span class="edit-badge">✏️</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
+                      ${section.subtitle}
+                      <span class="edit-badge">✏️</span>
+                    </p>
+                  </div>
+                  <div class="max-w-2xl mx-auto netlify-form">
+                    <form name="${section.formName}" method="POST" data-netlify="true" enctype="multipart/form-data">
+                      <input type="hidden" name="form-name" value="${section.formName}">
+                      <div class="space-y-6">
+                        ${section.formFields.map(field => `
+                          <div>
+                            <label class="block text-sm font-medium mb-1">${field.label}</label>
+                            <input type="${field.type}" name="${field.name}" ${field.required ? 'required' : ''} 
+                              class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                          </div>
+                        `).join('')}
+                        <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                          ${section.buttonText}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              `;
+              break;
+              
+            case 'gallery':
+              sectionContent = `
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                  <div class="text-center mb-16">
+                    <h2 class="custom-section-title editable" data-field="section-${index}-title">
+                      ${section.title}
+                      <span class="edit-badge">✏️</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
+                      ${section.subtitle}
+                      <span class="edit-badge">✏️</span>
+                    </p>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    ${section.images.map((image, imgIndex) => `
+                      <div class="relative">
+                        <img src="${image.url}" alt="${image.desc}" class="w-full h-64 object-cover rounded-lg">
+                        <p class="mt-2 editable" data-field="section-${index}-image-${imgIndex}-desc">${image.desc}</p>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+              break;
+          }
+          
+          sectionElement.innerHTML = sectionContent;
+          container.appendChild(sectionElement);
+        });
+      }
+      
+      renderNavigation() {
+        const mainNav = document.getElementById('mainNav');
+        const footerLinks = document.getElementById('footerLinks');
+        
+        if (!mainNav || !footerLinks) return;
+        
+        // Limpa os links dinâmicos (mantendo os links padrão)
+        const mainChildren = Array.from(mainNav.children);
+        const footerChildren = Array.from(footerLinks.children);
+        
+        // Remove apenas os links dinâmicos (assumindo que os primeiros são fixos)
+        for (let i = 5; i < mainChildren.length; i++) {
+          mainNav.removeChild(mainChildren[i]);
+        }
+        
+        for (let i = 5; i < footerChildren.length; i++) {
+          footerLinks.removeChild(footerChildren[i]);
+        }
+        
+        // Adiciona links para seções personalizadas
+        this.siteData.sections.forEach(section => {
+          const mainLink = document.createElement('a');
+          mainLink.href = `#${section.id}`;
+          mainLink.className = 'nav-link text-[#001F3F] font-medium';
+          mainLink.textContent = section.title;
+          mainNav.appendChild(mainLink);
+          
+          const footerLink = document.createElement('li');
+          footerLink.innerHTML = `<a href="#${section.id}" class="text-gray-300 hover:text-white transition-colors">${section.title}</a>`;
+          footerLinks.appendChild(footerLink);
+        });
+      }
+      
+      renderSectionsList() {
+        const container = document.getElementById('sectionsList');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        this.siteData.sections.forEach((section, index) => {
+          const div = document.createElement('div');
+          div.className = 'flex justify-between items-center bg-gray-100 p-3 rounded';
+          div.innerHTML = `
+            <div>
+              <h5 class="font-medium">${section.title}</h5>
+              <p class="text-sm text-gray-600">ID: ${section.id} | Tipo: ${section.type}</p>
+            </div>
+            <button onclick="siteCMS.removeSection(${index})" class="text-red-500 hover:text-red-700">
+              <i class="fas fa-trash"></i>
             </button>
           `;
           container.appendChild(div);
@@ -1750,6 +2202,102 @@
           this.showToast("Depoimento removido", "info");
         }
       }
+      
+      addNewSection() {
+        const name = document.getElementById('newSectionName').value;
+        const id = document.getElementById('newSectionId').value;
+        const type = document.getElementById('newSectionType').value;
+        
+        if (!name || !id) {
+          alert('Por favor, preencha o nome e o ID da seção');
+          return;
+        }
+        
+        // Cria a seção baseada no tipo
+        let newSection = {
+          id: id,
+          title: name,
+          type: type,
+          subtitle: 'Subtítulo da seção'
+        };
+        
+        switch(type) {
+          case 'text':
+            newSection.content = '<p>Conteúdo da seção. Edite este texto para adicionar seu conteúdo personalizado.</p>';
+            break;
+            
+          case 'cards':
+            newSection.cards = [
+              {
+                title: 'Card 1',
+                content: 'Conteúdo do card 1',
+                icon: 'fas fa-star'
+              },
+              {
+                title: 'Card 2',
+                content: 'Conteúdo do card 2',
+                icon: 'fas fa-heart'
+              },
+              {
+                title: 'Card 3',
+                content: 'Conteúdo do card 3',
+                icon: 'fas fa-check'
+              }
+            ];
+            break;
+            
+          case 'form':
+            newSection.formName = `form-${id}`;
+            newSection.buttonText = 'Enviar';
+            newSection.formFields = [
+              { label: 'Nome Completo', name: 'name', type: 'text', required: true },
+              { label: 'Email', name: 'email', type: 'email', required: true },
+              { label: 'Mensagem', name: 'message', type: 'textarea', required: false }
+            ];
+            break;
+            
+          case 'gallery':
+            newSection.images = [];
+            break;
+        }
+        
+        this.siteData.sections.push(newSection);
+        
+        // Adiciona aos menus de navegação
+        this.siteData.navigation.main.push({
+          text: name,
+          href: `#${id}`
+        });
+        
+        this.siteData.navigation.footer.push({
+          text: name,
+          href: `#${id}`
+        });
+        
+        this.saveData();
+        this.showToast("Seção adicionada com sucesso", "success");
+        
+        // Limpa os campos
+        document.getElementById('newSectionName').value = '';
+        document.getElementById('newSectionId').value = '';
+      }
+      
+      removeSection(index) {
+        if (confirm('Remover esta seção? Isso também removerá o link do menu.')) {
+          this.siteData.sections.splice(index, 1);
+          
+          // Remove dos menus de navegação (assumindo que está na mesma posição)
+          if (this.siteData.navigation.main.length > 5) {
+            this.siteData.navigation.main.splice(index + 5, 1);
+          }
+          if (this.siteData.navigation.footer.length > 5) {
+            this.siteData.navigation.footer.splice(index + 5, 1);
+          }
+          
+          this.saveData();
+          this.showToast("Seção removida", "info");
+        }
+      }
     }
 
     // Inicializa o CMS quando o DOM estiver pronto
@@ -1795,6 +2343,19 @@
             siteCMS.siteData.content[field] = input.value;
           }
         });
+        
+        // Atualiza links dos botões do hero
+        const heroPrimaryBtn = document.getElementById('heroPrimaryBtn');
+        const heroSecondaryBtn = document.getElementById('heroSecondaryBtn');
+        
+        if (heroPrimaryBtn && siteCMS.siteData.content.heroCtaPrimaryLink) {
+          heroPrimaryBtn.href = siteCMS.siteData.content.heroCtaPrimaryLink;
+        }
+        
+        if (heroSecondaryBtn && siteCMS.siteData.content.heroCtaSecondaryLink) {
+          heroSecondaryBtn.href = siteCMS.siteData.content.heroCtaSecondaryLink;
+        }
+        
         siteCMS.saveData();
       });
       
@@ -1826,6 +2387,11 @@
       document.getElementById('heroImageUpload').addEventListener('change', (e) => {
         siteCMS.handleImageUpload(e.target.files[0], 'heroImage');
       });
+      
+      // Upload de logo da empresa
+      document.getElementById('companyLogoUpload').addEventListener('change', (e) => {
+        siteCMS.handleImageUpload(e.target.files[0], 'companyLogo');
+      });
     });
 
     // Funções globais para chamadas a partir do HTML
@@ -1843,6 +2409,14 @@
     
     function removeTestimonial(index) {
       siteCMS.removeTestimonial(index);
+    }
+    
+    function addNewSection() {
+      siteCMS.addNewSection();
+    }
+    
+    function removeSection(index) {
+      siteCMS.removeSection(index);
     }
   </script>
 </body>
