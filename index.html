@@ -221,11 +221,11 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Email</label>
-          <input type="email" id="adminEmail" aria-label="Email do administrador" class="w-full p-2 border rounded" placeholder="seu@email.com">
+          <input type="email" id="adminEmail" aria-label="Email do administrador" class="w-full p-2 border rounded" placeholder="seu@email.com" required>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Senha</label>
-          <input type="password" id="adminPass" aria-label="Senha do administrador" class="w-full p-2 border rounded" placeholder="••••••••">
+          <input type="password" id="adminPass" aria-label="Senha do administrador" class="w-full p-2 border rounded" placeholder="••••••••" required>
         </div>
         <div id="loginError" class="text-red-500 text-sm hidden"></div>
         <button id="loginButton" aria-label="Entrar no painel administrativo" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded flex items-center justify-center">
@@ -439,11 +439,11 @@
             <div class="space-y-4">
               <div>
                 <label class="block text-sm font-medium mb-1">Nome da Seção</label>
-                <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco">
+                <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco" required>
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">ID da Seção (sem espaços)</label>
-                <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco">
+                <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco" required pattern="[a-z0-9-]+" title="Use apenas letras minúsculas, números e hífens">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Tipo de Seção</label>
@@ -495,20 +495,16 @@
           <div class="md:w-1/2 mb-12 md:mb-0">
             <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle">
               <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
-              
             </h1>
             <p class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">
               Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
-              
             </p>
             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <a id="heroPrimaryBtn" href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">
                 Fale com um especialista
-                
               </a>
               <a id="heroSecondaryBtn" href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">
                 Conheça nossa metodologia
-                
               </a>
             </div>
           </div>
@@ -528,11 +524,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="servicesTitle">
             Nossos Serviços
-            
           </h2>
           <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="servicesSubtitle">
             Soluções completas e personalizadas para transformar sua empresa
-            
           </p>
         </div>
         
@@ -543,12 +537,10 @@
               <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title">
                 Estratégia Empresarial
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc">
               Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature1">Planejamento estratégico</span></li>
@@ -563,12 +555,10 @@
               <i class="fas fa-users-cog text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title">
                 Gestão de Processos
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc">
               Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature1">Mapeamento de processos</span></li>
@@ -583,12 +573,10 @@
               <i class="fas fa-chart-pie text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title">
                 Análise Financeira
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc">
               Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature1">Análise de custos</span></li>
@@ -603,12 +591,10 @@
               <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">
                 Marketing Estratégico
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">
               Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Pesquisa de mercado</span></li>
@@ -623,12 +609,10 @@
               <i class="fas fa-user-tie text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service5Title">
                 Gestão de Pessoas
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service5Desc">
               Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature1">Recrutamento estratégico</span></li>
@@ -643,12 +627,10 @@
               <i class="fas fa-calculator text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service6Title">
                 Transformação Digital
-                
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service6Desc">
               Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.
-              
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature1">Diagnóstico digital</span></li>
@@ -666,11 +648,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="methodologyTitle">
             Nossa Metodologia
-            
           </h2>
           <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="methodologySubtitle">
             Processo estruturado e comprovado para garantir resultados excepcionais
-            
           </p>
         </div>
 
@@ -682,11 +662,9 @@
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step1Title">
               Diagnóstico
-              
             </h3>
             <p class="text-gray-600 editable" data-field="step1Desc">
               Análise profunda da situação atual da empresa e identificação de oportunidades.
-              
             </p>
           </div>
           
@@ -697,11 +675,9 @@
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step2Title">
               Planejamento
-              
             </h3>
             <p class="text-gray-600 editable" data-field="step2Desc">
               Desenvolvimento de estratégias personalizadas com metas e indicadores claros.
-              
             </p>
           </div>
           
@@ -712,11 +688,9 @@
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step3Title">
               Implementação
-              
             </h3>
             <p class="text-gray-600 editable" data-field="step3Desc">
               Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.
-              
             </p>
           </div>
           
@@ -727,11 +701,9 @@
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step4Title">
               Resultados
-              
             </h3>
             <p class="text-gray-600 editable" data-field="step4Desc">
               Entrega de resultados mensuráveis e plano de sustentabilidade para o futuro.
-              
             </p>
           </div>
         </div>
@@ -744,11 +716,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="resultsTitle">
             Resultados Comprovados
-            
           </h2>
           <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="resultsSubtitle">
             Números que demonstram o impacto real das nossas consultorias
-            
           </p>
         </div>
 
@@ -757,15 +727,12 @@
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">
               +150%
-              
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat1Title">
               Aumento de Receita
-              
             </h3>
             <p class="text-gray-600 editable" data-field="stat1Desc">
               Média de crescimento dos nossos clientes
-              
             </p>
           </div>
           
@@ -773,15 +740,12 @@
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">
               12
-              
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat2Title">
               Meses
-              
             </h3>
             <p class="text-gray-600 editable" data-field="stat2Desc">
               Tempo médio para transformação completa
-              
             </p>
           </div>
           
@@ -789,15 +753,12 @@
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">
               95%
-              
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat3Title">
               Satisfação
-              
             </h3>
             <p class="text-gray-600 editable" data-field="stat3Desc">
               Taxa de satisfação dos nossos clientes
-              
             </p>
           </div>
           
@@ -805,15 +766,12 @@
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">
               +300
-              
             </div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat4Title">
               Empresas
-              
             </h3>
             <p class="text-gray-600 editable" data-field="stat4Desc">
               Transformadas com nossa metodologia
-              
             </p>
           </div>
         </div>
@@ -826,11 +784,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="testimonialsTitle">
             O que nossos clientes dizem
-            
           </h2>
           <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="testimonialsSubtitle">
             Depoimentos reais de empresários que transformaram seus negócios
-            
           </p>
         </div>
         
@@ -927,7 +883,6 @@
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="galleryTitle">
           Galeria de Fotos
-          
         </h2>
         <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Itens da galeria serão adicionados dinamicamente -->
@@ -945,7 +900,6 @@
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="videosTitle">
           Vídeos
-          
         </h2>
         <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Itens de vídeo serão adicionados dinamicamente -->
@@ -964,11 +918,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="careersTitle">
             Envie Seu Currículo
-            
           </h2>
           <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="careersSubtitle">
             Faça parte do nosso time de consultores especializados
-            
           </p>
         </div>
 
@@ -1014,11 +966,9 @@
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-white mb-6 editable" style="font-family: 'Bebas Neue';" data-field="contactTitle">
             Vamos Transformar Sua Empresa
-            
           </h2>
           <p class="text-xl text-white max-w-3xl mx-auto editable" data-field="contactSubtitle">
             Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
-            
           </p>
         </div>
 
@@ -1027,16 +977,15 @@
           <div class="bg-white rounded-2xl p-8 shadow-2xl">
             <h3 class="text-2xl font-bold text-[#001F3F] mb-6 editable" data-field="contactFormTitle">
               Solicite uma Consultoria
-              
             </h3>
             <form id="contact-form" class="space-y-6">
               <div>
                 <label class="block text-sm font-medium mb-1">Nome Completo</label>
-                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Telefone</label>
@@ -1048,7 +997,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Mensagem</label>
-                <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required></textarea>
               </div>
               <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Enviar Mensagem
@@ -1060,7 +1009,6 @@
           <div class="text-white">
             <h3 class="text-2xl font-bold mb-8 editable" data-field="contactInfoTitle">
               Informações de Contato
-              
             </h3>
             
             <div class="space-y-6">
@@ -1071,11 +1019,9 @@
                 <div>
                   <h4 class="font-semibold editable" data-field="contactPhoneLabel">
                     Telefone
-                    
                   </h4>
                   <p class="text-gray-200 editable" data-field="phone">
                     (11) 9999-9999
-                    
                   </p>
                 </div>
               </div>
@@ -1087,11 +1033,9 @@
                 <div>
                   <h4 class="font-semibold editable" data-field="contactEmailLabel">
                     Email
-                    
                   </h4>
                   <p class="text-gray-200 editable" data-field="email">
                     contato@conceito.com.br
-                    
                   </p>
                 </div>
               </div>
@@ -1103,11 +1047,9 @@
                 <div>
                   <h4 class="font-semibold editable" data-field="contactAddressLabel">
                     Endereço
-                    
                   </h4>
                   <p class="text-gray-200 editable" data-field="address">
                     Av. Paulista, 1000 - São Paulo/SP
-                    
                   </p>
                 </div>
               </div>
@@ -1119,11 +1061,9 @@
                 <div>
                   <h4 class="font-semibold editable" data-field="contactHoursLabel">
                     Horário de Atendimento
-                    
                   </h4>
                   <p class="text-gray-200 editable" data-field="hours">
                     Segunda a Sexta, das 9h às 18h
-                    
                   </p>
                 </div>
               </div>
@@ -1140,11 +1080,9 @@
           <div>
             <h3 class="text-2xl font-bold mb-4 editable" data-field="footerTitle">
               CONCEITO
-              
             </h3>
             <p class="text-gray-300 editable" data-field="footerAbout">
               Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.
-              
             </p>
             <div class="flex space-x-4 mt-4">
               <a href="#" class="text-gray-300 hover:text-white">
@@ -1162,7 +1100,6 @@
           <div>
             <h3 class="text-xl font-bold mb-4 editable" data-field="footerLinksTitle">
               Links Rápidos
-              
             </h3>
             <ul class="space-y-2" id="footerLinks">
               <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Serviços</a></li>
@@ -1177,14 +1114,12 @@
           <div>
             <h3 class="text-xl font-bold mb-4 editable" data-field="footerNewsletterTitle">
               Newsletter
-              
             </h3>
             <p class="text-gray-300 mb-4 editable" data-field="footerNewsletterText">
               Assine nossa newsletter para receber dicas e novidades.
-              
             </p>
             <form class="flex">
-              <input type="email" placeholder="Seu email" class="flex-1 p-2 rounded-l-lg focus:outline-none text-gray-800">
+              <input type="email" placeholder="Seu email" class="flex-1 p-2 rounded-l-lg focus:outline-none text-gray-800" required>
               <button type="submit" class="bg-[#0066CC] hover:bg-[#0055AA] text-white px-4 rounded-r-lg">
                 <i class="fas fa-paper-plane"></i>
               </button>
@@ -1194,7 +1129,6 @@
         <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
           <p class="editable" data-field="footerCopyright">
             &copy; 2024 CONCEITO Consultoria. Todos os direitos reservados.
-            
           </p>
         </div>
       </div>
@@ -1209,7 +1143,7 @@
       authDomain: "conceito-19d28.firebaseapp.com",
       databaseURL: "https://conceito-19d28-default-rtdb.firebaseio.com",
       projectId: "conceito-19d28",
-      storageBucket: "conceito-19d28.firebasestorage.app",
+      storageBucket: "conceito-19d28.appspot.com",
       messagingSenderId: "549152952403",
       appId: "1:549152952403:web:8072e708a85f8e18ea36a6",
       measurementId: "G-X1ZM57VC10"
@@ -1246,6 +1180,7 @@
       init() {
         this.setupFirebaseListeners();
         this.checkAuthState();
+        this.setupEventListeners();
       }
       
       setupFirebaseListeners() {
@@ -1275,6 +1210,89 @@
             document.getElementById('firebaseConnectionStatus').textContent = "Desconectado";
             document.getElementById('firebaseConnectionStatus').className = "text-red-600";
             this.showToast("Conexão perdida, usando armazenamento local", "warning");
+          }
+        });
+      }
+      
+      setupEventListeners() {
+        // Configura eventos
+        document.getElementById('loginButton').addEventListener('click', () => {
+          const email = document.getElementById('adminEmail').value;
+          const password = document.getElementById('adminPass').value;
+          if (!email || !password) {
+            this.showToast("Preencha email e senha", "error");
+            return;
+          }
+          this.authenticate(email, password);
+        });
+        
+        document.getElementById('logoutButton').addEventListener('click', () => {
+          this.logout();
+        });
+        
+        // Enter no campo de senha
+        document.getElementById('adminPass').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPass').value;
+            if (!email || !password) {
+              this.showToast("Preencha email e senha", "error");
+              return;
+            }
+            this.authenticate(email, password);
+          }
+        });
+        
+        // Botão admin toggle
+        document.getElementById('adminToggle').addEventListener('click', () => {
+          this.toggleAdmin();
+        });
+        
+        // Fechar painel admin
+        document.getElementById('closeAdmin').addEventListener('click', () => {
+          this.toggleAdmin(false);
+        });
+        
+        // Salvar tudo
+        document.getElementById('saveAll').addEventListener('click', () => {
+          this.saveAllChanges();
+        });
+        
+        // Resetar tudo
+        document.getElementById('resetAll').addEventListener('click', () => {
+          if (confirm('Restaurar todos os dados para os valores padrão? Isso não pode ser desfeito.')) {
+            this.loadDefaultData();
+            this.saveData();
+            this.showToast("Dados restaurados para os valores padrão", "info");
+          }
+        });
+        
+        // Trocar abas
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            this.switchTab(tabId);
+          });
+        });
+        
+        // Edição inline
+        document.addEventListener('dblclick', (e) => {
+          if (this.isAdmin && e.target.classList.contains('editable')) {
+            this.enableInlineEdit(e.target);
+          }
+        });
+        
+        // Upload de imagem hero
+        document.getElementById('heroImageUpload').addEventListener('change', (e) => {
+          if (e.target.files[0]) {
+            this.handleImageUpload(e.target.files[0], 'heroImage');
+          }
+        });
+        
+        // Upload de logo da empresa
+        document.getElementById('companyLogoUpload').addEventListener('change', (e) => {
+          if (e.target.files[0]) {
+            this.handleImageUpload(e.target.files[0], 'companyLogo');
           }
         });
       }
@@ -1386,13 +1404,79 @@
         };
       }
       
+      async saveAllChanges() {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para salvar", "error");
+          this.showLoginModal();
+          return;
+        }
+
+        // Mostra indicador de carregamento
+        const saveButton = document.getElementById('saveAll');
+        const originalText = saveButton.innerHTML;
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+        saveButton.disabled = true;
+        
+        try {
+          // Atualiza siteData.content com os valores dos inputs do painel admin
+          Object.keys(this.siteData.content).forEach(field => {
+            const input = document.getElementById(field);
+            if (input) {
+              this.siteData.content[field] = input.value;
+            }
+          });
+          
+          // Atualiza links dos botões do hero
+          const heroPrimaryBtn = document.getElementById('heroPrimaryBtn');
+          const heroSecondaryBtn = document.getElementById('heroSecondaryBtn');
+          
+          if (heroPrimaryBtn && this.siteData.content.heroCtaPrimaryLink) {
+            heroPrimaryBtn.href = this.siteData.content.heroCtaPrimaryLink;
+          }
+          
+          if (heroSecondaryBtn && this.siteData.content.heroCtaSecondaryLink) {
+            heroSecondaryBtn.href = this.siteData.content.heroCtaSecondaryLink;
+          }
+          
+          await this.saveData();
+        } catch (error) {
+          console.error("Erro ao salvar alterações:", error);
+          this.showToast("Erro ao salvar alterações", "error");
+        } finally {
+          // Restaura botão
+          setTimeout(() => {
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+          }, 1000);
+        }
+      }
+      
+      async saveData() {
+        try {
+          // Salva no Firebase
+          await database.ref('siteData').set(this.siteData);
+          this.showToast("Dados salvos com sucesso!", "success");
+          
+          // Atualiza último sync
+          const now = new Date();
+          document.getElementById('lastSyncTime').textContent = now.toLocaleString();
+          
+          // Faz backup no localStorage
+          this.saveToLocalStorage();
+          
+          // Atualiza a visualização
+          this.renderContent();
+        } catch (error) {
+          console.error("Erro ao salvar no Firebase:", error);
+          this.showToast("Erro ao salvar no Firebase", "error");
+          
+          // Fallback para localStorage
+          this.saveToLocalStorage();
+          this.showToast("Dados salvos localmente", "warning");
+        }
+      }
+      
       async saveToLocalStorage() {
-    try {
-      const jsonData = JSON.stringify(this.siteData);
-      localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
-    } catch(e) {
-      console.warn("Não foi possível salvar no localStorage:", e);
-    }
         try {
           // Cria uma cópia otimizada dos dados para salvar
           const dataToSave = {
@@ -1499,50 +1583,6 @@
         } catch (e) {
           // Se falhar, assume que não está comprimido
           return JSON.parse(compressed);
-        }
-      }
-      
-      async saveData() {
-        try {
-          // Mostra indicador de carregamento
-          const saveButton = document.getElementById('saveAll');
-          const originalText = saveButton.innerHTML;
-          saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
-          saveButton.disabled = true;
-          
-          // Salva no Firebase
-          await database.ref('siteData').set(this.siteData);
-          this.showToast("Dados salvos com sucesso!", "success");
-          
-          // Atualiza último sync
-          const now = new Date();
-          document.getElementById('lastSyncTime').textContent = now.toLocaleString();
-          
-          // Faz backup no localStorage
-          this.saveToLocalStorage();
-          
-          // Atualiza a visualização
-          this.renderContent();
-          
-          // Restaura botão
-          setTimeout(() => {
-            saveButton.innerHTML = originalText;
-            saveButton.disabled = false;
-          }, 1000);
-        } catch (error) {
-          console.error("Erro ao salvar no Firebase:", error);
-          this.showToast("Erro ao salvar no Firebase", "error");
-          
-          // Fallback para localStorage
-          this.saveToLocalStorage();
-          this.showToast("Dados salvos localmente", "warning");
-          
-          // Restaura botão com mensagem de erro
-          saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
-          setTimeout(() => {
-            saveButton.innerHTML = originalText;
-            saveButton.disabled = false;
-          }, 2000);
         }
       }
       
@@ -1705,6 +1745,12 @@
       }
       
       enableInlineEdit(element) {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para editar", "error");
+          this.showLoginModal();
+          return;
+        }
+
         const field = element.getAttribute('data-field');
         const originalValue = element.textContent;
         
@@ -1734,6 +1780,12 @@
         if (!file) return;
         
         try {
+          if (!this.isAuthenticated) {
+            this.showToast("Você precisa estar autenticado para enviar imagens", "error");
+            this.showLoginModal();
+            return;
+          }
+
           this.showToast("Enviando imagem...", "info");
           
           // Cria um nome único para o arquivo
@@ -1954,16 +2006,13 @@
                   <div class="text-center mb-16">
                     <h2 class="custom-section-title editable" data-field="section-${index}-title">
                       ${section.title}
-                      
                     </h2>
                     <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
                       ${section.subtitle}
-                      
                     </p>
                   </div>
                   <div class="max-w-4xl mx-auto editable" data-field="section-${index}-content">
                     ${section.content}
-                    
                   </div>
                 </div>
               `;
@@ -1975,11 +2024,9 @@
                   <div class="text-center mb-16">
                     <h2 class="custom-section-title editable" data-field="section-${index}-title">
                       ${section.title}
-                      
                     </h2>
                     <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
                       ${section.subtitle}
-                      
                     </p>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1989,12 +2036,10 @@
                           <i class="${card.icon} text-5xl service-icon mb-4"></i>
                           <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="section-${index}-card-${cardIndex}-title">
                             ${card.title}
-                            
                           </h3>
                         </div>
                         <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="section-${index}-card-${cardIndex}-content">
                           ${card.content}
-                          
                         </p>
                       </div>
                     `).join('')}
@@ -2009,11 +2054,9 @@
                   <div class="text-center mb-16">
                     <h2 class="custom-section-title editable" data-field="section-${index}-title">
                       ${section.title}
-                      
                     </h2>
                     <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
                       ${section.subtitle}
-                      
                     </p>
                   </div>
                   <div class="max-w-2xl mx-auto netlify-form">
@@ -2043,11 +2086,9 @@
                   <div class="text-center mb-16">
                     <h2 class="custom-section-title editable" data-field="section-${index}-title">
                       ${section.title}
-                      
                     </h2>
                     <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="section-${index}-subtitle">
                       ${section.subtitle}
-                      
                     </p>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -2125,6 +2166,12 @@
       
       // Métodos para adicionar/remover itens
       addGalleryImage() {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para adicionar imagens", "error");
+          this.showLoginModal();
+          return;
+        }
+
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
@@ -2148,6 +2195,12 @@
       }
       
       removeGalleryItem(index) {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para remover imagens", "error");
+          this.showLoginModal();
+          return;
+        }
+
         if (confirm('Remover esta imagem da galeria?')) {
           this.siteData.media.gallery.splice(index, 1);
           this.saveData();
@@ -2156,6 +2209,12 @@
       }
       
       addVideo() {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para adicionar vídeos", "error");
+          this.showLoginModal();
+          return;
+        }
+
         const url = prompt('Cole a URL do vídeo do YouTube:');
         if (!url) return;
         
@@ -2178,6 +2237,12 @@
       }
       
       removeVideoItem(index) {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para remover vídeos", "error");
+          this.showLoginModal();
+          return;
+        }
+
         if (confirm('Remover este vídeo?')) {
           this.siteData.media.videos.splice(index, 1);
           this.saveData();
@@ -2186,6 +2251,12 @@
       }
       
       addTestimonial() {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para adicionar depoimentos", "error");
+          this.showLoginModal();
+          return;
+        }
+
         const name = prompt('Nome do cliente:') || 'Novo Cliente';
         const position = prompt('Cargo/empresa:') || 'Empresa';
         const content = prompt('Depoimento:') || 'Ótimo serviço!';
@@ -2201,7 +2272,13 @@
         this.showToast("Depoimento adicionado", "success");
       }
       
-      removeTestimonial(index) {
+       removeTestimonial(index) {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para remover depoimentos", "error");
+          this.showLoginModal();
+          return;
+        }
+
         if (confirm('Remover este depoimento?')) {
           this.siteData.testimonials.splice(index, 1);
           this.saveData();
@@ -2210,6 +2287,12 @@
       }
       
       addNewSection() {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para adicionar seções", "error");
+          this.showLoginModal();
+          return;
+        }
+
         const name = document.getElementById('newSectionName').value;
         const id = document.getElementById('newSectionId').value;
         const type = document.getElementById('newSectionType').value;
@@ -2219,6 +2302,18 @@
           return;
         }
         
+        // Validação do ID da seção
+        if (!/^[a-z0-9-]+$/.test(id)) {
+          alert('O ID da seção deve conter apenas letras minúsculas, números e hífens');
+          return;
+        }
+        
+        // Verifica se o ID já existe
+        if (this.siteData.sections.some(section => section.id === id)) {
+          alert('Já existe uma seção com este ID. Por favor, escolha outro.');
+          return;
+        }
+
         // Cria a seção baseada no tipo
         let newSection = {
           id: id,
@@ -2289,16 +2384,19 @@
       }
       
       removeSection(index) {
+        if (!this.isAuthenticated) {
+          this.showToast("Você precisa estar autenticado para remover seções", "error");
+          this.showLoginModal();
+          return;
+        }
+
         if (confirm('Remover esta seção? Isso também removerá o link do menu.')) {
+          const sectionId = this.siteData.sections[index].id;
           this.siteData.sections.splice(index, 1);
           
-          // Remove dos menus de navegação (assumindo que está na mesma posição)
-          if (this.siteData.navigation.main.length > 5) {
-            this.siteData.navigation.main.splice(index + 5, 1);
-          }
-          if (this.siteData.navigation.footer.length > 5) {
-            this.siteData.navigation.footer.splice(index + 5, 1);
-          }
+          // Remove dos menus de navegação
+          this.siteData.navigation.main = this.siteData.navigation.main.filter(item => item.href !== `#${sectionId}`);
+          this.siteData.navigation.footer = this.siteData.navigation.footer.filter(item => item.href !== `#${sectionId}`);
           
           this.saveData();
           this.showToast("Seção removida", "info");
@@ -2310,120 +2408,38 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.siteCMS = new SiteCMS();
       
-      // Configura eventos
-      document.getElementById('loginButton').addEventListener('click', () => {
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPass').value;
-        siteCMS.authenticate(email, password);
-      });
+      // Funções globais para chamadas a partir do HTML
+      window.addGalleryImage = function() {
+        siteCMS.addGalleryImage();
+      };
       
-      document.getElementById('logoutButton').addEventListener('click', () => {
-        siteCMS.logout();
-      });
+      window.addVideo = function() {
+        siteCMS.addVideo();
+      };
       
-      // Enter no campo de senha
-      document.getElementById('adminPass').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          const email = document.getElementById('adminEmail').value;
-          const password = document.getElementById('adminPass').value;
-          siteCMS.authenticate(email, password);
-        }
-      });
+      window.addTestimonial = function() {
+        siteCMS.addTestimonial();
+      };
       
-      // Botão admin toggle
-      document.getElementById('adminToggle').addEventListener('click', () => {
-        siteCMS.toggleAdmin();
-      });
+      window.removeTestimonial = function(index) {
+        siteCMS.removeTestimonial(index);
+      };
       
-      // Fechar painel admin
-      document.getElementById('closeAdmin').addEventListener('click', () => {
-        siteCMS.toggleAdmin(false);
-      });
+      window.addNewSection = function() {
+        siteCMS.addNewSection();
+      };
       
-      // Salvar tudo
-      document.getElementById('saveAll').addEventListener('click', () => {
-        // Atualiza siteData.content com os valores dos inputs do painel admin
-        Object.keys(siteCMS.siteData.content).forEach(field => {
-          const input = document.getElementById(field);
-          if (input) {
-            siteCMS.siteData.content[field] = input.value;
-          }
-        });
-        
-        // Atualiza links dos botões do hero
-        const heroPrimaryBtn = document.getElementById('heroPrimaryBtn');
-        const heroSecondaryBtn = document.getElementById('heroSecondaryBtn');
-        
-        if (heroPrimaryBtn && siteCMS.siteData.content.heroCtaPrimaryLink) {
-          heroPrimaryBtn.href = siteCMS.siteData.content.heroCtaPrimaryLink;
-        }
-        
-        if (heroSecondaryBtn && siteCMS.siteData.content.heroCtaSecondaryLink) {
-          heroSecondaryBtn.href = siteCMS.siteData.content.heroCtaSecondaryLink;
-        }
-        
-        siteCMS.saveData();
-      });
+      window.removeSection = function(index) {
+        siteCMS.removeSection(index);
+      };
       
-      // Resetar tudo
-      document.getElementById('resetAll').addEventListener('click', () => {
-        if (confirm('Restaurar todos os dados para os valores padrão? Isso não pode ser desfeito.')) {
-          siteCMS.loadDefaultData();
-          siteCMS.saveData();
-          siteCMS.showToast("Dados restaurados para os valores padrão", "info");
-        }
-      });
-      
-      // Trocar abas
-      document.querySelectorAll('.admin-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          const tabId = tab.getAttribute('data-tab');
-          siteCMS.switchTab(tabId);
-        });
-      });
-      
-      // Edição inline
-      document.addEventListener('dblclick', (e) => {
-        if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
-          siteCMS.enableInlineEdit(e.target);
-        }
-      });
-      
-      // Upload de imagem hero
-      document.getElementById('heroImageUpload').addEventListener('change', (e) => {
-        siteCMS.handleImageUpload(e.target.files[0], 'heroImage');
-      });
-      
-      // Upload de logo da empresa
-      document.getElementById('companyLogoUpload').addEventListener('change', (e) => {
-        siteCMS.handleImageUpload(e.target.files[0], 'companyLogo');
+      // Ativa tooltips para ícones de edição
+      tippy('.edit-badge', {
+        content: 'Clique duplo para editar',
+        placement: 'right',
+        arrow: true
       });
     });
-
-    // Funções globais para chamadas a partir do HTML
-    function addGalleryImage() {
-      siteCMS.addGalleryImage();
-    }
-    
-    function addVideo() {
-      siteCMS.addVideo();
-    }
-    
-    function addTestimonial() {
-      siteCMS.addTestimonial();
-    }
-    
-    function removeTestimonial(index) {
-      siteCMS.removeTestimonial(index);
-    }
-    
-    function addNewSection() {
-      siteCMS.addNewSection();
-    }
-    
-    function removeSection(index) {
-      siteCMS.removeSection(index);
-    }
   </script>
 </body>
 </html>
