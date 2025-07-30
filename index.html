@@ -2272,7 +2272,7 @@
         this.showToast("Depoimento adicionado", "success");
       }
       
-       removeTestimonial(index) {
+      removeTestimonial(index) {
         if (!this.isAuthenticated) {
           this.showToast("Você precisa estar autenticado para remover depoimentos", "error");
           this.showLoginModal();
@@ -2302,18 +2302,18 @@
           return;
         }
         
-        // Validação do ID da seção
+        // Valida ID da seção
         if (!/^[a-z0-9-]+$/.test(id)) {
           alert('O ID da seção deve conter apenas letras minúsculas, números e hífens');
           return;
         }
         
-        // Verifica se o ID já existe
+        // Verifica se já existe uma seção com esse ID
         if (this.siteData.sections.some(section => section.id === id)) {
-          alert('Já existe uma seção com este ID. Por favor, escolha outro.');
+          alert('Já existe uma seção com este ID');
           return;
         }
-
+        
         // Cria a seção baseada no tipo
         let newSection = {
           id: id,
@@ -2391,12 +2391,15 @@
         }
 
         if (confirm('Remover esta seção? Isso também removerá o link do menu.')) {
-          const sectionId = this.siteData.sections[index].id;
           this.siteData.sections.splice(index, 1);
           
-          // Remove dos menus de navegação
-          this.siteData.navigation.main = this.siteData.navigation.main.filter(item => item.href !== `#${sectionId}`);
-          this.siteData.navigation.footer = this.siteData.navigation.footer.filter(item => item.href !== `#${sectionId}`);
+          // Remove dos menus de navegação (assumindo que está na mesma posição)
+          if (this.siteData.navigation.main.length > 5) {
+            this.siteData.navigation.main.splice(index + 5, 1);
+          }
+          if (this.siteData.navigation.footer.length > 5) {
+            this.siteData.navigation.footer.splice(index + 5, 1);
+          }
           
           this.saveData();
           this.showToast("Seção removida", "info");
@@ -2407,39 +2410,38 @@
     // Inicializa o CMS quando o DOM estiver pronto
     document.addEventListener('DOMContentLoaded', () => {
       window.siteCMS = new SiteCMS();
-      
-      // Funções globais para chamadas a partir do HTML
-      window.addGalleryImage = function() {
-        siteCMS.addGalleryImage();
-      };
-      
-      window.addVideo = function() {
-        siteCMS.addVideo();
-      };
-      
-      window.addTestimonial = function() {
-        siteCMS.addTestimonial();
-      };
-      
-      window.removeTestimonial = function(index) {
-        siteCMS.removeTestimonial(index);
-      };
-      
-      window.addNewSection = function() {
-        siteCMS.addNewSection();
-      };
-      
-      window.removeSection = function(index) {
-        siteCMS.removeSection(index);
-      };
-      
-      // Ativa tooltips para ícones de edição
-      tippy('.edit-badge', {
-        content: 'Clique duplo para editar',
-        placement: 'right',
-        arrow: true
-      });
     });
+
+    // Funções globais para chamadas a partir do HTML
+    function addGalleryImage() {
+      siteCMS.addGalleryImage();
+    }
+    
+    function addVideo() {
+      const url = document.getElementById('youtubeUrl').value;
+      if (!url) {
+        siteCMS.showToast("Digite a URL do YouTube", "error");
+        return;
+      }
+      siteCMS.addVideo();
+      document.getElementById('youtubeUrl').value = '';
+    }
+    
+    function addTestimonial() {
+      siteCMS.addTestimonial();
+    }
+    
+    function removeTestimonial(index) {
+      siteCMS.removeTestimonial(index);
+    }
+    
+    function addNewSection() {
+      siteCMS.addNewSection();
+    }
+    
+    function removeSection(index) {
+      siteCMS.removeSection(index);
+    }
   </script>
 </body>
 </html>
