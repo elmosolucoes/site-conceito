@@ -13,7 +13,7 @@
   <title>CONCEITO | Consultoria Empresarial Premium</title>
   
   <!-- CDNs -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
@@ -1387,6 +1387,12 @@
       }
       
       async saveToLocalStorage() {
+    try {
+      const jsonData = JSON.stringify(this.siteData);
+      localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
+    } catch(e) {
+      console.warn("Não foi possível salvar no localStorage:", e);
+    }
         try {
           // Cria uma cópia otimizada dos dados para salvar
           const dataToSave = {
@@ -2455,93 +2461,6 @@ async function saveToIndexedDB(data) {
 
 <!-- Compressão e armazenamento local com LZString -->
 <script>
-class SiteCMS {
-  constructor() {
-    this.siteData = {};
-    this.siteCriticalData = {};
-    this.MAX_LOCALSTORAGE_SIZE = 4 * 1024 * 1024;
-  }
-  compressData(data) {
-    try {
-      return LZString.compressToUTF16(JSON.stringify(data));
-    } catch (e) {
-      console.error("Compression error:", e);
-      return JSON.stringify(data);
-    }
-  }
-  decompressData(compressedData) {
-    try {
-      return JSON.parse(LZString.decompressFromUTF16(compressedData));
-    } catch (e) {
-      console.error("Decompression error, trying plain JSON:", e);
-      try {
-        return JSON.parse(compressedData);
-      } catch (e2) {
-        console.error("JSON parse error:", e2);
-        return null;
-      }
-    }
-  }
-  getDataSize(data) {
-    return JSON.stringify(data).length;
-  }
-  async saveToLocalStorage(key, data) {
-    try {
-      const compressedData = this.compressData(data);
-      const dataSize = compressedData.length;
-      if (dataSize > this.MAX_LOCALSTORAGE_SIZE) {
-        console.warn(`Data too large for localStorage (${dataSize} bytes).`);
-        return false;
-      }
-      localStorage.setItem(key, compressedData);
-      return true;
-    } catch (e) {
-      console.error(`Error saving to localStorage (${key}):`, e);
-      if (key === 'siteCriticalData') {
-        console.log("Attempting to save critical data only...");
-        const minimalData = this.extractCriticalData(data);
-        return this.saveToLocalStorage(key, minimalData);
-      }
-      return false;
-    }
-  }
-  extractCriticalData(data) {
-    const critical = {};
-    if (data.userPreferences) critical.userPreferences = data.userPreferences;
-    if (data.authToken) critical.authToken = data.authToken;
-    return critical;
-  }
-  loadFromLocalStorage(key) {
-    try {
-      const compressedData = localStorage.getItem(key);
-      if (!compressedData) return null;
-      return this.decompressData(compressedData);
-    } catch (e) {
-      console.error(`Error loading from localStorage (${key}):`, e);
-      return null;
-    }
-  }
-  async saveData() {
-    try {
-      const criticalSuccess = await this.saveToLocalStorage('siteCriticalData', this.siteCriticalData);
-      if (criticalSuccess) {
-        await this.saveToLocalStorage('siteData', this.siteData);
-      }
-      return criticalSuccess;
-    } catch (e) {
-      console.error("Error saving data:", e);
-      return false;
-    }
-  }
-  cleanupLocalStorage() {
-    const keysToKeep = ['siteCriticalData', 'userSession'];
-    Object.keys(localStorage).forEach(key => {
-      if (!keysToKeep.includes(key)) {
-        localStorage.removeItem(key);
-      }
-    });
-  }
-}
 </script>
 
 </body>
