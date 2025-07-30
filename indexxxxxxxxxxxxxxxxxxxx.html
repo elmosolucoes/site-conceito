@@ -2425,5 +2425,153 @@
       siteCMS.removeSection(index);
     }
   </script>
+
+<!-- Bibliotecas adicionais -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
+<!-- IndexedDB Script -->
+<script>
+async function saveToIndexedDB(data) {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('SiteDatabase', 1);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('siteData')) {
+        db.createObjectStore('siteData', { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const transaction = db.transaction('siteData', 'readwrite');
+      const store = transaction.objectStore('siteData');
+      const putRequest = store.put({ id: 'mainData', data: data });
+      putRequest.onsuccess = () => resolve(true);
+      putRequest.onerror = (e) => {
+        console.error("IndexedDB put error:", e);
+        reject(false);
+      };
+    };
+    request.onerror = (event) => {
+      console.error("IndexedDB open error:", event);
+      reject(false);
+    };
+  });
+}
+</script>
+
+<!-- Compressão e armazenamento local com LZString -->
+<script>
+</script>
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9BgXIhAOxJGhUB5-HkVw382mTuOnJx2I",
+      authDomain: "conceito-19d28.firebaseapp.com",
+      databaseURL: "https://conceito-19d28-default-rtdb.firebaseio.com",
+      projectId: "conceito-19d28",
+      storageBucket: "conceito-19d28.appspot.com",
+      messagingSenderId: "549152952403",
+      appId: "1:549152952403:web:8072e708a85f8e18ea36a6"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    const showToast = msg => {
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    };
+
+    const saveData = async () => {
+      const content = {};
+      document.querySelectorAll('[data-field]').forEach(el => {
+        content[el.dataset.field] = el.textContent.trim();
+      });
+      localStorage.setItem('siteData', JSON.stringify(content));
+      try {
+        await db.ref('siteData/content').set(content);
+        showToast("Dados salvos com sucesso");
+      } catch (e) {
+        showToast("Erro ao salvar no Firebase");
+      }
+    };
+
+    const loadData = async () => {
+      const local = localStorage.getItem('siteData');
+      if (local) {
+        const data = JSON.parse(local);
+        for (const k in data) {
+          const el = document.querySelector(`[data-field="${k}"]`);
+          if (el) el.textContent = data[k];
+        }
+      }
+      try {
+        const snap = await db.ref('siteData/content').once('value');
+        if (snap.exists()) {
+          const data = snap.val();
+          for (const k in data) {
+            const el = document.querySelector(`[data-field="${k}"]`);
+            if (el) el.textContent = data[k];
+          }
+          localStorage.setItem('siteData', JSON.stringify(data));
+        }
+      } catch (e) {
+        console.warn("Erro Firebase", e);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('saveAll');
+      if (btn) btn.addEventListener('click', saveData);
+
+      const loginBtn = document.getElementById('loginButton');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', async () => {
+          const email = document.getElementById('adminEmail').value;
+          const pass = document.getElementById('adminPassword').value;
+          try {
+            await auth.signInWithEmailAndPassword(email, pass);
+            showToast("Login efetuado");
+          } catch (e) {
+            showToast("Erro no login");
+          }
+        });
+      }
+
+      const logoutBtn = document.getElementById('logoutButton');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          await auth.signOut();
+          showToast("Você saiu");
+        });
+      }
+
+      auth.onAuthStateChanged(user => {
+        const btnSave = document.getElementById('saveAll');
+        const btnLogout = document.getElementById('logoutButton');
+        if (btnSave && btnLogout) {
+          if (user) {
+            btnSave.classList.remove('hidden');
+            btnLogout.classList.remove('hidden');
+            loadData();
+          } else {
+            btnSave.classList.add('hidden');
+            btnLogout.classList.add('hidden');
+          }
+        }
+      });
+
+      loadData();
+    });
+  </script>
+
 </body>
 </html>
