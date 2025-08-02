@@ -1,984 +1,2619 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';">
-    <title>CONCEITO v24</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <style>
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-        .modal.show { display: block; }
-        .modal-content { background: white; margin: 15% auto; padding: 1.5rem; width: 80%; max-width: 500px; border-radius: 8px; }
-        .nav-link { color: white; margin: 0 0.5rem; text-decoration: none; display: inline-block; }
-        .nav-link:hover { color: #f59e0b; }
-        .service-card { background: white; padding: 1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .service-card:hover { transform: scale(1.05); }
-        .hero-bg { background: linear-gradient(to right, #1e3a8a, #3b82f6); color: white; padding: 4rem; display: flex; align-items: center; justify-content: space-between; }
-        .photo-container { position: relative; padding-bottom: 125%; }
-        .photo-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0.25rem; }
-        .client-logo { width: 100%; height: 100px; object-fit: contain; }
-        .hero-image { max-width: 50%; height: auto; position: relative; z-index: 10; animation: float 3s ease-in-out infinite; }
-        .header-logo { height: 60px; }
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
-        }
-        @media (max-width: 768px) {
-            .hero-image { display: none; }
-            .hero-bg { flex-direction: column; text-align: center; }
-            .header-logo { height: 40px; }
-            nav { display: flex; flex-wrap: wrap; justify-content: center; }
-            .nav-link { margin: 0.5rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="CONCEITO Consultoria">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
+  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#001F3F">
+  <link rel="canonical" href="https://conceito.com.br">
+  <title>CONCEITO | Consultoria Empresarial Premium</title>
+  
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #001F3F;
+      --secondary: #003366;
+      --accent: #0066CC;
+      --light: #F8FAFC;
+      --dark: #1E293B;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+    }
+    .text-outline {
+      text-shadow: -1px -1px 0 var(--primary), 1px -1px 0 var(--primary), -1px 1px 0 var(--primary), 1px 1px 0 var(--primary);
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .service-icon {
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-divider {
+      height: 100px;
+      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
+    }
+    /* Admin Styles */
+    .admin-panel {
+      width: 400px;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 40;
+    }
+    .admin-panel.open {
+      transform: translateX(0);
+    }
+    /* Adicione isso para evitar que o conteúdo principal role quando o painel estiver aberto */
+    body.admin-panel-open {
+      overflow: hidden;
+    }
+    .editable {
+      position: relative;
+      transition: all 0.2s;
+    }
+    .admin-logged-in .editable:hover {
+      outline: 2px dashed var(--accent);
+      background-color: rgba(0, 102, 204, 0.05);
+    }
+    .edit-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .admin-logged-in .editable:hover .edit-badge {
+      opacity: 1;
+    }
+    .testimonial-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    /* Modal de Login */
+    #loginModal {
+      transition: opacity 0.3s ease;
+    }
+    #loginModal input {
+      border-color: #cbd5e1;
+    }
+    #loginModal input:focus {
+      outline: none;
+      border-color: #0066CC;
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: #001F3F;
+      color: white;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    /* Logo preview admin */
+    #companyLogoPreview {
+      transition: all 0.3s ease;
+      max-height: none;
+      height: auto;
+      max-height: 48px;
+      max-width: 200px;
+      display: block;
+    }
+    /* Estilo para o pixel do Meta */
+    .meta-pixel-script {
+      display: none;
+    }
+    /* Custom sections */
+    .custom-section {
+      padding: 80px 0;
+    }
+    .custom-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: #001F3F;
+      margin-bottom: 1.5rem;
+    }
+    /* Netlify form styles */
+    .netlify-form {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .netlify-form input[type="text"],
+    .netlify-form input[type="email"],
+    .netlify-form input[type="tel"],
+    .netlify-form textarea,
+    .netlify-form input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      margin-bottom: 1rem;
+    }
+    .netlify-form button[type="submit"] {
+      background-color: #0066CC;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .netlify-form button[type="submit"]:hover {
+      background-color: #0055AA;
+    }
+
+    /* Estilos adicionais dos arquivos CSS */
+    [data-field] {
+      transition: color 0.3s ease;
+    }
+
+    .service-icon {
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: background 0.3s ease;
+    }
+
+    .text-primary {
+      color: var(--primary);
+    }
+
+    .text-secondary {
+      color: var(--secondary);
+    }
+
+    .text-accent {
+      color: var(--accent);
+    }
+
+    /* Estilos para botões */
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: color-mix(in srgb, var(--primary) 90%, black);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: color-mix(in srgb, var(--secondary) 90%, black);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .btn-accent:hover {
+      background-color: color-mix(in srgb, var(--accent) 90%, black);
+    }
+
+    /* Estilos para formulários */
+    .netlify-form input[type="text"],
+    .netlify-form input[type="email"],
+    .netlify-form input[type="tel"],
+    .netlify-form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .netlify-form input:focus,
+    .netlify-form textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+
+    /* Estilos para a interface de administração */
+    .admin-form-field {
+      transition: all 0.2s;
+    }
+
+    .admin-form-field:hover {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+  </style>
 </head>
-<body>
-    <!-- Modal de Login -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-2xl mb-4 font-bold">Login Administrativo</h2>
-            <form id="adminLoginForm">
-                <input type="text" id="adminUsername" placeholder="Usuário" class="border p-2 mb-2 w-full text-center text-gray-600" required>
-                <input type="password" id="adminPassword" placeholder="Senha" class="border p-2 mb-2 w-full text-center text-gray-600" required>
-                <p id="loginError" class="text-red-600 hidden mb-2">Usuário ou senha inválidos.</p>
-                <button type="submit" class="bg-blue-900 text-white p-2 w-full rounded">Entrar</button>
-            </form>
-        </div>
-    </div>
+<body class="bg-gray-50">
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
 
-    <!-- Painel Administrativo -->
-    <div id="adminPanel" class="hidden p-4 bg-gray-100">
-        <h2 class="text-2xl font-bold mb-4">Painel Administrativo</h2>
-        <button id="logout" class="bg-blue-600 text-white p-2 mb-4 rounded">Salvar e Sair</button>
-        <div class="tabs">
-            <button class="tab bg-blue-900 text-white p-2 rounded mr-2" data-tab="general">Informações Gerais</button>
-            <button class="tab bg-blue-900 text-white p-2 rounded mr-2" data-tab="content">Conteúdo</button>
-            <button class="tab bg-blue-900 text-white p-2 rounded mr-2" data-tab="media">Mídia</button>
-            <button class="tab bg-blue-900 text-white p-2 rounded" data-tab="design">Design</button>
+  <!-- Modal de Login -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full">
+      <h3 class="text-2xl font-bold text-[#001F3F] mb-6 text-center">Acesso Administrativo</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input type="email" id="adminEmail" aria-label="Email do administrador" class="w-full p-2 border rounded" placeholder="seu@email.com">
         </div>
-        <div id="general" class="tab-content mt-4">
-            <h3 class="text-xl font-bold mb-2">Informações Gerais</h3>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Informações da Empresa</h4>
-                <label>Nome da Empresa:</label>
-                <input id="companyName" type="text" class="border p-2 mb-2 w-full">
-                <label>Número do WhatsApp:</label>
-                <input id="whatsappNumber" type="text" class="border p-2 mb-2 w-full">
+        <div>
+          <label class="block text-sm font-medium mb-1">Senha</label>
+          <input type="password" id="adminPass" aria-label="Senha do administrador" class="w-full p-2 border rounded" placeholder="••••••••">
+        </div>
+        <div id="loginError" class="text-red-500 text-sm hidden"></div>
+        <button id="loginButton" aria-label="Entrar no painel administrativo" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white py-2 px-4 rounded flex items-center justify-center">
+          <span id="loginButtonText">Entrar</span>
+          <span id="loginSpinner" class="loading-spinner ml-2 hidden"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão Admin -->
+  <button id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
+    <i class="fas fa-cog"></i>
+  </button>
+
+  <!-- Painel Admin -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
+      <h3 class="font-bold text-lg">Painel Administrativo</h3>
+      <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="p-4 h-[calc(100%-60px)] overflow-y-auto">
+      <div class="mb-6">
+        <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
+          <i class="fas fa-save mr-2"></i>Salvar Tudo
+        </button>
+        <button id="resetAll" aria-label="Restaurar dados padrão" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
+          <i class="fas fa-undo mr-2"></i>Restaurar Padrão
+        </button>
+        <button id="logoutButton" aria-label="Sair do painel administrativo" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
+          <i class="fas fa-sign-out-alt mr-2"></i>Sair
+        </button>
+      </div>
+      
+      <!-- Abas -->
+      <div class="flex border-b mb-4">
+        <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
+        <button class="admin-tab px-4 py-2" data-tab="media" aria-label="Aba Mídia">Mídia</button>
+        <button class="admin-tab px-4 py-2" data-tab="buttons" aria-label="Aba Botões">Botões</button>
+        <button class="admin-tab px-4 py-2" data-tab="forms" aria-label="Aba Formulários">Formulários</button>
+        <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
+        <button class="admin-tab px-4 py-2" data-tab="sections" aria-label="Aba Seções">Seções</button>
+      </div>
+      
+      <!-- Conteúdo -->
+      <div id="content-tab" class="admin-tab-content space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Cabeçalho</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Nome da Empresa</label>
+              <input type="text" id="companyName" aria-label="Nome da Empresa" class="w-full p-2 border rounded">
             </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Logotipo da Empresa</h4>
-                <label>Clique para fazer upload do logotipo:</label>
-                <input id="logoUpload" type="file" accept="image/*" class="mb-2">
-                <label>Tamanho do Logotipo:</label>
-                <select id="logoSize" class="border p-2 mb-2 w-full">
-                    <option value="small">Pequeno</option>
-                    <option value="medium" selected>Médio</option>
-                    <option value="large">Grande</option>
+            <div>
+              <label class="block text-sm font-medium mb-1">Tagline</label>
+              <input type="text" id="siteTagline" aria-label="Tagline" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Logo da Empresa</label>
+              <input type="file" id="companyLogoUpload" accept="image/*" class="hidden">
+              <button onclick="document.getElementById('companyLogoUpload').click()" aria-label="Selecionar logo" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-upload mr-2"></i>Selecionar Logo
+              </button>
+              <div class="mt-4">
+                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Seção de Controle da Logo -->
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Controle da Logo</h4>
+          <div class="space-y-4">
+            <div class="flex space-x-2">
+              <button onclick="deleteLogo()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-trash mr-2"></i>Remover Logo
+              </button>
+              <button onclick="resizeLogo('increase')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-search-plus mr-2"></i>
+              </button>
+              <button onclick="resizeLogo('decrease')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-search-minus mr-2"></i>
+              </button>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm mr-2">Tamanho:</span>
+              <input type="range" id="logoSizeRange" min="20" max="200" value="48" class="flex-1" oninput="updateLogoSize(this.value)">
+              <span id="logoSizeValue" class="text-sm ml-2">48px</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Hero Section</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Título Principal</label>
+              <textarea id="heroTitle" aria-label="Título Principal" class="w-full p-2 border rounded" rows="3"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Subtítulo</label>
+              <textarea id="heroSubtitle" aria-label="Subtítulo" class="w-full p-2 border rounded" rows="2"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Botão Primário</label>
+              <input type="text" id="heroCtaPrimary" aria-label="Botão Primário" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Link Botão Primário</label>
+              <input type="text" id="heroCtaPrimaryLink" aria-label="Link Botão Primário" class="w-full p-2 border rounded" placeholder="#contact">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Botão Secundário</label>
+              <input type="text" id="heroCtaSecondary" aria-label="Botão Secundário" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
+              <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
+            </div>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Cores do Texto</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Cor Primária</label>
+              <input type="color" id="textPrimaryColor" value="#001F3F" class="w-full h-10">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Cor Secundária</label>
+              <input type="color" id="textSecondaryColor" value="#0066CC" class="w-full h-10">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Cor de Destaque</label>
+              <input type="color" id="textAccentColor" value="#0066CC" class="w-full h-10">
+            </div>
+            <div>
+              <button onclick="updateTextColors()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mt-2">
+                <i class="fas fa-save mr-2"></i>Salvar Cores
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Contato</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Telefone</label>
+              <input type="text" id="phone" aria-label="Telefone" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Email</label>
+              <input type="email" id="email" aria-label="Email" class="w-full p-2 border rounded">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium mb-1">Endereço</label>
+              <input type="text" id="address" aria-label="Endereço" class="w-full p-2 border rounded">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mídia -->
+      <div id="media-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Imagem Hero</h4>
+          <input type="file" id="heroImageUpload" accept="image/*" class="hidden">
+          <button onclick="document.getElementById('heroImageUpload').click()" aria-label="Selecionar imagem para o Hero" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <i class="fas fa-upload mr-2"></i>Selecionar Imagem
+          </button>
+          <div class="mt-4">
+            <img id="heroImagePreview" class="max-w-full h-auto rounded border hidden">
+            <div class="mt-2">
+              <label class="block text-sm font-medium mb-1">Texto Alternativo</label>
+              <input type="text" id="heroImageAlt" aria-label="Texto Alternativo da Imagem Hero" class="w-full p-2 border rounded">
+            </div>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Galeria de Fotos</h4>
+          <div id="galleryItems" class="space-y-4">
+            <!-- Itens da galeria serão adicionados aqui -->
+          </div>
+          <button onclick="addGalleryImage()" aria-label="Adicionar foto à galeria" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <i class="fas fa-plus mr-2"></i>Adicionar Foto
+          </button>
+        </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Vídeos</h4>
+          <div class="flex mb-4">
+            <input type="text" id="youtubeUrl" aria-label="URL do vídeo do YouTube" placeholder="Cole a URL do YouTube" class="flex-1 p-2 border rounded">
+            <button onclick="addVideo()" aria-label="Adicionar vídeo à galeria" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div id="videoItems" class="space-y-4">
+            <!-- Itens de vídeo serão adicionados aqui -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botões -->
+      <div id="buttons-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Gerenciar Botões</h4>
+          <div id="buttonsList" class="space-y-4 mb-6">
+            <!-- Botões serão listados aqui -->
+          </div>
+          
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h5 class="font-bold mb-3">Criar Novo Botão</h5>
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Texto</label>
+                  <input type="text" id="newButtonText" class="w-full p-2 border rounded" placeholder="Ex: Clique Aqui">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Estilo</label>
+                  <select id="newButtonStyle" class="w-full p-2 border rounded">
+                    <option value="primary">Primário</option>
+                    <option value="secondary">Secundário</option>
+                    <option value="accent">Destaque</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Link (opcional)</label>
+                  <input type="text" id="newButtonHref" class="w-full p-2 border rounded" placeholder="Ex: #contact">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">ID do Botão</label>
+                  <input type="text" id="newButtonId" class="w-full p-2 border rounded" placeholder="Ex: main-cta">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Alvo</label>
+                <select id="newButtonTarget" class="w-full p-2 border rounded">
+                  <option value="">Mesma janela</option>
+                  <option value="_blank">Nova janela</option>
                 </select>
-                <button id="removeLogo" class="bg-blue-600 text-white p-2 rounded">Remover Logotipo</button>
+              </div>
+              <button onclick="createNewButton()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-plus mr-2"></i>Criar Botão
+              </button>
             </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Gerenciar Serviços</h4>
-                <div id="servicesList"></div>
-                <button id="addService" class="bg-blue-900 text-white p-2 rounded">Adicionar Serviço</button>
-            </div>
+          </div>
         </div>
-        <div id="content" class="tab-content hidden mt-4">
-            <h3 class="text-xl font-bold mb-2">Conteúdo do Site</h3>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Seção Herói</h4>
-                <label>Título Principal:</label>
-                <input id="heroTitle" type="text" class="border p-2 mb-2 w-full">
-                <label>Descrição:</label>
-                <textarea id="heroDescription" class="border p-2 mb-2 w-full"></textarea>
-                <label>Imagem do Hero:</label>
-                <input id="heroImageUpload" type="file" accept="image/*" class="mb-2">
-                <button id="removeHeroImage" class="bg-blue-600 text-white p-2 rounded mb-2">Remover Imagem do Hero</button>
+      </div>
+      
+      <!-- Formulários -->
+      <div id="forms-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Gerenciar Formulários</h4>
+          <div id="formsList" class="space-y-4 mb-6">
+            <!-- Formulários serão listados aqui -->
+          </div>
+          
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h5 class="font-bold mb-3">Criar Novo Formulário</h5>
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Título</label>
+                  <input type="text" id="newFormTitle" class="w-full p-2 border rounded" placeholder="Ex: Contato">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">ID do Formulário</label>
+                  <input type="text" id="newFormId" class="w-full p-2 border rounded" placeholder="Ex: contact-form">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Texto do Botão</label>
+                <input type="text" id="newFormSubmitText" class="w-full p-2 border rounded" placeholder="Ex: Enviar Mensagem">
+              </div>
+              <button onclick="createNewForm()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-plus mr-2"></i>Criar Formulário
+              </button>
             </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Seção Sobre</h4>
-                <label>Conteúdo:</label>
-                <textarea id="aboutContent" class="border p-2 mb-2 w-full"></textarea>
-                <label>Texto da Equipe:</label>
-                <textarea id="aboutTeam" class="border p-2 mb-2 w-full"></textarea>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Seção CTA</h4>
-                <label>Título:</label>
-                <input id="ctaTitle" type="text" class="border p-2 mb-2 w-full">
-                <label>Descrição:</label>
-                <textarea id="ctaDescription" class="border p-2 mb-2 w-full"></textarea>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Seção Contato</h4>
-                <label>Endereço:</label>
-                <input id="contactAddress" type="text" class="border p-2 mb-2 w-full">
-                <label>Email:</label>
-                <input id="contactEmail" type="text" class="border p-2 mb-2 w-full">
-                <label>Horário de Atendimento:</label>
-                <input id="contactHours" type="text" class="border p-2 mb-2 w-full">
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Footer</h4>
-                <label>Descrição:</label>
-                <textarea id="footerDescription" class="border p-2 mb-2 w-full"></textarea>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Estatísticas</h4>
-                <label>Clientes Atendidos:</label>
-                <input id="statsClients" type="text" class="border p-2 mb-2 w-full">
-                <label>Crescimento Médio:</label>
-                <input id="statsGrowth" type="text" class="border p-2 mb-2 w-full">
-                <label>Anos de Experiência:</label>
-                <input id="statsYears" type="text" class="border p-2 mb-2 w-full">
-                <label>Gerado para Clientes:</label>
-                <input id="statsRevenue" type="text" class="border p-2 mb-2 w-full">
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Metodologia</h4>
-                <label>Título da Seção:</label>
-                <input id="methodologyTitle" type="text" class="border p-2 mb-2 w-full">
-                <label>Descrição da Seção:</label>
-                <textarea id="methodologyDescription" class="border p-2 mb-2 w-full"></textarea>
-                <div id="methodologySteps"></div>
-                <button id="addStep" class="bg-blue-900 text-white p-2 rounded">Adicionar Etapa</button>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Depoimentos</h4>
-                <div id="testimonialsList"></div>
-                <button id="addTestimonial" class="bg-blue-900 text-white p-2 rounded">Adicionar Depoimento</button>
-            </div>
+          </div>
         </div>
-        <div id="media" class="tab-content hidden mt-4">
-            <h3 class="text-xl font-bold mb-2">Mídia</h3>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Galeria de Fotos</h4>
-                <input id="photoUpload" type="file" accept="image/*" multiple class="mb-2">
-                <div id="photoGallery" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Vídeos</h4>
-                <input id="videoLink" type="text" placeholder="Link do YouTube" class="border p-2 mb-2 w-full">
-                <button id="addVideo" class="bg-blue-900 text-white p-2 rounded">Adicionar Vídeo</button>
-                <div id="videoGallery" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-            </div>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Logos de Clientes</h4>
-                <input id="clientLogoUpload" type="file" accept="image/*" multiple class="mb-2">
-                <div id="clientLogosAdmin" class="grid grid-cols-1 md:grid-cols-5 gap-4"></div>
-            </div>
+      </div>
+      
+      <!-- Configurações -->
+      <div id="settings-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Supabase Config</h4>
+          <div class="bg-gray-100 p-3 rounded mb-4 overflow-x-auto">
+            <pre id="supabaseConfigStatus" class="text-xs"></pre>
+          </div>
+          <div class="text-sm text-gray-600">
+            <p class="mb-2">Status da conexão: <span id="supabaseConnectionStatus" class="font-medium"></span></p>
+            <p>Última sincronização: <span id="lastSyncTime" class="font-medium"></span></p>
+          </div>
         </div>
-        <div id="design" class="tab-content hidden mt-4">
-            <h3 class="text-xl font-bold mb-2">Design</h3>
-            <div class="mb-4">
-                <h4 class="text-lg font-bold">Cores do Site</h4>
-                <label>Cor Principal (Navy Blue):</label>
-                <input id="primaryColor" type="color" value="#1e3a8a" class="mb-2">
-                <label>Cor de Destaque (Gold):</label>
-                <input id="highlightColor" type="color" value="#f59e0b" class="mb-2">
-                <label>Cor Secundária (Laser Blue):</label>
-                <input id="secondaryColor" type="color" value="#3b82f6" class="mb-2">
-            </div>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Idioma</h4>
+          <select id="siteLanguage" aria-label="Idioma do site" class="w-full p-2 border rounded">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="en-US">English (EUA)</option>
+            <option value="es-ES">Español</option>
+          </select>
         </div>
-        <button id="saveChanges" class="bg-green-600 text-white p-2 mt-4 rounded">Salvar Alterações</button>
+        
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Tema</h4>
+          <div class="grid grid-cols-4 gap-2">
+            <button data-theme="blue" aria-label="Tema Azul" class="theme-btn h-10 rounded bg-blue-800 border-2 border-blue-600"></button>
+            <button data-theme="emerald" aria-label="Tema Verde" class="theme-btn h-10 rounded bg-emerald-600"></button>
+            <button data-theme="indigo" aria-label="Tema Indigo" class="theme-btn h-10 rounded bg-indigo-600"></button>
+            <button data-theme="rose" aria-label="Tema Rosa" class="theme-btn h-10 rounded bg-rose-600"></button>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <label class="flex items-center">
+            <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
+          </label>
+        </div>
+        
+        <!-- Seção do Pixel do Meta -->
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Pixel do Meta (Facebook)</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">ID do Pixel</label>
+              <input type="text" id="metaPixelId" class="w-full p-2 border rounded" placeholder="Ex: 123456789012345">
+            </div>
+            <button onclick="saveMetaPixel()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              <i class="fas fa-save mr-2"></i>Salvar Pixel
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Seções -->
+      <div id="sections-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Gerenciar Seções</h4>
+          <div id="sectionsList" class="space-y-4 mb-6">
+            <!-- Seções existentes serão listadas aqui -->
+          </div>
+          
+          <div class="bg-gray-100 p-4 rounded-lg">
+            <h5 class="font-bold mb-3">Adicionar Nova Seção</h5>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome da Seção</label>
+                <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">ID da Seção (sem espaços)</label>
+                <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Tipo de Seção</label>
+                <select id="newSectionType" class="w-full p-2 border rounded">
+                  <option value="text">Texto Simples</option>
+                  <option value="cards">Cards</option>
+                  <option value="form">Formulário</option>
+                  <option value="gallery">Galeria</option>
+                </select>
+              </div>
+              <button onclick="addNewSection()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-plus mr-2"></i>Adicionar Seção
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Header -->
-    <header class="bg-blue-900 text-white p-4">
-        <div class="container max-w-6xl mx-auto flex justify-between items-center">
-            <a href="index.html"><img id="headerLogo" class="header-logo animate__animated animate__fadeIn" alt="Logo"></a>
-            <nav>
-                <a href="#services" class="nav-link">Serviços</a>
-                <a href="#methodology" class="nav-link">Metodologia</a>
-                <a href="#about" class="nav-link">Sobre Nós</a>
-                <a href="#testimonials" class="nav-link">Depoimentos</a>
-                <a href="#contact" class="nav-link">Contato</a>
-                <a href="client-area.html" class="nav-link">Enviar Currículo</a>
-                <a href="#" id="adminLink" class="nav-link">Admin</a>
-            </nav>
+  <!-- Conteúdo do Site -->
+  <div id="site-content">
+    <!-- Cabeçalho -->
+    <header class="fixed w-full bg-white shadow-md z-30">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+          <!-- Aqui aparece automaticamente o nome da empresa OU a logo, conforme configurado no painel admin -->
+          <span id="companyNameContainer"></span>
+          <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
         </div>
+        <nav class="hidden md:flex space-x-8" id="mainNav">
+          <a href="#services" class="nav-link text-[#001F3F] font-medium">Serviços</a>
+          <a href="#methodology" class="nav-link text-[#001F3F] font-medium">Metodologia</a>
+          <a href="#results" class="nav-link text-[#001F3F] font-medium">Resultados</a>
+          <a href="#testimonials" class="nav-link text-[#001F3F] font-medium">Depoimentos</a>
+          <a href="#contact" class="nav-link text-[#001F3F] font-medium">Contato</a>
+          <!-- Links dinâmicos para seções adicionadas serão inseridos aqui -->
+        </nav>
+        <button class="md:hidden text-[#001F3F]">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-bg animate__animated animate__fadeIn">
-        <div class="text-container">
-            <h2 id="heroTitleDisplay" class="text-4xl font-bold mb-4"></h2>
-            <p id="heroDescriptionDisplay" class="text-lg mb-8"></p>
-            <div>
-                <a href="#contact" class="bg-yellow-500 text-white p-3 rounded mr-2 hover:bg-yellow-600">Fale com um especialista</a>
-                <a href="#methodology" class="bg-transparent border border-white text-white p-3 rounded hover:bg-white hover:text-blue-900">Conheça nossa metodologia</a>
+    <section class="hero-gradient pt-32 pb-20 text-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="md:flex items-center justify-between">
+          <div class="md:w-1/2 mb-12 md:mb-0">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle">
+              <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
+            </h1>
+            <p class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">
+              Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
+            </p>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <a id="heroPrimaryBtn" href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">
+                Fale com um especialista
+              </a>
+              <a id="heroSecondaryBtn" href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">
+                Conheça nossa metodologia
+              </a>
             </div>
+          </div>
+          <div class="md:w-1/2 flex justify-center">
+            <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Business growth" class="rounded-lg shadow-2xl floating max-w-full h-auto editable-img" data-field="heroImage" data-alt-field="heroImageAlt">
+          </div>
         </div>
-        <img id="heroImage" class="hero-image animate__animated animate__fadeInRight" alt="Hero Image">
+      </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="bg-gray-100 p-8 text-center">
-        <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 animate__animated animate__zoomIn">
-            <div><h3 id="statsClientsDisplay" class="text-2xl font-bold"></h3><p>Clientes atendidos</p></div>
-            <div><h3 id="statsGrowthDisplay" class="text-2xl font-bold"></h3><p>Crescimento médio</p></div>
-            <div><h3 id="statsYearsDisplay" class="text-2xl font-bold"></h3><p>Anos de experiência</p></div>
-            <div><h3 id="statsRevenueDisplay" class="text-2xl font-bold"></h3><p>Gerados para clientes</p></div>
-        </div>
-    </section>
+    <!-- Section Divider -->
+    <div class="section-divider bg-gray-50"></div>
 
     <!-- Services Section -->
-    <section id="services" class="p-8">
-        <h2 class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn">NOSSOS SERVIÇOS</h2>
-        <p id="servicesDescription" class="text-center mb-8"></p>
-        <div id="servicesDisplay" class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    <section id="services" class="py-20 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="servicesTitle">
+            Nossos Serviços
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="servicesSubtitle">
+            Soluções completas e personalizadas para transformar sua empresa
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Service 1 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title" contenteditable="true">
+                Estratégia Empresarial
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc" contenteditable="true">
+              Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service1Feature1" contenteditable="true">Planejamento estratégico</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service1Feature2" contenteditable="true">Análise de mercado</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service1Feature3" contenteditable="true">Definição de objetivos</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Service 2 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-users-cog text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title" contenteditable="true">
+                Gestão de Processos
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc" contenteditable="true">
+              Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service2Feature1" contenteditable="true">Mapeamento de processos</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service2Feature2" contenteditable="true">Redesenho de fluxos</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service2Feature3" contenteditable="true">Automação de tarefas</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Service 3 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-chart-pie text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title" contenteditable="true">
+                Análise Financeira
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc" contenteditable="true">
+              Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service3Feature1" contenteditable="true">Análise de custos</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service3Feature2" contenteditable="true">Otimização tributária</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service3Feature3" contenteditable="true">Projeções financeiras</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Service 4 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title" contenteditable="true">
+                Marketing Estratégico
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc" contenteditable="true">
+              Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service4Feature1" contenteditable="true">Pesquisa de mercado</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service4Feature2" contenteditable="true">Posicionamento de marca</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service4Feature3" contenteditable="true">Plano de marketing</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Service 5 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-user-tie text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service5Title" contenteditable="true">
+                Gestão de Pessoas
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service5Desc" contenteditable="true">
+              Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service5Feature1" contenteditable="true">Recrutamento estratégico</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service5Feature2" contenteditable="true">Treinamento e desenvolvimento</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service5Feature3" contenteditable="true">Clima organizacional</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Service 6 -->
+          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div class="text-center mb-6">
+              <i class="fas fa-calculator text-5xl service-icon mb-4"></i>
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service6Title" contenteditable="true">
+                Transformação Digital
+              </h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service6Desc" contenteditable="true">
+              Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.
+            </p>
+            <ul class="text-sm text-gray-500 space-y-2">
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service6Feature1" contenteditable="true">Diagnóstico digital</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service6Feature2" contenteditable="true">Roadmap tecnológico</span>
+              </li>
+              <li>
+                <i class="fas fa-check text-[#0066CC] mr-2"></i>
+                <span class="editable" data-field="service6Feature3" contenteditable="true">Implementação de sistemas</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Methodology Section -->
-    <section id="methodology" class="bg-gray-100 p-8">
-        <h2 id="methodologyTitleDisplay" class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn"></h2>
-        <p id="methodologyDescriptionDisplay" class="text-center mb-8"></p>
-        <div id="methodologyStepsDisplay" class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4"></div>
+    <section id="methodology" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="methodologyTitle">
+            Nossa Metodologia
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="methodologySubtitle">
+            Processo estruturado e comprovado para garantir resultados excepcionais
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Step 1 -->
+          <div class="text-center">
+            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step1Title">Diagnóstico</h3>
+            <p class="text-gray-600 editable" data-field="step1Desc">Análise profunda da situação atual da empresa e identificação de oportunidades.</p>
+          </div>
+          
+          <!-- Step 2 -->
+          <div class="text-center">
+            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step2Title">Planejamento</h3>
+            <p class="text-gray-600 editable" data-field="step2Desc">Desenvolvimento de estratégias personalizadas com metas e indicadores claros.</p>
+          </div>
+          
+          <!-- Step 3 -->
+          <div class="text-center">
+            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step3Title">Implementação</h3>
+            <p class="text-gray-600 editable" data-field="step3Desc">Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.</p>
+          </div>
+          
+          <!-- Step 4 -->
+          <div class="text-center">
+            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step4Title">Resultados</h3>
+            <p class="text-gray-600 editable" data-field="step4Desc">Entrega de resultados mensuráveis e plano de sustentabilidade para o futuro.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="p-8">
-        <h2 class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn">SOBRE A CONCEITO</h2>
-        <p id="aboutContentDisplay" class="text-center mb-8"></p>
-        <p id="aboutTeamDisplay" class="text-center mb-8"></p>
-        <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-center animate__animated animate__zoomIn">
-            <div><h3 class="text-xl font-bold">100%</h3><p>Foco em resultados</p></div>
-            <div><h3 class="text-xl font-bold">24/7</h3><p>Suporte dedicado</p></div>
-            <div><h3 class="text-xl font-bold">100+</h3><p>Especialistas</p></div>
+    <!-- Results Section -->
+    <section id="results" class="py-20 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="resultsTitle">
+            Resultados Comprovados
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="resultsSubtitle">
+            Números que demonstram o impacto real das nossas consultorias
+          </p>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <!-- Stat 1 -->
+          <div class="text-center">
+            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">+150%</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat1Title">Aumento de Receita</h3>
+            <p class="text-gray-600 editable" data-field="stat1Desc">Média de crescimento dos nossos clientes</p>
+          </div>
+          
+          <!-- Stat 2 -->
+          <div class="text-center">
+            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">12</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat2Title">Meses</h3>
+            <p class="text-gray-600 editable" data-field="stat2Desc">Tempo médio para transformação completa</p>
+          </div>
+          
+          <!-- Stat 3 -->
+          <div class="text-center">
+            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">95%</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat3Title">Satisfação</h3>
+            <p class="text-gray-600 editable" data-field="stat3Desc">Taxa de satisfação dos nossos clientes</p>
+          </div>
+          
+          <!-- Stat 4 -->
+          <div class="text-center">
+            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">+300</div>
+            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat4Title">Empresas</h3>
+            <p class="text-gray-600 editable" data-field="stat4Desc">Transformadas com nossa metodologia</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="bg-gray-100 p-8">
-        <h2 class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn">DEPOIMENTOS</h2>
-        <p id="testimonialsDescription" class="text-center mb-8"></p>
-        <div id="testimonialsDisplay" class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+    <section id="testimonials" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="testimonialsTitle">
+            O que nossos clientes dizem
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="testimonialsSubtitle">
+            Depoimentos reais de empresários que transformaram seus negócios
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsContainer">
+          <!-- Depoimentos serão renderizados dinamicamente aqui -->
+        </div>
+        
+        <div class="text-center mt-8">
+          <button onclick="addTestimonial()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg admin-only hidden">
+            <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
+          </button>
+        </div>
+      </div>
     </section>
 
-    <!-- Clients Section -->
-    <section class="p-8">
-        <h2 class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn">Alguns de nossos clientes</h2>
-        <div id="clientLogos" class="container max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+    <!-- Galeria de Fotos -->
+    <section id="gallery" class="py-12 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="galleryTitle">Galeria de Fotos</h2>
+        <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Itens da galeria serão adicionados dinamicamente -->
+        </div>
+      </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="bg-blue-900 text-white p-8 text-center animate__animated animate__fadeIn">
-        <h2 id="ctaTitleDisplay" class="text-3xl font-bold mb-4"></h2>
-        <p id="ctaDescriptionDisplay" class="mb-8"></p>
-        <a href="#contact" class="bg-yellow-500 text-white p-3 rounded hover:bg-yellow-600">Agendar Consultoria</a>
+    <!-- Galeria de Vídeos -->
+    <section id="videos" class="py-12 bg-gray-100">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="videosTitle">Vídeos</h2>
+        <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Itens de vídeo serão adicionados dinamicamente -->
+        </div>
+      </div>
     </section>
+
+    <!-- Seção "Envie Seu Currículo" -->
+    <section id="careers" class="py-20 bg-white custom-section">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="careersTitle">
+            Envie Seu Currículo
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="careersSubtitle">
+            Faça parte do nosso time de consultores especializados
+          </p>
+        </div>
+
+        <div class="max-w-2xl mx-auto netlify-form">
+          <form name="careers" method="POST" data-netlify="true" enctype="multipart/form-data">
+            <input type="hidden" name="form-name" value="careers">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome Completo</label>
+                <input type="text" name="name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input type="email" name="email" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Telefone</label>
+                <input type="tel" name="phone" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Mensagem</label>
+                <textarea name="message" rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Currículo (PDF)</label>
+                <input type="file" name="resume" accept=".pdf" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                Enviar Currículo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seções personalizadas serão inseridas aqui -->
+    <div id="custom-sections-container"></div>
+
+    <!-- Formulários dinâmicos serão renderizados aqui -->
+    <div id="dynamicFormsContainer"></div>
 
     <!-- Contact Section -->
-    <section id="contact" class="p-8">
-        <h2 class="text-3xl font-bold text-center mb-4 animate__animated animate__fadeIn">FALE CONOSCO</h2>
-        <p id="contactDescription" class="text-center mb-8"></p>
-        <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <p><strong>Endereço:</strong> <span id="contactAddressDisplay"></span></p>
-                <p><strong>Telefone:</strong> <span id="whatsappNumberDisplay"></span></p>
-                <p><strong>Email:</strong> <span id="contactEmailDisplay"></span></p>
-                <p><strong>Horário de Atendimento:</strong> <span id="contactHoursDisplay"></span></p>
-            </div>
-            <div id="contactForm"></div>
+    <section id="contact" class="py-20 hero-gradient">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-black text-white mb-6 editable" style="font-family: 'Bebas Neue';" data-field="contactTitle">
+            Vamos Transformar Sua Empresa
+          </h2>
+          <p class="text-xl text-white max-w-3xl mx-auto editable" data-field="contactSubtitle">
+            Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
+          </p>
         </div>
-        <div id="logoDisplay" class="mt-4 text-center"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Contact Form -->
+          <div class="bg-white rounded-2xl p-8 shadow-2xl">
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-6 editable" data-field="contactFormTitle">
+              Solicite uma Consultoria
+            </h3>
+            <form id="contact-form" class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome Completo</label>
+                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Telefone</label>
+                <input type="tel" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Empresa</label>
+                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Mensagem</label>
+                <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+              </div>
+              <button type="submit" id="contactSubmitBtn" class="w-full btn-primary py-3 px-6 rounded-lg transition-colors editable" data-field="contactButtonText" data-style="primary">
+                Enviar Mensagem
+              </button>
+            </form>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="text-white">
+            <h3 class="text-2xl font-bold mb-8 editable" data-field="contactInfoTitle">
+              Informações de Contato
+            </h3>
+            
+            <div class="space-y-6">
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-phone"></i></div>
+                <div>
+                  <h4 class="font-semibold editable" data-field="contactPhoneLabel">Telefone</h4>
+                  <p class="text-gray-200 editable" data-field="phone">(11) 9999-9999</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-envelope"></i></div>
+                <div>
+                  <h4 class="font-semibold editable" data-field="contactEmailLabel">Email</h4>
+                  <p class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-map-marker-alt"></i></div>
+                <div>
+                  <h4 class="font-semibold editable" data-field="contactAddressLabel">Endereço</h4>
+                  <p class="text-gray-200 editable" data-field="address">Av. Paulista, 1000 - São Paulo/SP</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-clock"></i></div>
+                <div>
+                  <h4 class="font-semibold editable" data-field="contactHoursLabel">Horário de Atendimento</h4>
+                  <p class="text-gray-200 editable" data-field="hours">Segunda a Sexta, das 9h às 18h</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-blue-900 text-white p-8">
-        <div class="container max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <h3 class="text-xl font-bold">CONCEITO</h3>
-                <p id="footerDescriptionDisplay"></p>
+    <footer class="bg-[#001F3F] text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-2xl font-bold mb-4 editable" data-field="footerTitle">CONCEITO</h3>
+            <p class="text-gray-300 editable" data-field="footerAbout">Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.</p>
+            <div class="flex space-x-4 mt-4">
+              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
             </div>
-            <div>
-                <h3 class="text-xl font-bold">Links Rápidos</h3>
-                <a href="#services" class="block nav-link">Serviços</a>
-                <a href="#methodology" class="block nav-link">Metodologia</a>
-                <a href="#about" class="block nav-link">Sobre Nós</a>
-                <a href="#testimonials" class="block nav-link">Depoimentos</a>
-                <a href="#contact" class="block nav-link">Contato</a>
-                <a href="client-area.html" class="block nav-link">Enviar Currículo</a>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold">Serviços</h3>
-                <a href="#" class="block nav-link">Estratégia Empresarial</a>
-                <a href="#" class="block nav-link">Otimização de Processos</a>
-                <a href="#" class="block nav-link">Gestão de Equipes</a>
-                <a href="#" class="block nav-link">Consultoria Financeira</a>
-                <a href="#" class="block nav-link">Expansão de Mercado</a>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold">Legal</h3>
-                <a href="#" class="block nav-link">Termos de Uso</a>
-                <a href="#" class="block nav-link">Política de Privacidade</a>
-                <a href="#" class="block nav-link">Cookies</a>
-                <a href="#" class="block nav-link">FAQ</a>
-            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-bold mb-4 editable" data-field="footerLinksTitle">Links Rápidos</h3>
+            <ul class="space-y-2" id="footerLinks">
+              <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Serviços</a></li>
+              <li><a href="#methodology" class="text-gray-300 hover:text-white transition-colors">Metodologia</a></li>
+              <li><a href="#results" class="text-gray-300 hover:text-white transition-colors">Resultados</a></li>
+              <li><a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Depoimentos</a></li>
+              <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contato</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-bold mb-4 editable" data-field="footerNewsletterTitle">Newsletter</h3>
+            <p class="text-gray-300 mb-4 editable" data-field="footerNewsletterText">Assine nossa newsletter para receber dicas e novidades.</p>
+            <form class="flex">
+              <input type="email" placeholder="Seu email" class="flex-1 p-2 rounded-l-lg focus:outline-none text-gray-800">
+              <button type="submit" class="bg-[#0066CC] hover:bg-[#0055AA] text-white px-4 rounded-r-lg"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
         </div>
-        <p class="text-center mt-4">© 2023 CONCEITO Consultoria Empresarial. Todos os direitos reservados.</p>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+          <p class="editable" data-field="footerCopyright">&copy; 2024 CONCEITO Consultoria. Todos os direitos reservados.</p>
+        </div>
+      </div>
     </footer>
+  </div>
 
-    <script>
-        let isAuthenticated = false;
-        const staticData = {
-            companyName: "CONCEITO",
-            whatsappNumber: "(11) 9999-9999",
-            heroTitle: "TRANSFORME SEU NEGÓCIO COM CONSULTORIA PREMIUM",
-            heroDescription: "Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.",
-            heroImage: null,
-            aboutContent: "Fundada em 2005, a CONCEITO se consolidou como uma das principais consultorias empresariais do Brasil, com atuação em todo o território nacional e clientes em mais de 15 países.",
-            aboutTeam: "Nossa equipe é composta por especialistas com experiência prática em gestão empresarial, muitos deles ex-executivos de grandes corporações que decidiram dedicar seu conhecimento a transformar empresas de todos os portes.",
-            ctaTitle: "PRONTO PARA TRANSFORMAR SEU NEGÓCIO?",
-            ctaDescription: "Agende uma consultoria gratuita com nossos especialistas e descubra como podemos ajudar sua empresa a alcançar novos patamares.",
-            contactDescription: "Entre em contato com nossa equipe para saber mais sobre nossos serviços e como podemos ajudar seu negócio a crescer.",
-            contactAddress: "Av. Paulista, 1000 - São Paulo/SP",
-            contactEmail: "contato@conceito.com.br",
-            contactHours: "Segunda a Sexta, das 9h às 18h",
-            footerDescription: "Consultoria empresarial premium com foco em resultados extraordinários.",
-            servicesDescription: "Soluções personalizadas para cada etapa do crescimento do seu negócio",
-            methodologyTitle: "METODOLOGIA EXCLUSIVA",
-            methodologyDescription: "Processo comprovado que já transformou centenas de empresas",
-            testimonialsDescription: "Veja o que nossos clientes dizem sobre nossos serviços",
-            statsClients: "+0",
-            statsGrowth: "+0%",
-            statsYears: "0+",
-            statsRevenue: "R$0M+",
-            services: [
-                { id: 1, title: "Estratégia Empresarial", text: "Desenvolvimento de estratégias de crescimento com plano de ação detalhado para alcançar resultados extraordinários." },
-                { id: 2, title: "Otimização de Processos", text: "Redesenho de processos operacionais para eliminar desperdícios e aumentar produtividade em até 200%." },
-                { id: 3, title: "Gestão de Equipes", text: "Metodologia exclusiva para desenvolvimento de lideranças e alta performance de equipes." }
-            ],
-            methodologySteps: [
-                { id: 1, title: "Diagnóstico Estratégico", text: "Análise profunda de todos os aspectos do negócio para identificar oportunidades de melhoria e pontos críticos." },
-                { id: 2, title: "Planejamento Personalizado", text: "Desenvolvimento de um plano estratégico exclusivo para seu negócio com metas claras e indicadores de desempenho." },
-                { id: 3, title: "Implementação com Suporte", text: "Execução do plano com acompanhamento próximo de nossos consultores para garantir os resultados esperados." },
-                { id: 4, title: "Resultados e Escalabilidade", text: "Consolidação dos resultados e preparação da empresa para o próximo nível de crescimento e expansão." }
-            ],
-            testimonials: [
-                { id: 1, text: "A CONCEITO transformou completamente nosso negócio. Em 8 meses aumentamos nossa receita em 150% e reduzimos custos em 30%. Recomendo sem dúvidas!", author: "Carlos Silva", position: "CEO, Indústria ABC" },
-                { id: 2, text: "O trabalho da CONCEITO foi fundamental para nossa expansão internacional. Eles não só criaram a estratégia, como nos acompanharam em todo o processo.", author: "Ana Oliveira", position: "Diretora, TechStart" },
-                { id: 3, text: "Depois de anos tentando melhorar nossos processos internos, a CONCEITO conseguiu em 3 meses o que não tínhamos conseguido em 5 anos. Incrível!", author: "Roberto Santos", position: "Presidente, Grupo XYZ" }
-            ],
-            logo: null,
-            logoSize: "medium",
-            photos: [],
-            videos: [],
-            clientLogos: [],
-            primaryColor: "#1e3a8a",
-            highlightColor: "#f59e0b",
-            secondaryColor: "#3b82f6"
-        };
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Configuração do Supabase
+      const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const logoSizeStyles = {
-            small: '40px',
-            medium: '60px',
-            large: '80px'
-        };
-
-        function loadData() {
-            try {
-                const savedData = JSON.parse(localStorage.getItem('siteData')) || staticData;
-                Object.assign(staticData, savedData);
-
-                document.getElementById('companyName').value = staticData.companyName;
-                document.getElementById('whatsappNumber').value = staticData.whatsappNumber;
-                document.getElementById('heroTitle').value = staticData.heroTitle;
-                document.getElementById('heroDescription').value = staticData.heroDescription;
-                document.getElementById('aboutContent').value = staticData.aboutContent;
-                document.getElementById('aboutTeam').value = staticData.aboutTeam;
-                document.getElementById('ctaTitle').value = staticData.ctaTitle;
-                document.getElementById('ctaDescription').value = staticData.ctaDescription;
-                document.getElementById('contactDescription').value = staticData.contactDescription;
-                document.getElementById('contactAddress').value = staticData.contactAddress;
-                document.getElementById('contactEmail').value = staticData.contactEmail;
-                document.getElementById('contactHours').value = staticData.contactHours;
-                document.getElementById('footerDescription').value = staticData.footerDescription;
-                document.getElementById('servicesDescription').value = staticData.servicesDescription;
-                document.getElementById('methodologyTitle').value = staticData.methodologyTitle;
-                document.getElementById('methodologyDescription').value = staticData.methodologyDescription;
-                document.getElementById('testimonialsDescription').value = staticData.testimonialsDescription;
-                document.getElementById('statsClients').value = staticData.statsClients;
-                document.getElementById('statsGrowth').value = staticData.statsGrowth;
-                document.getElementById('statsYears').value = staticData.statsYears;
-                document.getElementById('statsRevenue').value = staticData.statsRevenue;
-                document.getElementById('primaryColor').value = staticData.primaryColor;
-                document.getElementById('highlightColor').value = staticData.highlightColor;
-                document.getElementById('secondaryColor').value = staticData.secondaryColor;
-                document.getElementById('logoSize').value = staticData.logoSize;
-
-                document.getElementById('heroTitleDisplay').textContent = staticData.heroTitle;
-                document.getElementById('heroDescriptionDisplay').textContent = staticData.heroDescription;
-                document.getElementById('heroImage').src = staticData.heroImage || '';
-                document.getElementById('heroImage').style.display = staticData.heroImage ? 'block' : 'none';
-                document.getElementById('aboutContentDisplay').textContent = staticData.aboutContent;
-                document.getElementById('aboutTeamDisplay').textContent = staticData.aboutTeam;
-                document.getElementById('ctaTitleDisplay').textContent = staticData.ctaTitle;
-                document.getElementById('ctaDescriptionDisplay').textContent = staticData.ctaDescription;
-                document.getElementById('contactDescription').textContent = staticData.contactDescription;
-                document.getElementById('contactAddressDisplay').textContent = staticData.contactAddress;
-                document.getElementById('whatsappNumberDisplay').textContent = staticData.whatsappNumber;
-                document.getElementById('contactEmailDisplay').textContent = staticData.contactEmail;
-                document.getElementById('contactHoursDisplay').textContent = staticData.contactHours;
-                document.getElementById('footerDescriptionDisplay').textContent = staticData.footerDescription;
-                document.getElementById('servicesDescription').textContent = staticData.servicesDescription;
-                document.getElementById('methodologyTitleDisplay').textContent = staticData.methodologyTitle;
-                document.getElementById('methodologyDescriptionDisplay').textContent = staticData.methodologyDescription;
-                document.getElementById('testimonialsDescription').textContent = staticData.testimonialsDescription;
-                document.getElementById('statsClientsDisplay').textContent = staticData.statsClients;
-                document.getElementById('statsGrowthDisplay').textContent = staticData.statsGrowth;
-                document.getElementById('statsYearsDisplay').textContent = staticData.statsYears;
-                document.getElementById('statsRevenueDisplay').textContent = staticData.statsRevenue;
-
-                const headerLogo = document.getElementById('headerLogo');
-                headerLogo.src = staticData.logo || '';
-                headerLogo.style.display = staticData.logo ? 'block' : 'none';
-                headerLogo.style.height = logoSizeStyles[staticData.logoSize];
-
-                const logoDisplay = document.getElementById('logoDisplay');
-                logoDisplay.innerHTML = staticData.logo ? `<img src="${staticData.logo}" class="h-${staticData.logoSize === 'small' ? '16' : staticData.logoSize === 'medium' ? '24' : '32'} mx-auto" alt="Logo">` : '';
-
-                const servicesList = document.getElementById('servicesList');
-                servicesList.innerHTML = staticData.services.map(s => `
-                    <div class="service" data-id="${s.id}">
-                        <input type="text" value="${s.title}" class="border p-2 mb-2 w-full">
-                        <textarea class="border p-2 mb-2 w-full">${s.text}</textarea>
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    </div>
-                `).join('');
-                const servicesDisplay = document.getElementById('servicesDisplay');
-                servicesDisplay.innerHTML = staticData.services.map(s => `
-                    <div class="service-card animate__animated animate__fadeIn">
-                        <h3 class="text-xl font-bold">${s.title}</h3>
-                        <p>${s.text}</p>
-                        <a href="#" class="text-blue-900 hover:underline">Saiba mais</a>
-                    </div>
-                `).join('');
-
-                const methodologySteps = document.getElementById('methodologySteps');
-                methodologySteps.innerHTML = staticData.methodologySteps.map(s => `
-                    <div class="step" data-id="${s.id}">
-                        <input type="text" value="${s.title}" class="border p-2 mb-2 w-full">
-                        <textarea class="border p-2 mb-2 w-full">${s.text}</textarea>
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    </div>
-                `).join('');
-                const methodologyStepsDisplay = document.getElementById('methodologyStepsDisplay');
-                methodologyStepsDisplay.innerHTML = staticData.methodologySteps.map(s => `
-                    <div class="animate__animated animate__fadeIn">
-                        <h3 class="text-xl font-bold">${s.title}</h3>
-                        <p>${s.text}</p>
-                    </div>
-                `).join('');
-
-                const testimonialsList = document.getElementById('testimonialsList');
-                testimonialsList.innerHTML = staticData.testimonials.map(t => `
-                    <div class="testimonial" data-id="${t.id}">
-                        <textarea class="border p-2 mb-2 w-full">${t.text}</textarea>
-                        <input type="text" value="${t.author}" class="border p-2 mb-2 w-full" placeholder="Autor">
-                        <input type="text" value="${t.position}" class="border p-2 mb-2 w-full" placeholder="Cargo">
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    </div>
-                `).join('');
-                const testimonialsDisplay = document.getElementById('testimonialsDisplay');
-                testimonialsDisplay.innerHTML = staticData.testimonials.map(t => `
-                    <div class="animate__animated animate__fadeIn">
-                        <p class="italic">"${t.text}"</p>
-                        <p class="font-bold">${t.author}</p>
-                        <p>${t.position}</p>
-                    </div>
-                `).join('');
-
-                const photoGallery = document.getElementById('photoGallery');
-                photoGallery.innerHTML = staticData.photos.map(p => `
-                    <div class="photo-container">
-                        <img src="${p}" alt="Foto">
-                    </div>
-                `).join('');
-
-                const clientLogos = document.getElementById('clientLogos');
-                const clientLogosAdmin = document.getElementById('clientLogosAdmin');
-                const clientLogosHTML = staticData.clientLogos.map((logo, index) => `
-                    <div class="relative">
-                        <img src="${logo}" class="client-logo" alt="Client Logo ${index}">
-                        <button class="absolute top-0 right-0 bg-red-600 text-white p-1 rounded remove-client-logo" data-index="${index}">X</button>
-                    </div>
-                `).join('');
-                clientLogos.innerHTML = staticData.clientLogos.map(logo => `<img src="${logo}" class="client-logo animate__animated animate__fadeIn" alt="Client Logo">`).join('');
-                clientLogosAdmin.innerHTML = clientLogosHTML;
-
-                const videoGallery = document.getElementById('videoGallery');
-                videoGallery.innerHTML = staticData.videos.map(v => `
-                    <iframe class="w-full h-56 rounded" src="${v.replace('watch?v=', 'embed/')}" frameborder="0" allowfullscreen></iframe>
-                `).join('');
-
-                document.querySelectorAll('#servicesList .service button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover serviços.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(button.parentElement.dataset.id);
-                        staticData.services = staticData.services.filter(s => s.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                });
-
-                document.querySelectorAll('#methodologySteps .step button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover etapas.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(button.parentElement.dataset.id);
-                        staticData.methodologySteps = staticData.methodologySteps.filter(s => s.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                });
-
-                document.querySelectorAll('#testimonialsList .testimonial button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover depoimentos.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(button.parentElement.dataset.id);
-                        staticData.testimonials = staticData.testimonials.filter(t => t.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                });
-
-                document.querySelectorAll('.remove-client-logo').forEach(button => {
-                    button.addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover logos.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const index = parseInt(button.dataset.index);
-                        staticData.clientLogos.splice(index, 1);
-                        saveData();
-                        loadData();
-                    });
-                });
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
+      // Sistema CMS Completo com Supabase
+      class SiteCMS {
+        constructor() {
+          this.isAdmin = false;
+          this.isAuthenticated = false;
+          this.user = null;
+          this.siteData = {
+            content: {},
+            media: { gallery: [], videos: [] },
+            testimonials: [],
+            sections: [],
+            forms: [],
+            buttons: [],
+            navigation: { main: [], footer: [] }
+          };
+          this.init();
+        }
+        
+        init() {
+          this.setupSupabaseListeners();
+          this.checkAuthState();
+        }
+        
+        setupSupabaseListeners() {
+          supabase.auth.onAuthStateChange((_event, session) => {
+            this.user = session ? session.user : null;
+            this.isAuthenticated = !!this.user;
+            
+            if (this.isAuthenticated) {
+              this.loadData();
+              this.showToast("Conectado ao Supabase", "success");
+              document.getElementById('supabaseConnectionStatus').textContent = "Conectado";
+              document.getElementById('supabaseConnectionStatus').className = "text-green-600";
+            } else {
+              document.getElementById('supabaseConnectionStatus').textContent = "Desconectado";
+              document.getElementById('supabaseConnectionStatus').className = "text-red-600";
             }
+          });
+        }
+        
+        async checkAuthState() {
+          try {
+            document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
+            const { data: { user } } = await supabase.auth.getUser();
+            this.user = user;
+            this.isAuthenticated = !!user;
+            
+            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
+            await this.loadData();
+            
+            if (!this.isAuthenticated) {
+              // Se falhar no Supabase, tenta do localStorage
+              await this.loadFromLocalStorage();
+            }
+          } catch (error) {
+            console.error("Erro ao verificar autenticação:", error);
+            // Se der erro, tenta do localStorage como fallback
+            await this.loadFromLocalStorage();
+          }
+        }
+        
+        async loadData() {
+          try {
+            this.showToast("Carregando dados...", "info");
+            let { data, error } = await supabase.from('site_data').select('*').eq('id', 1).single();
+
+            if (error && error.code !== 'PGRST116') throw error;
+            
+            if (data) {
+              this.siteData = {
+                content: data.content || {},
+                media: data.media || { gallery: [], videos: [] },
+                testimonials: data.testimonials || [],
+                sections: data.sections || [],
+                forms: data.forms || [],
+                buttons: data.buttons || [],
+                navigation: data.navigation || { main: [], footer: [] }
+              };
+              this.showToast("Dados carregados do Supabase", "success");
+            } else {
+              this.loadDefaultData();
+              if(this.isAuthenticated) await this.saveData();
+              this.showToast("Dados padrão carregados", "info");
+            }
+            
+            this.renderContent();
+            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
+            await this.saveToLocalStorage();
+            
+          } catch (error) {
+            console.error("Erro ao carregar do Supabase:", error);
+            this.showToast("Erro ao carregar do Supabase", "error");
+            await this.loadFromLocalStorage();
+          }
+        }
+        
+        loadDefaultData() {
+          // Captura dados padrão dos elementos HTML
+          document.querySelectorAll('[data-field]').forEach(el => {
+            const field = el.dataset.field;
+            if (el.tagName === 'IMG') {
+              this.siteData.content[field] = el.src;
+              if (el.dataset.altField) this.siteData.content[el.dataset.altField] = el.alt;
+            } else if (el.tagName === 'A' && el.hasAttribute('href')) {
+              this.siteData.content[field + 'Link'] = el.getAttribute('href');
+              this.siteData.content[field] = el.innerHTML.trim();
+            } else {
+              this.siteData.content[field] = el.innerHTML.trim();
+            }
+          });
+          
+          // Dados padrão para outras seções
+          this.siteData.media = { gallery: [], videos: [] };
+          this.siteData.testimonials = [];
+          this.siteData.sections = [];
+          this.siteData.forms = [];
+          this.siteData.buttons = [];
+          this.siteData.navigation = {
+            main: [
+              { text: "Serviços", href: "#services" },
+              { text: "Metodologia", href: "#methodology" },
+              { text: "Resultados", href: "#results" },
+              { text: "Depoimentos", href: "#testimonials" },
+              { text: "Contato", href: "#contact" }
+            ],
+            footer: [
+              { text: "Serviços", href: "#services" },
+              { text: "Metodologia", href: "#methodology" },
+              { text: "Resultados", href: "#results" },
+              { text: "Depoimentos", href: "#testimonials" },
+              { text: "Contato", href: "#contact" }
+            ]
+          };
+        }
+        
+        async saveToLocalStorage() {
+          try {
+            const jsonData = JSON.stringify(this.siteData);
+            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
+            console.log("Dados salvos no localStorage:", this.siteData);
+          } catch(e) { 
+            console.warn("Não foi possível salvar no localStorage:", e); 
+          }
         }
 
-        function saveData() {
-            try {
-                localStorage.setItem('siteData', JSON.stringify(staticData));
-            } catch (error) {
-                console.error('Erro ao salvar dados:', error);
+        loadFromLocalStorage() {
+          try {
+            const savedData = localStorage.getItem('siteData');
+            if (savedData) {
+              const parsed = JSON.parse(decodeURIComponent(escape(atob(savedData))));
+              this.siteData = {
+                content: parsed.content || {},
+                media: parsed.media || { gallery: [], videos: [] },
+                testimonials: parsed.testimonials || [],
+                sections: parsed.sections || [],
+                forms: parsed.forms || [],
+                buttons: parsed.buttons || [],
+                navigation: parsed.navigation || { main: [], footer: [] }
+              };
+              console.log("Dados carregados do localStorage:", this.siteData);
+              this.showToast("Dados carregados do armazenamento local", "info");
+            } else {
+              console.log("Nenhum dado encontrado no localStorage, carregando padrões");
+              this.loadDefaultData();
             }
+            
+            this.renderContent();
+            
+          } catch (error) {
+            console.error("Erro ao carregar do localStorage:", error);
+            this.loadDefaultData();
+            this.renderContent();
+          }
+        }
+        
+        async saveData() {
+          const saveButton = document.getElementById('saveAll');
+          let originalText = saveButton.innerHTML;
+          try {
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+            saveButton.disabled = true;
+
+            const { error } = await supabase.from('site_data').upsert({ 
+              id: 1, 
+              ...this.siteData 
+            }, { onConflict: 'id' });
+            
+            if (error) throw error;
+            
+            this.showToast("Dados salvos com sucesso!", "success");
+            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
+            
+            await this.saveToLocalStorage();
+            this.renderContent();
+            
+            setTimeout(() => {
+              saveButton.innerHTML = originalText;
+              saveButton.disabled = false;
+            }, 1000);
+            
+          } catch (error) {
+            console.error("Erro ao salvar no Supabase:", error);
+            this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
+            
+            await this.saveToLocalStorage();
+            this.showToast("Dados salvos localmente", "warning");
+            
+            saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
+            setTimeout(() => {
+              saveButton.innerHTML = originalText;
+              saveButton.disabled = false;
+            }, 2000);
+          }
+        }
+        
+        async authenticate(email, password) {
+          try {
+            document.getElementById('loginButtonText').textContent = "Autenticando...";
+            document.getElementById('loginSpinner').classList.remove('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            
+            this.showToast("Login realizado com sucesso", "success");
+            this.hideLoginModal();
+            this.isAuthenticated = true;
+            this.toggleAdmin(true);
+            
+          } catch (error) {
+            console.error("Erro de autenticação:", error);
+            document.getElementById('loginError').textContent = error.message;
+            document.getElementById('loginError').classList.remove('hidden');
+            this.showToast("Erro ao fazer login", "error");
+          } finally {
+            document.getElementById('loginButtonText').textContent = "Entrar";
+            document.getElementById('loginSpinner').classList.add('hidden');
+          }
+        }
+        
+        async logout() {
+          try {
+            await supabase.auth.signOut();
+            this.isAuthenticated = false;
+            this.toggleAdmin(false);
+            this.showLoginModal();
+            this.showToast("Logout realizado", "info");
+          } catch (error) { 
+            console.error("Erro ao fazer logout:", error); 
+          }
+        }
+        
+        showToast(message, type = "info") {
+          const toast = document.getElementById('toast');
+          toast.textContent = message;
+          toast.className = 'toast';
+          const colors = { 
+            success: '#4CAF50', 
+            error: '#F44336', 
+            warning: '#FF9800', 
+            info: '#2196F3' 
+          };
+          toast.style.backgroundColor = colors[type] || colors.info;
+          toast.classList.remove('hidden');
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+          }, 5000);
+        }
+        
+        toggleAdmin(show = null) {
+          if (!this.isAuthenticated && (show === true || show === null)) {
+            this.showLoginModal();
+            return;
+          }
+          
+          const panel = document.getElementById('adminPanel');
+          this.isAdmin = show === null ? !panel.classList.contains('open') : show;
+          
+          if (this.isAdmin) {
+            panel.classList.add('open');
+            document.body.classList.add('admin-logged-in', 'admin-panel-open');
+            this.updateAdminForm();
+            document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.remove('hidden'));
+          } else {
+            panel.classList.remove('open');
+            document.body.classList.remove('admin-logged-in', 'admin-panel-open');
+            document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
+          }
+        }
+        
+        showLoginModal() {
+          document.getElementById('loginModal').classList.remove('hidden');
+          document.getElementById('adminEmail').focus();
+        }
+        
+        hideLoginModal() {
+          document.getElementById('loginModal').classList.add('hidden');
+        }
+        
+        switchTab(tabId) {
+          document.querySelectorAll('.admin-tab').forEach(tab => 
+            tab.classList.toggle('active', tab.dataset.tab === tabId)
+          );
+          document.querySelectorAll('.admin-tab-content').forEach(content => 
+            content.classList.toggle('hidden', content.id !== `${tabId}-tab`)
+          );
+        }
+        
+        updateAdminForm() {
+          Object.keys(this.siteData.content).forEach(field => {
+            const input = document.getElementById(field);
+            if (input) {
+              input.value = this.siteData.content[field] || '';
+              
+              if (field === 'heroImage' || field === 'companyLogo') {
+                const preview = document.getElementById(field + 'Preview');
+                if (preview && this.siteData.content[field]) {
+                  preview.src = this.siteData.content[field];
+                  preview.classList.remove('hidden');
+                }
+              }
+            }
+          });
+          
+          // Atualiza cores do texto
+          if (this.siteData.content.textPrimaryColor) {
+            document.getElementById('textPrimaryColor').value = this.siteData.content.textPrimaryColor;
+          }
+          if (this.siteData.content.textSecondaryColor) {
+            document.getElementById('textSecondaryColor').value = this.siteData.content.textSecondaryColor;
+          }
+          if (this.siteData.content.textAccentColor) {
+            document.getElementById('textAccentColor').value = this.siteData.content.textAccentColor;
+          }
+          
+          this.renderSectionsList();
+          this.renderForms();
+          this.renderButtons();
+        }
+        
+        enableInlineEdit(element) {
+          const field = element.dataset.field;
+          const originalValue = element.innerHTML;
+          
+          element.contentEditable = true;
+          element.focus();
+          
+          const finishEdit = () => {
+            element.contentEditable = false;
+            const newValue = element.innerHTML;
+            if (newValue !== originalValue) {
+              this.siteData.content[field] = newValue;
+              this.saveData();
+            }
+          };
+          
+          element.addEventListener('blur', finishEdit, { once: true });
+          element.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter') { 
+              e.preventDefault(); 
+              finishEdit(); 
+            }
+          });
+        }
+        
+        async handleImageUpload(file, field) {
+          if (!file) return null;
+          
+          try {
+            this.showToast("Enviando imagem...", "info");
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${field}-${Date.now()}.${fileExt}`;
+            const filePath = `images/${fileName}`;
+
+            let { error: uploadError } = await supabase.storage
+              .from('images')
+              .upload(filePath, file, { upsert: true });
+              
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+              .from('images')
+              .getPublicUrl(filePath);
+              
+            if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
+            
+            this.showToast("Imagem enviada com sucesso!", "success");
+            return publicUrl;
+            
+          } catch (error) {
+            console.error("Erro ao processar imagem:", error);
+            this.showToast(`Erro ao processar imagem: ${error.message}`, "error");
+            return null;
+          }
+        }
+        
+        async deleteLogo() {
+          if (confirm('Tem certeza que deseja remover a logo?')) {
+            // Remove a logo do armazenamento se existir
+            if (this.siteData.content.companyLogo) {
+              try {
+                const filePath = new URL(this.siteData.content.companyLogo).pathname.split('/images/')[1];
+                if (filePath) {
+                  await supabase.storage.from('images').remove([`images/${filePath}`]);
+                }
+              } catch (error) {
+                console.warn("Não foi possível remover o arquivo do Storage:", error.message);
+              }
+            }
+            
+            // Remove a logo dos dados
+            delete this.siteData.content.companyLogo;
+            await this.saveData();
+            this.showToast("Logo removida com sucesso", "success");
+          }
+        }
+        
+        resizeLogo(action) {
+          const logo = document.querySelector('#companyNameContainer img');
+          if (!logo) return;
+          
+          const currentSize = parseInt(logo.style.height || '48');
+          let newSize = currentSize;
+          
+          if (action === 'increase') {
+            newSize = Math.min(currentSize + 10, 200);
+          } else {
+            newSize = Math.max(currentSize - 10, 20);
+          }
+          
+          logo.style.height = `${newSize}px`;
+          document.getElementById('logoSizeRange').value = newSize;
+          document.getElementById('logoSizeValue').textContent = `${newSize}px`;
+          
+          // Salva o tamanho preferido
+          this.siteData.content.logoSize = newSize;
+          this.saveData();
+        }
+        
+        updateLogoSize(size) {
+          const logo = document.querySelector('#companyNameContainer img');
+          if (logo) {
+            logo.style.height = `${size}px`;
+            document.getElementById('logoSizeValue').textContent = `${size}px`;
+            this.siteData.content.logoSize = size;
+            this.saveData();
+          }
+        }
+        
+        async saveMetaPixel() {
+          const pixelId = document.getElementById('metaPixelId').value;
+          if (!pixelId) {
+            this.showToast("Por favor, insira um ID de Pixel válido", "error");
+            return;
+          }
+          
+          this.siteData.content.metaPixelId = pixelId;
+          await this.saveData();
+          this.injectMetaPixel();
+          this.showToast("Pixel do Meta salvo com sucesso", "success");
+        }
+        
+        injectMetaPixel() {
+          // Remove o pixel antigo se existir
+          const oldPixel = document.getElementById('meta-pixel-script');
+          if (oldPixel) {
+            oldPixel.remove();
+          }
+          
+          const pixelId = this.siteData.content.metaPixelId;
+          if (!pixelId) return;
+          
+          // Cria o novo script do pixel
+          const script = document.createElement('script');
+          script.id = 'meta-pixel-script';
+          script.innerHTML = `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${pixelId}');
+            fbq('track', 'PageView');
+          `;
+          
+          const noscript = document.createElement('noscript');
+          noscript.innerHTML = `
+            <img height="1" width="1" style="display:none"
+              src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>
+          `;
+          
+          document.head.appendChild(script);
+          document.body.appendChild(noscript);
+        }
+        
+        async updateTextColors() {
+          const primary = document.getElementById('textPrimaryColor').value;
+          const secondary = document.getElementById('textSecondaryColor').value;
+          const accent = document.getElementById('textAccentColor').value;
+          
+          this.siteData.content.textPrimaryColor = primary;
+          this.siteData.content.textSecondaryColor = secondary;
+          this.siteData.content.textAccentColor = accent;
+          
+          await this.saveData();
+          this.applyTextColors();
+          this.showToast("Cores salvas com sucesso", "success");
         }
 
-        function showModal(message) {
-            try {
-                const modal = document.createElement('div');
-                modal.className = 'modal show';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <p class="text-center mb-4">${message}</p>
-                        <button class="bg-blue-900 text-white p-2 rounded mx-auto">Fechar</button>
+        applyTextColors() {
+          const primary = this.siteData.content.textPrimaryColor || '#001F3F';
+          const secondary = this.siteData.content.textSecondaryColor || '#0066CC';
+          const accent = this.siteData.content.textAccentColor || '#0066CC';
+          
+          document.documentElement.style.setProperty('--primary', primary);
+          document.documentElement.style.setProperty('--secondary', secondary);
+          document.documentElement.style.setProperty('--accent', accent);
+          
+          // Atualiza os valores no painel admin
+          if (document.getElementById('textPrimaryColor')) {
+            document.getElementById('textPrimaryColor').value = primary;
+            document.getElementById('textSecondaryColor').value = secondary;
+            document.getElementById('textAccentColor').value = accent;
+          }
+        }
+        
+        renderContent() {
+          console.log("Renderizando conteúdo com dados:", this.siteData);
+          
+          // Aplica as cores do texto primeiro
+          this.applyTextColors();
+          
+          const companyNameContainer = document.getElementById('companyNameContainer');
+          if (companyNameContainer) {
+            const logo = this.siteData.content.companyLogo;
+            const name = this.siteData.content.companyName || "CONCEITO";
+            
+            if (logo && logo.trim() !== '') {
+              companyNameContainer.innerHTML = `<img src="${logo}" alt="Logo" class="h-10 w-auto">`;
+            } else {
+              companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
+            }
+          }
+          
+          // Aplica o tamanho da logo se existir
+          const logo = document.querySelector('#companyNameContainer img');
+          if (logo && this.siteData.content.logoSize) {
+            logo.style.height = `${this.siteData.content.logoSize}px`;
+            document.getElementById('logoSizeRange').value = this.siteData.content.logoSize;
+            document.getElementById('logoSizeValue').textContent = `${this.siteData.content.logoSize}px`;
+          }
+
+          // Injeta o pixel do Meta se existir
+          if (this.siteData.content.metaPixelId) {
+            document.getElementById('metaPixelId').value = this.siteData.content.metaPixelId;
+            this.injectMetaPixel();
+          }
+          
+          document.querySelectorAll('[data-field]').forEach(el => {
+            const field = el.dataset.field;
+            const value = this.siteData.content[field];
+            
+            if (value === undefined || value === null) return;
+            
+            if (el.tagName === 'IMG') {
+              if (value && value.trim() !== '') {
+                el.src = value;
+                const altField = el.dataset.altField;
+                if (altField && this.siteData.content[altField]) {
+                  el.alt = this.siteData.content[altField];
+                }
+              }
+            } else if (el.tagName === 'A') {
+              el.innerHTML = value;
+              const linkField = field + 'Link';
+              if (this.siteData.content[linkField]) {
+                el.href = this.siteData.content[linkField];
+              }
+            } else {
+              el.innerHTML = value;
+            }
+          });
+          
+          this.renderGallery();
+          this.renderVideos();
+          this.renderTestimonials();
+          this.renderCustomSections();
+          this.renderNavigation();
+          this.renderForms();
+          this.renderButtons();
+        }
+
+        renderGallery() {
+          const container = document.getElementById('galleryGrid');
+          const adminContainer = document.getElementById('galleryItems');
+          if (!container || !adminContainer) return;
+          
+          container.innerHTML = '';
+          adminContainer.innerHTML = '';
+          
+          (this.siteData.media.gallery || []).forEach((item, index) => {
+            container.innerHTML += `
+              <div class="relative">
+                <img src="${item.url}" alt="${item.desc}" class="w-full h-64 object-cover rounded-lg shadow-md">
+                <p class="mt-2 text-center text-gray-600">${item.desc}</p>
+              </div>
+            `;
+            
+            adminContainer.innerHTML += `
+              <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
+                <img src="${item.url}" class="w-12 h-12 object-cover rounded mr-4">
+                <span class="flex-1 text-sm">${item.desc}</span>
+                <button class="text-red-500 hover:text-red-700" onclick="removeGalleryItem(${index})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            `;
+          });
+        }
+        
+        renderVideos() {
+          const container = document.getElementById('videosGrid');
+          const adminContainer = document.getElementById('videoItems');
+          if (!container || !adminContainer) return;
+          
+          container.innerHTML = '';
+          adminContainer.innerHTML = '';
+          
+          (this.siteData.media.videos || []).forEach((item, index) => {
+            container.innerHTML += `
+              <div class="relative">
+                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.youtubeId}" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <p class="mt-2 text-center text-gray-600">${item.desc}</p>
+              </div>
+            `;
+            
+            adminContainer.innerHTML += `
+              <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
+                <div class="flex-1 text-sm">
+                  <p class="font-semibold">${item.desc}</p>
+                  <p class="text-xs text-gray-500">${item.youtubeId}</p>
+                </div>
+                <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            `;
+          });
+        }
+        
+        renderTestimonials() {
+          const container = document.getElementById('testimonialsContainer');
+          if (!container) return;
+          
+          container.innerHTML = (this.siteData.testimonials || []).map((t, i) => `
+            <div class="testimonial-card rounded-xl p-6 shadow-lg relative">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                  ${t.initials || 'N'}
+                </div>
+                <div>
+                  <h4 class="font-bold text-[#001F3F]">${t.name}</h4>
+                  <p class="text-gray-600 text-sm">${t.position}</p>
+                </div>
+              </div>
+              <p class="text-gray-700 italic mb-4">"${t.content}"</p>
+              <div class="flex text-yellow-400">
+                ${'<i class="fas fa-star"></i>'.repeat(5)}
+              </div>
+              <button class="remove-btn absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hidden" onclick="removeTestimonial(${i})">×</button>
+            </div>
+          `).join('');
+        }
+
+        renderNavigation() {
+          const mainNav = document.getElementById('mainNav');
+          const footerLinks = document.getElementById('footerLinks');
+          if (!mainNav || !footerLinks) return;
+          
+          const defaultNav = [
+            { href: "#services", text: "Serviços" },
+            { href: "#methodology", text: "Metodologia" },
+            { href: "#results", text: "Resultados" },
+            { href: "#testimonials", text: "Depoimentos" },
+            { href: "#contact", text: "Contato" }
+          ];
+          
+          const dynamicNav = (this.siteData.sections || []).map(s => ({ 
+            href: `#${s.id}`, 
+            text: s.title 
+          }));
+          
+          const allNavLinks = [...defaultNav, ...dynamicNav];
+
+          mainNav.innerHTML = allNavLinks.map(link => 
+            `<a href="${link.href}" class="nav-link text-[#001F3F] font-medium">${link.text}</a>`
+          ).join('');
+          
+          footerLinks.innerHTML = allNavLinks.map(link => 
+            `<li><a href="${link.href}" class="text-gray-300 hover:text-white transition-colors">${link.text}</a></li>`
+          ).join('');
+        }
+        
+        renderCustomSections() {
+          const container = document.getElementById('custom-sections-container');
+          if (!container) return;
+          
+          container.innerHTML = (this.siteData.sections || []).map(section => {
+            switch(section.type) {
+              case 'text':
+                return `
+                  <section id="${section.id}" class="py-20 bg-white custom-section">
+                    <div class="container mx-auto px-4">
+                      <h2 class="custom-section-title text-center mb-8">${section.title}</h2>
+                      <div class="max-w-4xl mx-auto text-gray-600 leading-relaxed">
+                        ${section.content || 'Conteúdo da seção...'}
+                      </div>
                     </div>
+                  </section>
                 `;
-                document.body.appendChild(modal);
-                modal.querySelector('button').addEventListener('click', () => {
-                    modal.remove();
-                });
-            } catch (error) {
-                console.error('Erro ao exibir modal:', error);
+              case 'form':
+                return `
+                  <section id="${section.id}" class="py-20 bg-gray-50 custom-section">
+                    <div class="container mx-auto px-4">
+                      <h2 class="custom-section-title text-center mb-8">${section.title}</h2>
+                      <div class="max-w-2xl mx-auto netlify-form">
+                        <form name="${section.id}" method="POST" data-netlify="true">
+                          <input type="hidden" name="form-name" value="${section.id}">
+                          <div class="space-y-4">
+                            <input type="text" name="name" placeholder="Nome" required>
+                            <input type="email" name="email" placeholder="Email" required>
+                            <textarea name="message" rows="4" placeholder="Mensagem"></textarea>
+                            <button type="submit">Enviar</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </section>
+                `;
+              default:
+                return '';
             }
+          }).join('');
+        }
+        
+        renderSectionsList() {
+          const container = document.getElementById('sectionsList');
+          if (!container) return;
+          
+          container.innerHTML = (this.siteData.sections || []).map((section, index) => `
+            <div class="flex items-center justify-between bg-gray-100 p-3 rounded mb-2">
+              <div class="flex-1">
+                <h5 class="font-semibold">${section.title}</h5>
+                <p class="text-sm text-gray-600">ID: ${section.id} | Tipo: ${section.type}</p>
+              </div>
+              <button class="bg-red-500 hover:bg-red-700 text-white p-2 rounded ml-2" onclick="removeSection(${index})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          `).join('');
+        }
+        
+        async createForm(formData) {
+          if (!this.siteData.forms) this.siteData.forms = [];
+          this.siteData.forms.push(formData);
+          await this.saveData();
+          this.renderForms();
         }
 
-        function updateData() {
-            try {
-                staticData.companyName = document.getElementById('companyName').value;
-                staticData.whatsappNumber = document.getElementById('whatsappNumber').value;
-                staticData.heroTitle = document.getElementById('heroTitle').value;
-                staticData.heroDescription = document.getElementById('heroDescription').value;
-                staticData.aboutContent = document.getElementById('aboutContent').value;
-                staticData.aboutTeam = document.getElementById('aboutTeam').value;
-                staticData.ctaTitle = document.getElementById('ctaTitle').value;
-                staticData.ctaDescription = document.getElementById('ctaDescription').value;
-                staticData.contactDescription = document.getElementById('contactDescription').value;
-                staticData.contactAddress = document.getElementById('contactAddress').value;
-                staticData.contactEmail = document.getElementById('contactEmail').value;
-                staticData.contactHours = document.getElementById('contactHours').value;
-                staticData.footerDescription = document.getElementById('footerDescription').value;
-                staticData.servicesDescription = document.getElementById('servicesDescription').value;
-                staticData.methodologyTitle = document.getElementById('methodologyTitle').value;
-                staticData.methodologyDescription = document.getElementById('methodologyDescription').value;
-                staticData.testimonialsDescription = document.getElementById('testimonialsDescription').value;
-                staticData.statsClients = document.getElementById('statsClients').value;
-                staticData.statsGrowth = document.getElementById('statsGrowth').value;
-                staticData.statsYears = document.getElementById('statsYears').value;
-                staticData.statsRevenue = document.getElementById('statsRevenue').value;
-                staticData.logoSize = document.getElementById('logoSize').value;
-                staticData.services = Array.from(document.querySelectorAll('#servicesList .service')).map((s, i) => ({
-                    id: parseInt(s.dataset.id) || i + 1,
-                    title: s.querySelector('input').value,
-                    text: s.querySelector('textarea').value
-                }));
-                staticData.methodologySteps = Array.from(document.querySelectorAll('#methodologySteps .step')).map((s, i) => ({
-                    id: parseInt(s.dataset.id) || i + 1,
-                    title: s.querySelector('input').value,
-                    text: s.querySelector('textarea').value
-                }));
-                staticData.testimonials = Array.from(document.querySelectorAll('#testimonialsList .testimonial')).map((t, i) => ({
-                    id: parseInt(t.dataset.id) || i + 1,
-                    text: t.querySelector('textarea').value,
-                    author: t.querySelector('input[placeholder="Autor"]').value,
-                    position: t.querySelector('input[placeholder="Cargo"]').value
-                }));
-            } catch (error) {
-                console.error('Erro ao atualizar dados:', error);
-            }
+        async deleteForm(index) {
+          if (this.siteData.forms && this.siteData.forms[index]) {
+            this.siteData.forms.splice(index, 1);
+            await this.saveData();
+            this.renderForms();
+          }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                loadData();
-
-                document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const username = document.getElementById('adminUsername').value;
-                    const password = document.getElementById('adminPassword').value;
-                    if (username === 'admin' && password === 'admin123') {
-                        isAuthenticated = true;
-                        document.getElementById('adminModal').classList.remove('show');
-                        document.getElementById('adminPanel').classList.remove('hidden');
-                        document.getElementById('loginError').classList.add('hidden');
-                    } else {
-                        document.getElementById('loginError').classList.remove('hidden');
-                    }
-                });
-
-                document.getElementById('adminLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Admin link clicked');
-                    if (!isAuthenticated) {
-                        document.getElementById('adminModal').classList.add('show');
-                    } else {
-                        document.getElementById('adminPanel').classList.remove('hidden');
-                    }
-                });
-
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
+        renderForms() {
+          // Renderiza formulários dinâmicos
+          const formsContainer = document.getElementById('dynamicFormsContainer');
+          if (formsContainer) {
+            formsContainer.innerHTML = (this.siteData.forms || []).map(form => `
+              <section id="${form.id}" class="py-12 bg-white">
+                <div class="container mx-auto px-4">
+                  <h2 class="text-3xl font-bold text-center mb-8">${form.title}</h2>
+                  <form class="max-w-2xl mx-auto netlify-form" name="${form.id}" netlify>
+                    ${form.fields.map(field => `
+                      <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">${field.label}</label>
+                        ${field.type === 'textarea' ? 
+                          `<textarea name="${field.name}" class="w-full p-3 border rounded-lg" ${field.required ? 'required' : ''}></textarea>` :
+                          `<input type="${field.type}" name="${field.name}" class="w-full p-3 border rounded-lg" ${field.required ? 'required' : ''}>`
                         }
-                        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                        document.getElementById(tab.dataset.tab).classList.remove('hidden');
-                    });
-                });
+                      </div>
+                    `).join('')}
+                    <button type="submit" class="btn-primary py-2 px-6 rounded-lg">
+                      ${form.submitText || 'Enviar'}
+                    </button>
+                  </form>
+                </div>
+              </section>
+            `).join('');
+          }
 
-                document.getElementById('saveChanges').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para salvar alterações.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    updateData();
-                    saveData();
-                    loadData();
-                    showModal('Alterações salvas com sucesso!');
-                });
+          // Atualiza o painel admin
+          const adminFormsContainer = document.getElementById('formsList');
+          if (adminFormsContainer) {
+            adminFormsContainer.innerHTML = (this.siteData.forms || []).map((form, index) => `
+              <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                <h4 class="font-bold mb-2">${form.title} (ID: ${form.id})</h4>
+                <div class="grid grid-cols-3 gap-4 mb-3">
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Título</label>
+                    <input type="text" value="${form.title}" id="formTitle-${index}" class="w-full p-2 border rounded">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">ID do Form</label>
+                    <input type="text" value="${form.id}" id="formId-${index}" class="w-full p-2 border rounded">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Texto do Botão</label>
+                    <input type="text" value="${form.submitText || 'Enviar'}" id="formSubmitText-${index}" class="w-full p-2 border rounded">
+                  </div>
+                </div>
+                <h5 class="font-medium mb-2">Campos:</h5>
+                <div id="formFields-${index}">
+                  ${form.fields.map((field, fieldIndex) => `
+                    <div class="bg-white p-3 rounded border mb-2">
+                      <div class="grid grid-cols-3 gap-3 mb-2">
+                        <div>
+                          <label class="block text-xs font-medium mb-1">Rótulo</label>
+                          <input type="text" value="${field.label}" id="formFieldLabel-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+                        </div>
+                        <div>
+                          <label class="block text-xs font-medium mb-1">Nome</label>
+                          <input type="text" value="${field.name}" id="formFieldName-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+                        </div>
+                        <div>
+                          <label class="block text-xs font-medium mb-1">Tipo</label>
+                          <select id="formFieldType-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
+                            <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email</option>
+                            <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Telefone</option>
+                            <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>Área de Texto</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="flex justify-between">
+                        <label class="flex items-center text-xs">
+                          <input type="checkbox" ${field.required ? 'checked' : ''} 
+                                 id="formFieldRequired-${index}-${fieldIndex}" class="mr-1">
+                          Obrigatório
+                        </label>
+                        <button onclick="removeFormField(${index}, ${fieldIndex})" class="text-red-500 text-xs">
+                          <i class="fas fa-trash"></i> Remover
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="flex space-x-2 mt-3">
+                  <button onclick="addFormField(${index})" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded text-sm">
+                    <i class="fas fa-plus mr-1"></i>Adicionar Campo
+                  </button>
+                  <button onclick="updateForm(${index})" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
+                    <i class="fas fa-save mr-1"></i>Atualizar
+                  </button>
+                  <button onclick="deleteForm(${index})" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm">
+                    <i class="fas fa-trash mr-1"></i>Remover Formulário
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
 
-                document.getElementById('logout').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para salvar alterações.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    updateData();
-                    saveData();
-                    loadData();
-                    showModal('Alterações salvas com sucesso!');
-                    isAuthenticated = false;
-                    document.getElementById('adminPanel').classList.add('hidden');
-                    document.getElementById('adminModal').classList.add('show');
-                    document.getElementById('adminUsername').value = '';
-                    document.getElementById('adminPassword').value = '';
-                    document.getElementById('loginError').classList.add('hidden');
-                });
+        async updateForm(index) {
+          const title = document.getElementById(`formTitle-${index}`).value;
+          const id = document.getElementById(`formId-${index}`).value;
+          const submitText = document.getElementById(`formSubmitText-${index}`).value;
+          
+          // Coletar todos os campos
+          const fields = [];
+          const fieldsContainer = document.getElementById(`formFields-${index}`);
+          const fieldElements = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]');
+          
+          fieldElements.forEach((_, fieldIndex) => {
+            fields.push({
+              label: document.getElementById(`formFieldLabel-${index}-${fieldIndex}`).value,
+              name: document.getElementById(`formFieldName-${index}-${fieldIndex}`).value,
+              type: document.getElementById(`formFieldType-${index}-${fieldIndex}`).value,
+              required: document.getElementById(`formFieldRequired-${index}-${fieldIndex}`).checked
+            });
+          });
+          
+          this.siteData.forms[index] = {
+            id,
+            title,
+            submitText,
+            fields
+          };
+          
+          await this.saveData();
+          this.renderForms();
+        }
 
-                document.getElementById('addService').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para adicionar serviços.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const id = staticData.services.length ? Math.max(...staticData.services.map(s => s.id)) + 1 : 1;
-                    const serviceDiv = document.createElement('div');
-                    serviceDiv.className = 'service';
-                    serviceDiv.dataset.id = id;
-                    serviceDiv.innerHTML = `
-                        <input type="text" placeholder="Título do Serviço" class="border p-2 mb-2 w-full">
-                        <textarea placeholder="Descrição do Serviço" class="border p-2 mb-2 w-full"></textarea>
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    `;
-                    document.getElementById('servicesList').appendChild(serviceDiv);
-                    serviceDiv.querySelector('button').addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover serviços.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(serviceDiv.dataset.id);
-                        staticData.services = staticData.services.filter(s => s.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                    staticData.services.push({ id, title: '', text: '' });
-                    saveData();
-                    loadData();
-                });
+        async createButton(buttonData) {
+          if (!this.siteData.buttons) this.siteData.buttons = [];
+          this.siteData.buttons.push(buttonData);
+          await this.saveData();
+          this.renderButtons();
+        }
 
-                document.getElementById('addStep').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para adicionar etapas.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const id = staticData.methodologySteps.length ? Math.max(...staticData.methodologySteps.map(s => s.id)) + 1 : 1;
-                    const stepDiv = document.createElement('div');
-                    stepDiv.className = 'step';
-                    stepDiv.dataset.id = id;
-                    stepDiv.innerHTML = `
-                        <input type="text" placeholder="Título da Etapa" class="border p-2 mb-2 w-full">
-                        <textarea placeholder="Descrição da Etapa" class="border p-2 mb-2 w-full"></textarea>
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    `;
-                    document.getElementById('methodologySteps').appendChild(stepDiv);
-                    serviceDiv.querySelector('button').addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover etapas.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(stepDiv.dataset.id);
-                        staticData.methodologySteps = staticData.methodologySteps.filter(s => s.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                    staticData.methodologySteps.push({ id, title: '', text: '' });
-                    saveData();
-                    loadData();
-                });
+        async updateButton(index, buttonData) {
+          if (this.siteData.buttons && this.siteData.buttons[index]) {
+            this.siteData.buttons[index] = buttonData;
+            await this.saveData();
+            this.renderButtons();
+          }
+        }
 
-                document.getElementById('addTestimonial').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para adicionar depoimentos.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const id = staticData.testimonials.length ? Math.max(...staticData.testimonials.map(t => t.id)) + 1 : 1;
-                    const testimonialDiv = document.createElement('div');
-                    testimonialDiv.className = 'testimonial';
-                    testimonialDiv.dataset.id = id;
-                    testimonialDiv.innerHTML = `
-                        <textarea placeholder="Texto do Depoimento" class="border p-2 mb-2 w-full"></textarea>
-                        <input type="text" placeholder="Autor" class="border p-2 mb-2 w-full">
-                        <input type="text" placeholder="Cargo" class="border p-2 mb-2 w-full">
-                        <button class="bg-blue-600 text-white p-2 rounded">Remover</button>
-                    `;
-                    document.getElementById('testimonialsList').appendChild(testimonialDiv);
-                    testimonialDiv.querySelector('button').addEventListener('click', () => {
-                        if (!isAuthenticated) {
-                            showModal('Faça login para remover depoimentos.');
-                            document.getElementById('adminModal').classList.add('show');
-                            return;
-                        }
-                        const id = parseInt(testimonialDiv.dataset.id);
-                        staticData.testimonials = staticData.testimonials.filter(t => t.id !== id);
-                        saveData();
-                        loadData();
-                    });
-                    staticData.testimonials.push({ id, text: '', author: '', position: '' });
-                    saveData();
-                    loadData();
-                });
+        async deleteButton(index) {
+          if (this.siteData.buttons && this.siteData.buttons[index]) {
+            this.siteData.buttons.splice(index, 1);
+            await this.saveData();
+            this.renderButtons();
+          }
+        }
 
-                document.getElementById('logoUpload').addEventListener('change', (e) => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para fazer upload.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            staticData.logo = reader.result;
-                            saveData();
-                            loadData();
-                            showModal('Logotipo uploaded com sucesso!');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                document.getElementById('removeLogo').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para remover.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    staticData.logo = null;
-                    saveData();
-                    loadData();
-                    showModal('Logotipo removido com sucesso.');
-                });
-
-                document.getElementById('heroImageUpload').addEventListener('change', (e) => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para fazer upload.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            staticData.heroImage = reader.result;
-                            saveData();
-                            loadData();
-                            showModal('Imagem do Hero carregada com sucesso!');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                document.getElementById('removeHeroImage').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para remover.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    staticData.heroImage = null;
-                    saveData();
-                    loadData();
-                    showModal('Imagem do Hero removida com sucesso.');
-                });
-
-                document.getElementById('photoUpload').addEventListener('change', (e) => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para fazer upload.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const files = Array.from(e.target.files);
-                    const readers = files.map(file => {
-                        return new Promise(resolve => {
-                            const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result);
-                            reader.readAsDataURL(file);
-                        });
-                    });
-                    Promise.all(readers).then(photos => {
-                        staticData.photos = [...staticData.photos, ...photos];
-                        saveData();
-                        loadData();
-                        showModal('Fotos carregadas com sucesso!');
-                    });
-                });
-
-                document.getElementById('clientLogoUpload').addEventListener('change', (e) => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para fazer upload.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const files = Array.from(e.target.files);
-                    const readers = files.map(file => {
-                        return new Promise(resolve => {
-                            const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result);
-                            reader.readAsDataURL(file);
-                        });
-                    });
-                    Promise.all(readers).then(logos => {
-                        staticData.clientLogos = [...staticData.clientLogos, ...logos];
-                        saveData();
-                        loadData();
-                        showModal('Logos de clientes carregados com sucesso!');
-                    });
-                });
-
-                document.getElementById('addVideo').addEventListener('click', () => {
-                    if (!isAuthenticated) {
-                        showModal('Faça login para adicionar vídeos.');
-                        document.getElementById('adminModal').classList.add('show');
-                        return;
-                    }
-                    const video = document.getElementById('videoLink').value;
-                    if (video.includes('youtube.com')) {
-                        staticData.videos.push(video);
-                        saveData();
-                        loadData();
-                        document.getElementById('videoLink').value = '';
-                        showModal('Vídeo adicionado com sucesso!');
-                    } else {
-                        showModal('Insira um link válido do YouTube.');
-                    }
-                });
-            } catch (error) {
-                console.error('Erro ao inicializar:', error);
+        renderButtons() {
+          // Renderiza botões dinâmicos no site
+          document.querySelectorAll('[data-button-id]').forEach(container => {
+            const buttonId = container.getAttribute('data-button-id');
+            const button = this.siteData.buttons?.find(b => b.id === buttonId);
+            
+            if (button) {
+              container.innerHTML = `
+                <button class="btn-${button.style} ${button.classes || ''}" 
+                        onclick="${button.onclick || ''}" 
+                        ${button.href ? `href="${button.href}"` : ''}
+                        ${button.target ? `target="${button.target}"` : ''}>
+                  ${button.text}
+                </button>
+              `;
             }
+          });
+
+          // Atualiza o painel admin
+          const buttonsContainer = document.getElementById('buttonsList');
+          if (buttonsContainer) {
+            buttonsContainer.innerHTML = (this.siteData.buttons || []).map((button, index) => `
+              <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Texto</label>
+                    <input type="text" value="${button.text}" id="buttonText-${index}" class="w-full p-2 border rounded">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Estilo</label>
+                    <select id="buttonStyle-${index}" class="w-full p-2 border rounded">
+                      <option value="primary" ${button.style === 'primary' ? 'selected' : ''}>Primário</option>
+                      <option value="secondary" ${button.style === 'secondary' ? 'selected' : ''}>Secundário</option>
+                      <option value="accent" ${button.style === 'accent' ? 'selected' : ''}>Destaque</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Link (opcional)</label>
+                    <input type="text" value="${button.href || ''}" id="buttonHref-${index}" class="w-full p-2 border rounded">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">ID do Botão</label>
+                    <input type="text" value="${button.id}" id="buttonId-${index}" class="w-full p-2 border rounded">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Alvo</label>
+                    <select id="buttonTarget-${index}" class="w-full p-2 border rounded">
+                      <option value="">Mesma janela</option>
+                      <option value="_blank" ${button.target === '_blank' ? 'selected' : ''}>Nova janela</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex space-x-2 mt-3">
+                  <button onclick="updateButton(${index})" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
+                    <i class="fas fa-save mr-1"></i>Atualizar
+                  </button>
+                  <button onclick="deleteButton(${index})" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm">
+                    <i class="fas fa-trash mr-1"></i>Remover
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+        
+        async addGalleryImage() {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const desc = prompt('Descrição da imagem:', 'Imagem da galeria');
+            if (!desc) return;
+            
+            const downloadURL = await this.handleImageUpload(file, `gallery`);
+            if (downloadURL) {
+              if (!this.siteData.media.gallery) this.siteData.media.gallery = [];
+              this.siteData.media.gallery.push({ url: downloadURL, desc });
+              await this.saveData();
+            }
+          };
+          input.click();
+        }
+        
+        async removeGalleryItem(index) {
+          if (confirm('Remover esta imagem da galeria?')) {
+            const item = this.siteData.media.gallery[index];
+            this.siteData.media.gallery.splice(index, 1);
+            await this.saveData();
+            this.showToast("Imagem removida", "info");
+            
+            try {
+              const filePath = new URL(item.url).pathname.split('/images/')[1];
+              if (filePath) {
+                await supabase.storage.from('images').remove([`images/${filePath}`]);
+              }
+            } catch (error) {
+              console.warn("Não foi possível remover o arquivo do Storage:", error.message);
+            }
+          }
+        }
+        
+        addVideo() {
+          const url = prompt('Cole a URL do vídeo do YouTube:');
+          if (!url) return;
+          
+          const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+          if (match && match[2].length === 11) {
+            const desc = prompt('Descrição do vídeo:', 'Vídeo institucional');
+            if (!desc) return;
+            
+            if (!this.siteData.media.videos) this.siteData.media.videos = [];
+            this.siteData.media.videos.push({ youtubeId: match[2], desc });
+            this.saveData();
+          } else {
+            this.showToast("URL do YouTube inválida", "error");
+          }
+        }
+        
+        removeVideoItem(index) {
+          if (confirm('Remover este vídeo?')) {
+            this.siteData.media.videos.splice(index, 1);
+            this.saveData();
+          }
+        }
+        
+        addTestimonial() {
+          const name = prompt('Nome:', 'Novo Cliente');
+          if (!name) return;
+          
+          const position = prompt('Cargo/Empresa:', 'Empresa');
+          if (!position) return;
+          
+          const content = prompt('Depoimento:', 'Ótimo serviço!');
+          if (!content) return;
+          
+          this.siteData.testimonials.push({
+            name,
+            position,
+            content,
+            initials: name.charAt(0).toUpperCase()
+          });
+          this.saveData();
+        }
+        
+        removeTestimonial(index) {
+          if (confirm('Remover este depoimento?')) {
+            this.siteData.testimonials.splice(index, 1);
+            this.saveData();
+          }
+        }
+        
+        addNewSection() {
+          const name = document.getElementById('newSectionName').value;
+          const id = document.getElementById('newSectionId').value;
+          const type = document.getElementById('newSectionType').value;
+          
+          if (!name || !id) {
+            this.showToast("Nome e ID são obrigatórios", "error");
+            return;
+          }
+          
+          if (!this.siteData.sections) this.siteData.sections = [];
+          this.siteData.sections.push({ title: name, id, type, content: '' });
+          this.saveData();
+          
+          document.getElementById('newSectionName').value = '';
+          document.getElementById('newSectionId').value = '';
+          document.getElementById('newSectionType').value = 'text';
+        }
+        
+        removeSection(index) {
+          if (confirm('Remover esta seção?')) {
+            this.siteData.sections.splice(index, 1);
+            this.saveData();
+          }
+        }
+      }
+
+      // Inicializa o CMS
+      window.siteCMS = new SiteCMS();
+      
+      // Event Listeners
+      document.getElementById('loginButton').addEventListener('click', () => {
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPass').value;
+        siteCMS.authenticate(email, password);
+      });
+      
+      document.getElementById('logoutButton').addEventListener('click', () => siteCMS.logout());
+      
+      document.getElementById('adminPass').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('loginButton').click();
+      });
+      
+      document.getElementById('adminToggle').addEventListener('click', () => siteCMS.toggleAdmin());
+      document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
+      
+      document.getElementById('saveAll').addEventListener('click', () => {
+        document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
+          const field = input.id;
+          if (field && siteCMS.siteData.content.hasOwnProperty(field)) {
+            siteCMS.siteData.content[field] = input.value;
+          }
         });
-    </script>
+        siteCMS.saveData();
+      });
+      
+      document.getElementById('resetAll').addEventListener('click', () => {
+        if (confirm('Restaurar dados padrão? Isso não pode ser desfeito.')) {
+          siteCMS.loadDefaultData();
+          siteCMS.saveData();
+        }
+      });
+      
+      document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => siteCMS.switchTab(e.currentTarget.dataset.tab));
+      });
+      
+      document.addEventListener('dblclick', (e) => {
+        if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
+          siteCMS.enableInlineEdit(e.target);
+        }
+      });
+      
+      document.getElementById('heroImageUpload').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const url = await siteCMS.handleImageUpload(file, 'heroImage');
+        if (url) {
+          siteCMS.siteData.content.heroImage = url;
+          await siteCMS.saveData();
+        }
+      });
+      
+      document.getElementById('companyLogoUpload').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const url = await siteCMS.handleImageUpload(file, 'companyLogo');
+        if (url) {
+          siteCMS.siteData.content.companyLogo = url;
+          await siteCMS.saveData();
+        }
+      });
+      
+      document.getElementById('loginModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          siteCMS.hideLoginModal();
+        }
+      });
+    });
+
+    // Funções globais para serem chamadas pelos botões
+    function addGalleryImage() { window.siteCMS?.addGalleryImage(); }
+    function removeGalleryItem(index) { window.siteCMS?.removeGalleryItem(index); }
+    function addVideo() { window.siteCMS?.addVideo(); }
+    function removeVideoItem(index) { window.siteCMS?.removeVideoItem(index); }
+    function addTestimonial() { window.siteCMS?.addTestimonial(); }
+    function removeTestimonial(index) { window.siteCMS?.removeTestimonial(index); }
+    function addNewSection() { window.siteCMS?.addNewSection(); }
+    function removeSection(index) { window.siteCMS?.removeSection(index); }
+    function deleteLogo() { window.siteCMS?.deleteLogo(); }
+    function resizeLogo(action) { window.siteCMS?.resizeLogo(action); }
+    function updateLogoSize(size) { window.siteCMS?.updateLogoSize(size); }
+    function saveMetaPixel() { window.siteCMS?.saveMetaPixel(); }
+    function updateTextColors() { window.siteCMS?.updateTextColors(); }
+
+    // Funções globais para formulários
+    function createNewForm() {
+      const title = document.getElementById('newFormTitle').value;
+      const id = document.getElementById('newFormId').value;
+      const submitText = document.getElementById('newFormSubmitText').value;
+      
+      if (!title || !id) {
+        window.siteCMS?.showToast("Título e ID são obrigatórios", "error");
+        return;
+      }
+      
+      window.siteCMS?.createForm({
+        id,
+        title,
+        submitText,
+        fields: [
+          { label: "Nome", name: "name", type: "text", required: true },
+          { label: "Email", name: "email", type: "email", required: true }
+        ]
+      });
+    }
+
+    function updateForm(index) {
+      const title = document.getElementById(`formTitle-${index}`).value;
+      const id = document.getElementById(`formId-${index}`).value;
+      const submitText = document.getElementById(`formSubmitText-${index}`).value;
+      
+      // Coletar todos os campos
+      const fields = [];
+      const fieldsContainer = document.getElementById(`formFields-${index}`);
+      const fieldElements = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]');
+      
+      fieldElements.forEach((_, fieldIndex) => {
+        fields.push({
+          label: document.getElementById(`formFieldLabel-${index}-${fieldIndex}`).value,
+          name: document.getElementById(`formFieldName-${index}-${fieldIndex}`).value,
+          type: document.getElementById(`formFieldType-${index}-${fieldIndex}`).value,
+          required: document.getElementById(`formFieldRequired-${index}-${fieldIndex}`).checked
+        });
+      });
+      
+      window.siteCMS?.updateForm(index, {
+        id,
+        title,
+        submitText,
+        fields
+      });
+    }
+
+    function addFormField(formIndex) {
+      const fieldsContainer = document.getElementById(`formFields-${formIndex}`);
+      const fieldIndex = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]').length;
+      
+      const fieldHtml = `
+        <div class="bg-white p-3 rounded border mb-2">
+          <div class="grid grid-cols-3 gap-3 mb-2">
+            <div>
+              <label class="block text-xs font-medium mb-1">Rótulo</label>
+              <input type="text" value="Novo Campo" id="formFieldLabel-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Nome</label>
+              <input type="text" value="field${fieldIndex + 1}" id="formFieldName-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Tipo</label>
+              <select id="formFieldType-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
+                <option value="text">Texto</option>
+                <option value="email">Email</option>
+                <option value="tel">Telefone</option>
+                <option value="textarea">Área de Texto</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex justify-between">
+            <label class="flex items-center text-xs">
+              <input type="checkbox" checked id="formFieldRequired-${formIndex}-${fieldIndex}" class="mr-1">
+              Obrigatório
+            </label>
+            <button onclick="removeFormField(${formIndex}, ${fieldIndex})" class="text-red-500 text-xs">
+              <i class="fas fa-trash"></i> Remover
+            </button>
+          </div>
+        </div>
+      `;
+      
+      fieldsContainer.insertAdjacentHTML('beforeend', fieldHtml);
+    }
+
+    function removeFormField(formIndex, fieldIndex) {
+      const fieldElement = document.querySelector(`[id="formFieldLabel-${formIndex}-${fieldIndex}"]`)?.parentElement?.parentElement?.parentElement;
+      if (fieldElement) {
+        fieldElement.remove();
+      }
+    }
+
+    function deleteForm(index) {
+      if (confirm('Tem certeza que deseja remover este formulário?')) {
+        window.siteCMS?.deleteForm(index);
+      }
+    }
+
+    // Funções globais para botões
+    function createNewButton() {
+      const text = document.getElementById('newButtonText').value;
+      const style = document.getElementById('newButtonStyle').value;
+      const href = document.getElementById('newButtonHref').value;
+      const id = document.getElementById('newButtonId').value;
+      const target = document.getElementById('newButtonTarget').value;
+      
+      if (!text || !id) {
+        window.siteCMS?.showToast("Texto e ID são obrigatórios", "error");
+        return;
+      }
+      
+      window.siteCMS?.createButton({
+        id,
+        text,
+        style,
+        href,
+        target,
+        classes: 'py-2 px-4 rounded-lg transition-all'
+      });
+    }
+
+    function updateButton(index) {
+      const text = document.getElementById(`buttonText-${index}`).value;
+      const style = document.getElementById(`buttonStyle-${index}`).value;
+      const href = document.getElementById(`buttonHref-${index}`).value;
+      const id = document.getElementById(`buttonId-${index}`).value;
+      const target = document.getElementById(`buttonTarget-${index}`).value;
+      
+      window.siteCMS?.updateButton(index, {
+        id,
+        text,
+        style,
+        href,
+        target,
+        classes: 'py-2 px-4 rounded-lg transition-all'
+      });
+    }
+
+    function deleteButton(index) {
+      if (confirm('Tem certeza que deseja remover este botão?')) {
+        window.siteCMS?.deleteButton(index);
+      }
+    }
+  </script>
 </body>
 </html>
