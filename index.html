@@ -951,7 +951,6 @@
 
   <!-- Scripts -->
   <script>
-    // Substituir o script existente por esta versão corrigida
     document.addEventListener('DOMContentLoaded', () => {
       // Configuração do Supabase
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
@@ -1003,16 +1002,17 @@
             this.user = user;
             this.isAuthenticated = !!user;
             
+            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
+            await this.loadData();
+            
             if (!this.isAuthenticated) {
-              // Carrega do localStorage primeiro
-              this.loadFromLocalStorage();
-            } else {
-              // Se autenticado, carrega do Supabase
-              await this.loadData();
+              // Se falhar no Supabase, tenta do localStorage
+              await this.loadFromLocalStorage();
             }
           } catch (error) {
             console.error("Erro ao verificar autenticação:", error);
-            this.loadFromLocalStorage();
+            // Se der erro, tenta do localStorage como fallback
+            await this.loadFromLocalStorage();
           }
         }
         
@@ -1038,7 +1038,6 @@
               this.showToast("Dados padrão carregados", "info");
             }
             
-            // Sempre renderiza o conteúdo após carregar
             this.renderContent();
             document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
             await this.saveToLocalStorage();
@@ -1046,7 +1045,7 @@
           } catch (error) {
             console.error("Erro ao carregar do Supabase:", error);
             this.showToast("Erro ao carregar do Supabase", "error");
-            this.loadFromLocalStorage();
+            await this.loadFromLocalStorage();
           }
         }
         
@@ -1116,7 +1115,6 @@
               this.loadDefaultData();
             }
             
-            // IMPORTANTE: Sempre renderiza após carregar
             this.renderContent();
             
           } catch (error) {
@@ -1143,10 +1141,7 @@
             this.showToast("Dados salvos com sucesso!", "success");
             document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
             
-            // Salva também no localStorage
             await this.saveToLocalStorage();
-            
-            // Re-renderiza o conteúdo
             this.renderContent();
             
             setTimeout(() => {
@@ -1158,7 +1153,6 @@
             console.error("Erro ao salvar no Supabase:", error);
             this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
             
-            // Mesmo com erro no Supabase, salva localmente
             await this.saveToLocalStorage();
             this.showToast("Dados salvos localmente", "warning");
             
@@ -1266,13 +1260,11 @@
         }
         
         updateAdminForm() {
-          // Atualiza os campos do formulário admin com os dados atuais
           Object.keys(this.siteData.content).forEach(field => {
             const input = document.getElementById(field);
             if (input) {
               input.value = this.siteData.content[field] || '';
               
-              // Para campos de imagem, atualiza também o preview
               if (field === 'heroImage' || field === 'companyLogo') {
                 const preview = document.getElementById(field + 'Preview');
                 if (preview && this.siteData.content[field]) {
@@ -1345,7 +1337,6 @@
         renderContent() {
           console.log("Renderizando conteúdo com dados:", this.siteData);
           
-          // Renderiza o logo/nome da empresa
           const companyNameContainer = document.getElementById('companyNameContainer');
           if (companyNameContainer) {
             const logo = this.siteData.content.companyLogo;
@@ -1358,7 +1349,6 @@
             }
           }
           
-          // Renderiza todos os campos editáveis
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             const value = this.siteData.content[field];
@@ -1384,7 +1374,6 @@
             }
           });
           
-          // Renderiza outras seções
           this.renderGallery();
           this.renderVideos();
           this.renderTestimonials();
@@ -1401,7 +1390,6 @@
           adminContainer.innerHTML = '';
           
           (this.siteData.media.gallery || []).forEach((item, index) => {
-            // Galeria pública
             container.innerHTML += `
               <div class="relative">
                 <img src="${item.url}" alt="${item.desc}" class="w-full h-64 object-cover rounded-lg shadow-md">
@@ -1409,7 +1397,6 @@
               </div>
             `;
             
-            // Admin galeria
             adminContainer.innerHTML += `
               <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
                 <img src="${item.url}" class="w-12 h-12 object-cover rounded mr-4">
@@ -1431,7 +1418,6 @@
           adminContainer.innerHTML = '';
           
           (this.siteData.media.videos || []).forEach((item, index) => {
-            // Vídeos públicos
             container.innerHTML += `
               <div class="relative">
                 <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
@@ -1441,7 +1427,6 @@
               </div>
             `;
             
-            // Admin vídeos
             adminContainer.innerHTML += `
               <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
                 <div class="flex-1 text-sm">
@@ -1510,7 +1495,6 @@
         }
         
         renderCustomSections() {
-          // Implementação das seções customizadas
           const container = document.getElementById('custom-sections-container');
           if (!container) return;
           
@@ -1672,7 +1656,6 @@
           this.siteData.sections.push({ title: name, id, type, content: '' });
           this.saveData();
           
-          // Limpa os campos
           document.getElementById('newSectionName').value = '';
           document.getElementById('newSectionId').value = '';
           document.getElementById('newSectionType').value = 'text';
@@ -1706,7 +1689,6 @@
       document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
       
       document.getElementById('saveAll').addEventListener('click', () => {
-        // Atualiza os dados do formulário antes de salvar
         document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
           const field = input.id;
           if (field && siteCMS.siteData.content.hasOwnProperty(field)) {
@@ -1723,19 +1705,16 @@
         }
       });
       
-      // Tabs do admin
       document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.addEventListener('click', (e) => siteCMS.switchTab(e.currentTarget.dataset.tab));
       });
       
-      // Edição inline
       document.addEventListener('dblclick', (e) => {
         if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
           siteCMS.enableInlineEdit(e.target);
         }
       });
       
-      // Upload de imagens
       document.getElementById('heroImageUpload').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -1758,7 +1737,6 @@
         }
       });
       
-      // Fechar modal clicando fora
       document.getElementById('loginModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
           siteCMS.hideLoginModal();
