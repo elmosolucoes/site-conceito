@@ -1278,7 +1278,11 @@
         
         init() {
           this.setupSupabaseListeners();
-          this.checkAuthState();
+          this.checkAuthState().then(() => {
+            if (this.isAuthenticated) {
+              document.body.classList.add('admin-logged-in');
+            }
+          });
         }
         
         setupSupabaseListeners() {
@@ -1291,9 +1295,11 @@
               this.showToast("Conectado ao Supabase", "success");
               document.getElementById('supabaseConnectionStatus').textContent = "Conectado";
               document.getElementById('supabaseConnectionStatus').className = "text-green-600";
+              document.body.classList.add('admin-logged-in');
             } else {
               document.getElementById('supabaseConnectionStatus').textContent = "Desconectado";
               document.getElementById('supabaseConnectionStatus').className = "text-red-600";
+              document.body.classList.remove('admin-logged-in');
             }
           });
         }
@@ -1305,22 +1311,21 @@
             this.user = user;
             this.isAuthenticated = !!user;
             
-            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
             await this.loadData();
             
             if (!this.isAuthenticated) {
-              // Se falhar no Supabase, tenta do localStorage
               await this.loadFromLocalStorage();
             }
           } catch (error) {
             console.error("Erro ao verificar autenticação:", error);
-            // Se der erro, tenta do localStorage como fallback
             await this.loadFromLocalStorage();
           }
         }
         
         async loadData() {
           try {
+            if (!this.isAuthenticated) return;
+            
             this.showToast("Carregando dados...", "info");
             let { data, error } = await supabase.from('site_data').select('*').eq('id', 1).single();
 
@@ -1397,13 +1402,12 @@
           try {
             const jsonData = JSON.stringify(this.siteData);
             localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
-            console.log("Dados salvos no localStorage:", this.siteData);
           } catch(e) { 
             console.warn("Não foi possível salvar no localStorage:", e); 
           }
         }
 
-        loadFromLocalStorage() {
+        async loadFromLocalStorage() {
           try {
             const savedData = localStorage.getItem('siteData');
             if (savedData) {
@@ -1417,10 +1421,8 @@
                 buttons: parsed.buttons || [],
                 navigation: parsed.navigation || { main: [], footer: [] }
               };
-              console.log("Dados carregados do localStorage:", this.siteData);
               this.showToast("Dados carregados do armazenamento local", "info");
             } else {
-              console.log("Nenhum dado encontrado no localStorage, carregando padrões");
               this.loadDefaultData();
             }
             
@@ -1434,6 +1436,11 @@
         }
         
         async saveData() {
+          if (!this.isAuthenticated) {
+            this.showToast("Você precisa estar autenticado para salvar alterações", "error");
+            return false;
+          }
+          
           const saveButton = document.getElementById('saveAll');
           let originalText = saveButton.innerHTML;
           try {
@@ -1458,6 +1465,7 @@
               saveButton.disabled = false;
             }, 1000);
             
+            return true;
           } catch (error) {
             console.error("Erro ao salvar no Supabase:", error);
             this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
@@ -1470,6 +1478,8 @@
               saveButton.innerHTML = originalText;
               saveButton.disabled = false;
             }, 2000);
+            
+            return false;
           }
         }
         
@@ -1532,7 +1542,7 @@
         toggleAdmin(show = null) {
           if (!this.isAuthenticated && (show === true || show === null)) {
             this.showLoginModal();
-            return;
+            return false;
           }
           
           const panel = document.getElementById('adminPanel');
@@ -1540,7 +1550,10 @@
           
           if (this.isAdmin) {
             panel.classList.add('open');
-            document.body.classList.add('admin-logged-in', 'admin-panel-open');
+            document.body.classList.add('admin-panel-open');
+            if (this.isAuthenticated) {
+              document.body.classList.add('admin-logged-in');
+            }
             this.updateAdminForm();
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.remove('hidden'));
           } else {
@@ -1548,6 +1561,7 @@
             document.body.classList.remove('admin-logged-in', 'admin-panel-open');
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
           }
+          return this.isAdmin;
         }
         
         showLoginModal() {
@@ -1601,6 +1615,11 @@
         }
         
         enableInlineEdit(element) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const field = element.dataset.field;
           const originalValue = element.innerHTML;
           
@@ -1625,7 +1644,21 @@
           });
         }
         
+        showAuthRequired() {
+          const toast = document.getElementById('toast');
+          toast.textContent = "Você precisa fazer login para editar o site";
+          toast.className = 'toast show';
+          toast.style.backgroundColor = '#F44336';
+          setTimeout(() => toast.className = 'toast', 3000);
+          this.showLoginModal();
+        }
+        
         async handleImageUpload(file, field) {
+          if (!this.isAuthenticated) {
+            this.showToast("Acesso não autorizado", "error");
+            return null;
+          }
+          
           if (!file) return null;
           
           try {
@@ -1657,6 +1690,11 @@
         }
         
         async deleteLogo() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (confirm('Tem certeza que deseja remover a logo?')) {
             // Remove a logo do armazenamento se existir
             if (this.siteData.content.companyLogo) {
@@ -1678,6 +1716,11 @@
         }
         
         resizeLogo(action) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const logo = document.querySelector('#companyNameContainer img');
           if (!logo) return;
           
@@ -1700,6 +1743,11 @@
         }
         
         updateLogoSize(size) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const logo = document.querySelector('#companyNameContainer img');
           if (logo) {
             logo.style.height = `${size}px`;
@@ -1710,6 +1758,11 @@
         }
         
         async saveMetaPixel() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const pixelId = document.getElementById('metaPixelId').value;
           if (!pixelId) {
             this.showToast("Por favor, insira um ID de Pixel válido", "error");
@@ -1759,6 +1812,11 @@
         }
         
         async updateTextColors() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const primary = document.getElementById('textPrimaryColor').value;
           const secondary = document.getElementById('textSecondaryColor').value;
           const accent = document.getElementById('textAccentColor').value;
@@ -2028,6 +2086,11 @@
         }
         
         async createForm(formData) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (!this.siteData.forms) this.siteData.forms = [];
           this.siteData.forms.push(formData);
           await this.saveData();
@@ -2035,6 +2098,11 @@
         }
 
         async deleteForm(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (this.siteData.forms && this.siteData.forms[index]) {
             this.siteData.forms.splice(index, 1);
             await this.saveData();
@@ -2142,6 +2210,11 @@
         }
 
         async updateForm(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const title = document.getElementById(`formTitle-${index}`).value;
           const id = document.getElementById(`formId-${index}`).value;
           const submitText = document.getElementById(`formSubmitText-${index}`).value;
@@ -2172,6 +2245,11 @@
         }
 
         async createButton(buttonData) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (!this.siteData.buttons) this.siteData.buttons = [];
           this.siteData.buttons.push(buttonData);
           await this.saveData();
@@ -2179,6 +2257,11 @@
         }
 
         async updateButton(index, buttonData) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (this.siteData.buttons && this.siteData.buttons[index]) {
             this.siteData.buttons[index] = buttonData;
             await this.saveData();
@@ -2187,6 +2270,11 @@
         }
 
         async deleteButton(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (this.siteData.buttons && this.siteData.buttons[index]) {
             this.siteData.buttons.splice(index, 1);
             await this.saveData();
@@ -2262,6 +2350,11 @@
         }
         
         async addGalleryImage() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const input = document.createElement('input');
           input.type = 'file';
           input.accept = 'image/*';
@@ -2283,6 +2376,11 @@
         }
         
         async removeGalleryItem(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (confirm('Remover esta imagem da galeria?')) {
             const item = this.siteData.media.gallery[index];
             this.siteData.media.gallery.splice(index, 1);
@@ -2301,6 +2399,11 @@
         }
         
         addVideo() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const url = prompt('Cole a URL do vídeo do YouTube:');
           if (!url) return;
           
@@ -2318,6 +2421,11 @@
         }
         
         removeVideoItem(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (confirm('Remover este vídeo?')) {
             this.siteData.media.videos.splice(index, 1);
             this.saveData();
@@ -2325,6 +2433,11 @@
         }
         
         addTestimonial() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const name = prompt('Nome:', 'Novo Cliente');
           if (!name) return;
           
@@ -2344,6 +2457,11 @@
         }
         
         removeTestimonial(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (confirm('Remover este depoimento?')) {
             this.siteData.testimonials.splice(index, 1);
             this.saveData();
@@ -2351,6 +2469,11 @@
         }
         
         addNewSection() {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           const name = document.getElementById('newSectionName').value;
           const id = document.getElementById('newSectionId').value;
           const type = document.getElementById('newSectionType').value;
@@ -2370,6 +2493,11 @@
         }
         
         removeSection(index) {
+          if (!this.isAuthenticated) {
+            this.showAuthRequired();
+            return;
+          }
+          
           if (confirm('Remover esta seção?')) {
             this.siteData.sections.splice(index, 1);
             this.saveData();
@@ -2397,12 +2525,19 @@
       document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
       
       document.getElementById('saveAll').addEventListener('click', () => {
-        document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
+        // Atualiza todos os campos de conteúdo
+        document.querySelectorAll('#content-tab input, #content-tab textarea, #content-tab select').forEach(input => {
           const field = input.id;
           if (field && siteCMS.siteData.content.hasOwnProperty(field)) {
             siteCMS.siteData.content[field] = input.value;
           }
         });
+        
+        // Atualiza cores do texto
+        siteCMS.siteData.content.textPrimaryColor = document.getElementById('textPrimaryColor').value;
+        siteCMS.siteData.content.textSecondaryColor = document.getElementById('textSecondaryColor').value;
+        siteCMS.siteData.content.textAccentColor = document.getElementById('textAccentColor').value;
+        
         siteCMS.saveData();
       });
       
@@ -2418,8 +2553,12 @@
       });
       
       document.addEventListener('dblclick', (e) => {
-        if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
-          siteCMS.enableInlineEdit(e.target);
+        if (e.target.classList.contains('editable')) {
+          if (!siteCMS.isAdmin || !siteCMS.isAuthenticated) {
+            siteCMS.showAuthRequired();
+          } else {
+            siteCMS.enableInlineEdit(e.target);
+          }
         }
       });
       
