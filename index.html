@@ -67,19 +67,9 @@
       box-shadow: -5px 0 15px rgba(0,0,0,0.1);
       transform: translateX(400px);
       transition: transform 0.3s ease;
-      position: fixed;
-      top: 0;
-      right: 0;
-      height: 100vh;
-      overflow-y: auto;
-      z-index: 40;
     }
     .admin-panel.open {
       transform: translateX(0);
-    }
-    /* Adicione isso para evitar que o conteúdo principal role quando o painel estiver aberto */
-    body.admin-panel-open {
-      overflow: hidden;
     }
     .editable {
       position: relative;
@@ -172,16 +162,9 @@
     }
     /* Logo preview admin */
     #companyLogoPreview {
-      transition: all 0.3s ease;
-      max-height: none;
-      height: auto;
       max-height: 48px;
       max-width: 200px;
       display: block;
-    }
-    /* Estilo para o pixel do Meta */
-    .meta-pixel-script {
-      display: none;
     }
     /* Custom sections */
     .custom-section {
@@ -222,88 +205,6 @@
     .netlify-form button[type="submit"]:hover {
       background-color: #0055AA;
     }
-
-    /* Estilos adicionais dos arquivos CSS */
-    [data-field] {
-      transition: color 0.3s ease;
-    }
-
-    .service-icon {
-      background: linear-gradient(135deg, var(--accent), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: background 0.3s ease;
-    }
-
-    .text-primary {
-      color: var(--primary);
-    }
-
-    .text-secondary {
-      color: var(--secondary);
-    }
-
-    .text-accent {
-      color: var(--accent);
-    }
-
-    /* Estilos para botões */
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: color-mix(in srgb, var(--primary) 90%, black);
-    }
-
-    .btn-secondary {
-      background-color: var(--secondary);
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: color-mix(in srgb, var(--secondary) 90%, black);
-    }
-
-    .btn-accent {
-      background-color: var(--accent);
-      color: white;
-    }
-
-    .btn-accent:hover {
-      background-color: color-mix(in srgb, var(--accent) 90%, black);
-    }
-
-    /* Estilos para formulários */
-    .netlify-form input[type="text"],
-    .netlify-form input[type="email"],
-    .netlify-form input[type="tel"],
-    .netlify-form textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 0.375rem;
-      margin-bottom: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .netlify-form input:focus,
-    .netlify-form textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-    }
-
-    /* Estilos para a interface de administração */
-    .admin-form-field {
-      transition: all 0.2s;
-    }
-
-    .admin-form-field:hover {
-      box-shadow: 0 0 0 2px var(--accent);
-    }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -338,7 +239,7 @@
   </button>
 
   <!-- Painel Admin -->
-  <div id="adminPanel" class="admin-panel">
+  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40">
     <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
@@ -363,8 +264,6 @@
       <div class="flex border-b mb-4">
         <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
         <button class="admin-tab px-4 py-2" data-tab="media" aria-label="Aba Mídia">Mídia</button>
-        <button class="admin-tab px-4 py-2" data-tab="buttons" aria-label="Aba Botões">Botões</button>
-        <button class="admin-tab px-4 py-2" data-tab="forms" aria-label="Aba Formulários">Formulários</button>
         <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
         <button class="admin-tab px-4 py-2" data-tab="sections" aria-label="Aba Seções">Seções</button>
       </div>
@@ -389,31 +288,8 @@
                 <i class="fas fa-upload mr-2"></i>Selecionar Logo
               </button>
               <div class="mt-4">
-                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden">
+                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden" style="max-height: 60px;">
               </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Seção de Controle da Logo -->
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Controle da Logo</h4>
-          <div class="space-y-4">
-            <div class="flex space-x-2">
-              <button onclick="deleteLogo()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-trash mr-2"></i>Remover Logo
-              </button>
-              <button onclick="resizeLogo('increase')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-search-plus mr-2"></i>
-              </button>
-              <button onclick="resizeLogo('decrease')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-search-minus mr-2"></i>
-              </button>
-            </div>
-            <div class="flex items-center">
-              <span class="text-sm mr-2">Tamanho:</span>
-              <input type="range" id="logoSizeRange" min="20" max="200" value="48" class="flex-1" oninput="updateLogoSize(this.value)">
-              <span id="logoSizeValue" class="text-sm ml-2">48px</span>
             </div>
           </div>
         </div>
@@ -444,29 +320,6 @@
             <div>
               <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
               <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
-            </div>
-          </div>
-        </div>
-        
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Cores do Texto</h4>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Cor Primária</label>
-              <input type="color" id="textPrimaryColor" value="#001F3F" class="w-full h-10">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Cor Secundária</label>
-              <input type="color" id="textSecondaryColor" value="#0066CC" class="w-full h-10">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Cor de Destaque</label>
-              <input type="color" id="textAccentColor" value="#0066CC" class="w-full h-10">
-            </div>
-            <div>
-              <button onclick="updateTextColors()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mt-2">
-                <i class="fas fa-save mr-2"></i>Salvar Cores
-              </button>
             </div>
           </div>
         </div>
@@ -531,89 +384,6 @@
         </div>
       </div>
       
-      <!-- Botões -->
-      <div id="buttons-tab" class="admin-tab-content hidden space-y-6">
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Gerenciar Botões</h4>
-          <div id="buttonsList" class="space-y-4 mb-6">
-            <!-- Botões serão listados aqui -->
-          </div>
-          
-          <div class="bg-gray-100 p-4 rounded-lg">
-            <h5 class="font-bold mb-3">Criar Novo Botão</h5>
-            <div class="space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Texto</label>
-                  <input type="text" id="newButtonText" class="w-full p-2 border rounded" placeholder="Ex: Clique Aqui">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">Estilo</label>
-                  <select id="newButtonStyle" class="w-full p-2 border rounded">
-                    <option value="primary">Primário</option>
-                    <option value="secondary">Secundário</option>
-                    <option value="accent">Destaque</option>
-                  </select>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Link (opcional)</label>
-                  <input type="text" id="newButtonHref" class="w-full p-2 border rounded" placeholder="Ex: #contact">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">ID do Botão</label>
-                  <input type="text" id="newButtonId" class="w-full p-2 border rounded" placeholder="Ex: main-cta">
-                </div>
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Alvo</label>
-                <select id="newButtonTarget" class="w-full p-2 border rounded">
-                  <option value="">Mesma janela</option>
-                  <option value="_blank">Nova janela</option>
-                </select>
-              </div>
-              <button onclick="createNewButton()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-plus mr-2"></i>Criar Botão
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Formulários -->
-      <div id="forms-tab" class="admin-tab-content hidden space-y-6">
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Gerenciar Formulários</h4>
-          <div id="formsList" class="space-y-4 mb-6">
-            <!-- Formulários serão listados aqui -->
-          </div>
-          
-          <div class="bg-gray-100 p-4 rounded-lg">
-            <h5 class="font-bold mb-3">Criar Novo Formulário</h5>
-            <div class="space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium mb-1">Título</label>
-                  <input type="text" id="newFormTitle" class="w-full p-2 border rounded" placeholder="Ex: Contato">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-1">ID do Formulário</label>
-                  <input type="text" id="newFormId" class="w-full p-2 border rounded" placeholder="Ex: contact-form">
-                </div>
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Texto do Botão</label>
-                <input type="text" id="newFormSubmitText" class="w-full p-2 border rounded" placeholder="Ex: Enviar Mensagem">
-              </div>
-              <button onclick="createNewForm()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-plus mr-2"></i>Criar Formulário
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <!-- Configurações -->
       <div id="settings-tab" class="admin-tab-content hidden space-y-6">
         <div class="admin-section">
@@ -650,20 +420,6 @@
           <label class="flex items-center">
             <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
           </label>
-        </div>
-        
-        <!-- Seção do Pixel do Meta -->
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Pixel do Meta (Facebook)</h4>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">ID do Pixel</label>
-              <input type="text" id="metaPixelId" class="w-full p-2 border rounded" placeholder="Ex: 123456789012345">
-            </div>
-            <button onclick="saveMetaPixel()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-              <i class="fas fa-save mr-2"></i>Salvar Pixel
-            </button>
-          </div>
         </div>
       </div>
       
@@ -776,26 +532,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title">
                 Estratégia Empresarial
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc">
               Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service1Feature1" contenteditable="true">Planejamento estratégico</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service1Feature2" contenteditable="true">Análise de mercado</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service1Feature3" contenteditable="true">Definição de objetivos</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature1">Planejamento estratégico</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature2">Análise de mercado</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature3">Definição de objetivos</span></li>
             </ul>
           </div>
           
@@ -803,26 +550,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-users-cog text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title">
                 Gestão de Processos
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc">
               Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service2Feature1" contenteditable="true">Mapeamento de processos</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service2Feature2" contenteditable="true">Redesenho de fluxos</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service2Feature3" contenteditable="true">Automação de tarefas</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature1">Mapeamento de processos</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature2">Redesenho de fluxos</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature3">Automação de tarefas</span></li>
             </ul>
           </div>
           
@@ -830,26 +568,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-chart-pie text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title">
                 Análise Financeira
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc">
               Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service3Feature1" contenteditable="true">Análise de custos</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service3Feature2" contenteditable="true">Otimização tributária</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service3Feature3" contenteditable="true">Projeções financeiras</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature1">Análise de custos</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature2">Otimização tributária</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature3">Projeções financeiras</span></li>
             </ul>
           </div>
           
@@ -857,26 +586,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">
                 Marketing Estratégico
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">
               Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service4Feature1" contenteditable="true">Pesquisa de mercado</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service4Feature2" contenteditable="true">Posicionamento de marca</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service4Feature3" contenteditable="true">Plano de marketing</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Pesquisa de mercado</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Posicionamento de marca</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Plano de marketing</span></li>
             </ul>
           </div>
           
@@ -884,26 +604,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-user-tie text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service5Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service5Title">
                 Gestão de Pessoas
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service5Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service5Desc">
               Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service5Feature1" contenteditable="true">Recrutamento estratégico</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service5Feature2" contenteditable="true">Treinamento e desenvolvimento</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service5Feature3" contenteditable="true">Clima organizacional</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature1">Recrutamento estratégico</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature2">Treinamento e desenvolvimento</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature3">Clima organizacional</span></li>
             </ul>
           </div>
           
@@ -911,26 +622,17 @@
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
               <i class="fas fa-calculator text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service6Title" contenteditable="true">
+              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service6Title">
                 Transformação Digital
               </h3>
             </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service6Desc" contenteditable="true">
+            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service6Desc">
               Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service6Feature1" contenteditable="true">Diagnóstico digital</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service6Feature2" contenteditable="true">Roadmap tecnológico</span>
-              </li>
-              <li>
-                <i class="fas fa-check text-[#0066CC] mr-2"></i>
-                <span class="editable" data-field="service6Feature3" contenteditable="true">Implementação de sistemas</span>
-              </li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature1">Diagnóstico digital</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature2">Roadmap tecnológico</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature3">Implementação de sistemas</span></li>
             </ul>
           </div>
         </div>
@@ -1117,9 +819,6 @@
     <!-- Seções personalizadas serão inseridas aqui -->
     <div id="custom-sections-container"></div>
 
-    <!-- Formulários dinâmicos serão renderizados aqui -->
-    <div id="dynamicFormsContainer"></div>
-
     <!-- Contact Section -->
     <section id="contact" class="py-20 hero-gradient">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -1159,7 +858,7 @@
                 <label class="block text-sm font-medium mb-1">Mensagem</label>
                 <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
               </div>
-              <button type="submit" id="contactSubmitBtn" class="w-full btn-primary py-3 px-6 rounded-lg transition-colors editable" data-field="contactButtonText" data-style="primary">
+              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Enviar Mensagem
               </button>
             </form>
@@ -1269,8 +968,6 @@
             media: { gallery: [], videos: [] },
             testimonials: [],
             sections: [],
-            forms: [],
-            buttons: [],
             navigation: { main: [], footer: [] }
           };
           this.init();
@@ -1332,8 +1029,6 @@
                 media: data.media || { gallery: [], videos: [] },
                 testimonials: data.testimonials || [],
                 sections: data.sections || [],
-                forms: data.forms || [],
-                buttons: data.buttons || [],
                 navigation: data.navigation || { main: [], footer: [] }
               };
               this.showToast("Dados carregados do Supabase", "success");
@@ -1373,8 +1068,6 @@
           this.siteData.media = { gallery: [], videos: [] };
           this.siteData.testimonials = [];
           this.siteData.sections = [];
-          this.siteData.forms = [];
-          this.siteData.buttons = [];
           this.siteData.navigation = {
             main: [
               { text: "Serviços", href: "#services" },
@@ -1413,8 +1106,6 @@
                 media: parsed.media || { gallery: [], videos: [] },
                 testimonials: parsed.testimonials || [],
                 sections: parsed.sections || [],
-                forms: parsed.forms || [],
-                buttons: parsed.buttons || [],
                 navigation: parsed.navigation || { main: [], footer: [] }
               };
               console.log("Dados carregados do localStorage:", this.siteData);
@@ -1540,12 +1231,12 @@
           
           if (this.isAdmin) {
             panel.classList.add('open');
-            document.body.classList.add('admin-logged-in', 'admin-panel-open');
+            document.body.classList.add('admin-logged-in');
             this.updateAdminForm();
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.remove('hidden'));
           } else {
             panel.classList.remove('open');
-            document.body.classList.remove('admin-logged-in', 'admin-panel-open');
+            document.body.classList.remove('admin-logged-in');
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
           }
         }
@@ -1584,20 +1275,7 @@
             }
           });
           
-          // Atualiza cores do texto
-          if (this.siteData.content.textPrimaryColor) {
-            document.getElementById('textPrimaryColor').value = this.siteData.content.textPrimaryColor;
-          }
-          if (this.siteData.content.textSecondaryColor) {
-            document.getElementById('textSecondaryColor').value = this.siteData.content.textSecondaryColor;
-          }
-          if (this.siteData.content.textAccentColor) {
-            document.getElementById('textAccentColor').value = this.siteData.content.textAccentColor;
-          }
-          
           this.renderSectionsList();
-          this.renderForms();
-          this.renderButtons();
         }
         
         enableInlineEdit(element) {
@@ -1656,144 +1334,8 @@
           }
         }
         
-        async deleteLogo() {
-          if (confirm('Tem certeza que deseja remover a logo?')) {
-            // Remove a logo do armazenamento se existir
-            if (this.siteData.content.companyLogo) {
-              try {
-                const filePath = new URL(this.siteData.content.companyLogo).pathname.split('/images/')[1];
-                if (filePath) {
-                  await supabase.storage.from('images').remove([`images/${filePath}`]);
-                }
-              } catch (error) {
-                console.warn("Não foi possível remover o arquivo do Storage:", error.message);
-              }
-            }
-            
-            // Remove a logo dos dados
-            delete this.siteData.content.companyLogo;
-            await this.saveData();
-            this.showToast("Logo removida com sucesso", "success");
-          }
-        }
-        
-        resizeLogo(action) {
-          const logo = document.querySelector('#companyNameContainer img');
-          if (!logo) return;
-          
-          const currentSize = parseInt(logo.style.height || '48');
-          let newSize = currentSize;
-          
-          if (action === 'increase') {
-            newSize = Math.min(currentSize + 10, 200);
-          } else {
-            newSize = Math.max(currentSize - 10, 20);
-          }
-          
-          logo.style.height = `${newSize}px`;
-          document.getElementById('logoSizeRange').value = newSize;
-          document.getElementById('logoSizeValue').textContent = `${newSize}px`;
-          
-          // Salva o tamanho preferido
-          this.siteData.content.logoSize = newSize;
-          this.saveData();
-        }
-        
-        updateLogoSize(size) {
-          const logo = document.querySelector('#companyNameContainer img');
-          if (logo) {
-            logo.style.height = `${size}px`;
-            document.getElementById('logoSizeValue').textContent = `${size}px`;
-            this.siteData.content.logoSize = size;
-            this.saveData();
-          }
-        }
-        
-        async saveMetaPixel() {
-          const pixelId = document.getElementById('metaPixelId').value;
-          if (!pixelId) {
-            this.showToast("Por favor, insira um ID de Pixel válido", "error");
-            return;
-          }
-          
-          this.siteData.content.metaPixelId = pixelId;
-          await this.saveData();
-          this.injectMetaPixel();
-          this.showToast("Pixel do Meta salvo com sucesso", "success");
-        }
-        
-        injectMetaPixel() {
-          // Remove o pixel antigo se existir
-          const oldPixel = document.getElementById('meta-pixel-script');
-          if (oldPixel) {
-            oldPixel.remove();
-          }
-          
-          const pixelId = this.siteData.content.metaPixelId;
-          if (!pixelId) return;
-          
-          // Cria o novo script do pixel
-          const script = document.createElement('script');
-          script.id = 'meta-pixel-script';
-          script.innerHTML = `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${pixelId}');
-            fbq('track', 'PageView');
-          `;
-          
-          const noscript = document.createElement('noscript');
-          noscript.innerHTML = `
-            <img height="1" width="1" style="display:none"
-              src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>
-          `;
-          
-          document.head.appendChild(script);
-          document.body.appendChild(noscript);
-        }
-        
-        async updateTextColors() {
-          const primary = document.getElementById('textPrimaryColor').value;
-          const secondary = document.getElementById('textSecondaryColor').value;
-          const accent = document.getElementById('textAccentColor').value;
-          
-          this.siteData.content.textPrimaryColor = primary;
-          this.siteData.content.textSecondaryColor = secondary;
-          this.siteData.content.textAccentColor = accent;
-          
-          await this.saveData();
-          this.applyTextColors();
-          this.showToast("Cores salvas com sucesso", "success");
-        }
-
-        applyTextColors() {
-          const primary = this.siteData.content.textPrimaryColor || '#001F3F';
-          const secondary = this.siteData.content.textSecondaryColor || '#0066CC';
-          const accent = this.siteData.content.textAccentColor || '#0066CC';
-          
-          document.documentElement.style.setProperty('--primary', primary);
-          document.documentElement.style.setProperty('--secondary', secondary);
-          document.documentElement.style.setProperty('--accent', accent);
-          
-          // Atualiza os valores no painel admin
-          if (document.getElementById('textPrimaryColor')) {
-            document.getElementById('textPrimaryColor').value = primary;
-            document.getElementById('textSecondaryColor').value = secondary;
-            document.getElementById('textAccentColor').value = accent;
-          }
-        }
-        
         renderContent() {
           console.log("Renderizando conteúdo com dados:", this.siteData);
-          
-          // Aplica as cores do texto primeiro
-          this.applyTextColors();
           
           const companyNameContainer = document.getElementById('companyNameContainer');
           if (companyNameContainer) {
@@ -1805,20 +1347,6 @@
             } else {
               companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
             }
-          }
-          
-          // Aplica o tamanho da logo se existir
-          const logo = document.querySelector('#companyNameContainer img');
-          if (logo && this.siteData.content.logoSize) {
-            logo.style.height = `${this.siteData.content.logoSize}px`;
-            document.getElementById('logoSizeRange').value = this.siteData.content.logoSize;
-            document.getElementById('logoSizeValue').textContent = `${this.siteData.content.logoSize}px`;
-          }
-
-          // Injeta o pixel do Meta se existir
-          if (this.siteData.content.metaPixelId) {
-            document.getElementById('metaPixelId').value = this.siteData.content.metaPixelId;
-            this.injectMetaPixel();
           }
           
           document.querySelectorAll('[data-field]').forEach(el => {
@@ -1851,8 +1379,6 @@
           this.renderTestimonials();
           this.renderCustomSections();
           this.renderNavigation();
-          this.renderForms();
-          this.renderButtons();
         }
 
         renderGallery() {
@@ -2015,250 +1541,16 @@
           if (!container) return;
           
           container.innerHTML = (this.siteData.sections || []).map((section, index) => `
-            <div class="flex items-center justify-between bg-gray-100 p-3 rounded mb-2">
-              <div class="flex-1">
+            <div class="flex items-center justify-between bg-gray-100 p-3 rounded">
+              <div>
                 <h5 class="font-semibold">${section.title}</h5>
                 <p class="text-sm text-gray-600">ID: ${section.id} | Tipo: ${section.type}</p>
               </div>
-              <button class="bg-red-500 hover:bg-red-700 text-white p-2 rounded ml-2" onclick="removeSection(${index})">
+              <button class="text-red-500 hover:text-red-700" onclick="removeSection(${index})">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
           `).join('');
-        }
-        
-        async createForm(formData) {
-          if (!this.siteData.forms) this.siteData.forms = [];
-          this.siteData.forms.push(formData);
-          await this.saveData();
-          this.renderForms();
-        }
-
-        async deleteForm(index) {
-          if (this.siteData.forms && this.siteData.forms[index]) {
-            this.siteData.forms.splice(index, 1);
-            await this.saveData();
-            this.renderForms();
-          }
-        }
-
-        renderForms() {
-          // Renderiza formulários dinâmicos
-          const formsContainer = document.getElementById('dynamicFormsContainer');
-          if (formsContainer) {
-            formsContainer.innerHTML = (this.siteData.forms || []).map(form => `
-              <section id="${form.id}" class="py-12 bg-white">
-                <div class="container mx-auto px-4">
-                  <h2 class="text-3xl font-bold text-center mb-8">${form.title}</h2>
-                  <form class="max-w-2xl mx-auto netlify-form" name="${form.id}" netlify>
-                    ${form.fields.map(field => `
-                      <div class="mb-4">
-                        <label class="block text-sm font-medium mb-1">${field.label}</label>
-                        ${field.type === 'textarea' ? 
-                          `<textarea name="${field.name}" class="w-full p-3 border rounded-lg" ${field.required ? 'required' : ''}></textarea>` :
-                          `<input type="${field.type}" name="${field.name}" class="w-full p-3 border rounded-lg" ${field.required ? 'required' : ''}>`
-                        }
-                      </div>
-                    `).join('')}
-                    <button type="submit" class="btn-primary py-2 px-6 rounded-lg">
-                      ${form.submitText || 'Enviar'}
-                    </button>
-                  </form>
-                </div>
-              </section>
-            `).join('');
-          }
-
-          // Atualiza o painel admin
-          const adminFormsContainer = document.getElementById('formsList');
-          if (adminFormsContainer) {
-            adminFormsContainer.innerHTML = (this.siteData.forms || []).map((form, index) => `
-              <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                <h4 class="font-bold mb-2">${form.title} (ID: ${form.id})</h4>
-                <div class="grid grid-cols-3 gap-4 mb-3">
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Título</label>
-                    <input type="text" value="${form.title}" id="formTitle-${index}" class="w-full p-2 border rounded">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium mb-1">ID do Form</label>
-                    <input type="text" value="${form.id}" id="formId-${index}" class="w-full p-2 border rounded">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Texto do Botão</label>
-                    <input type="text" value="${form.submitText || 'Enviar'}" id="formSubmitText-${index}" class="w-full p-2 border rounded">
-                  </div>
-                </div>
-                <h5 class="font-medium mb-2">Campos:</h5>
-                <div id="formFields-${index}">
-                  ${form.fields.map((field, fieldIndex) => `
-                    <div class="bg-white p-3 rounded border mb-2">
-                      <div class="grid grid-cols-3 gap-3 mb-2">
-                        <div>
-                          <label class="block text-xs font-medium mb-1">Rótulo</label>
-                          <input type="text" value="${field.label}" id="formFieldLabel-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium mb-1">Nome</label>
-                          <input type="text" value="${field.name}" id="formFieldName-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium mb-1">Tipo</label>
-                          <select id="formFieldType-${index}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
-                            <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email</option>
-                            <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Telefone</option>
-                            <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>Área de Texto</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="flex justify-between">
-                        <label class="flex items-center text-xs">
-                          <input type="checkbox" ${field.required ? 'checked' : ''} 
-                                 id="formFieldRequired-${index}-${fieldIndex}" class="mr-1">
-                          Obrigatório
-                        </label>
-                        <button onclick="removeFormField(${index}, ${fieldIndex})" class="text-red-500 text-xs">
-                          <i class="fas fa-trash"></i> Remover
-                        </button>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-                <div class="flex space-x-2 mt-3">
-                  <button onclick="addFormField(${index})" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded text-sm">
-                    <i class="fas fa-plus mr-1"></i>Adicionar Campo
-                  </button>
-                  <button onclick="updateForm(${index})" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
-                    <i class="fas fa-save mr-1"></i>Atualizar
-                  </button>
-                  <button onclick="deleteForm(${index})" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm">
-                    <i class="fas fa-trash mr-1"></i>Remover Formulário
-                  </button>
-                </div>
-              </div>
-            `).join('');
-          }
-        }
-
-        async updateForm(index) {
-          const title = document.getElementById(`formTitle-${index}`).value;
-          const id = document.getElementById(`formId-${index}`).value;
-          const submitText = document.getElementById(`formSubmitText-${index}`).value;
-          
-          // Coletar todos os campos
-          const fields = [];
-          const fieldsContainer = document.getElementById(`formFields-${index}`);
-          const fieldElements = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]');
-          
-          fieldElements.forEach((_, fieldIndex) => {
-            fields.push({
-              label: document.getElementById(`formFieldLabel-${index}-${fieldIndex}`).value,
-              name: document.getElementById(`formFieldName-${index}-${fieldIndex}`).value,
-              type: document.getElementById(`formFieldType-${index}-${fieldIndex}`).value,
-              required: document.getElementById(`formFieldRequired-${index}-${fieldIndex}`).checked
-            });
-          });
-          
-          this.siteData.forms[index] = {
-            id,
-            title,
-            submitText,
-            fields
-          };
-          
-          await this.saveData();
-          this.renderForms();
-        }
-
-        async createButton(buttonData) {
-          if (!this.siteData.buttons) this.siteData.buttons = [];
-          this.siteData.buttons.push(buttonData);
-          await this.saveData();
-          this.renderButtons();
-        }
-
-        async updateButton(index, buttonData) {
-          if (this.siteData.buttons && this.siteData.buttons[index]) {
-            this.siteData.buttons[index] = buttonData;
-            await this.saveData();
-            this.renderButtons();
-          }
-        }
-
-        async deleteButton(index) {
-          if (this.siteData.buttons && this.siteData.buttons[index]) {
-            this.siteData.buttons.splice(index, 1);
-            await this.saveData();
-            this.renderButtons();
-          }
-        }
-
-        renderButtons() {
-          // Renderiza botões dinâmicos no site
-          document.querySelectorAll('[data-button-id]').forEach(container => {
-            const buttonId = container.getAttribute('data-button-id');
-            const button = this.siteData.buttons?.find(b => b.id === buttonId);
-            
-            if (button) {
-              container.innerHTML = `
-                <button class="btn-${button.style} ${button.classes || ''}" 
-                        onclick="${button.onclick || ''}" 
-                        ${button.href ? `href="${button.href}"` : ''}
-                        ${button.target ? `target="${button.target}"` : ''}>
-                  ${button.text}
-                </button>
-              `;
-            }
-          });
-
-          // Atualiza o painel admin
-          const buttonsContainer = document.getElementById('buttonsList');
-          if (buttonsContainer) {
-            buttonsContainer.innerHTML = (this.siteData.buttons || []).map((button, index) => `
-              <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                <div class="grid grid-cols-2 gap-4 mb-3">
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Texto</label>
-                    <input type="text" value="${button.text}" id="buttonText-${index}" class="w-full p-2 border rounded">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Estilo</label>
-                    <select id="buttonStyle-${index}" class="w-full p-2 border rounded">
-                      <option value="primary" ${button.style === 'primary' ? 'selected' : ''}>Primário</option>
-                      <option value="secondary" ${button.style === 'secondary' ? 'selected' : ''}>Secundário</option>
-                      <option value="accent" ${button.style === 'accent' ? 'selected' : ''}>Destaque</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Link (opcional)</label>
-                    <input type="text" value="${button.href || ''}" id="buttonHref-${index}" class="w-full p-2 border rounded">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium mb-1">ID do Botão</label>
-                    <input type="text" value="${button.id}" id="buttonId-${index}" class="w-full p-2 border rounded">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium mb-1">Alvo</label>
-                    <select id="buttonTarget-${index}" class="w-full p-2 border rounded">
-                      <option value="">Mesma janela</option>
-                      <option value="_blank" ${button.target === '_blank' ? 'selected' : ''}>Nova janela</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="flex space-x-2 mt-3">
-                  <button onclick="updateButton(${index})" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
-                    <i class="fas fa-save mr-1"></i>Atualizar
-                  </button>
-                  <button onclick="deleteButton(${index})" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm">
-                    <i class="fas fa-trash mr-1"></i>Remover
-                  </button>
-                </div>
-              </div>
-            `).join('');
-          }
         }
         
         async addGalleryImage() {
@@ -2461,159 +1753,6 @@
     function removeTestimonial(index) { window.siteCMS?.removeTestimonial(index); }
     function addNewSection() { window.siteCMS?.addNewSection(); }
     function removeSection(index) { window.siteCMS?.removeSection(index); }
-    function deleteLogo() { window.siteCMS?.deleteLogo(); }
-    function resizeLogo(action) { window.siteCMS?.resizeLogo(action); }
-    function updateLogoSize(size) { window.siteCMS?.updateLogoSize(size); }
-    function saveMetaPixel() { window.siteCMS?.saveMetaPixel(); }
-    function updateTextColors() { window.siteCMS?.updateTextColors(); }
-
-    // Funções globais para formulários
-    function createNewForm() {
-      const title = document.getElementById('newFormTitle').value;
-      const id = document.getElementById('newFormId').value;
-      const submitText = document.getElementById('newFormSubmitText').value;
-      
-      if (!title || !id) {
-        window.siteCMS?.showToast("Título e ID são obrigatórios", "error");
-        return;
-      }
-      
-      window.siteCMS?.createForm({
-        id,
-        title,
-        submitText,
-        fields: [
-          { label: "Nome", name: "name", type: "text", required: true },
-          { label: "Email", name: "email", type: "email", required: true }
-        ]
-      });
-    }
-
-    function updateForm(index) {
-      const title = document.getElementById(`formTitle-${index}`).value;
-      const id = document.getElementById(`formId-${index}`).value;
-      const submitText = document.getElementById(`formSubmitText-${index}`).value;
-      
-      // Coletar todos os campos
-      const fields = [];
-      const fieldsContainer = document.getElementById(`formFields-${index}`);
-      const fieldElements = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]');
-      
-      fieldElements.forEach((_, fieldIndex) => {
-        fields.push({
-          label: document.getElementById(`formFieldLabel-${index}-${fieldIndex}`).value,
-          name: document.getElementById(`formFieldName-${index}-${fieldIndex}`).value,
-          type: document.getElementById(`formFieldType-${index}-${fieldIndex}`).value,
-          required: document.getElementById(`formFieldRequired-${index}-${fieldIndex}`).checked
-        });
-      });
-      
-      window.siteCMS?.updateForm(index, {
-        id,
-        title,
-        submitText,
-        fields
-      });
-    }
-
-    function addFormField(formIndex) {
-      const fieldsContainer = document.getElementById(`formFields-${formIndex}`);
-      const fieldIndex = fieldsContainer.querySelectorAll('[id^="formFieldLabel-"]').length;
-      
-      const fieldHtml = `
-        <div class="bg-white p-3 rounded border mb-2">
-          <div class="grid grid-cols-3 gap-3 mb-2">
-            <div>
-              <label class="block text-xs font-medium mb-1">Rótulo</label>
-              <input type="text" value="Novo Campo" id="formFieldLabel-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-            </div>
-            <div>
-              <label class="block text-xs font-medium mb-1">Nome</label>
-              <input type="text" value="field${fieldIndex + 1}" id="formFieldName-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-            </div>
-            <div>
-              <label class="block text-xs font-medium mb-1">Tipo</label>
-              <select id="formFieldType-${formIndex}-${fieldIndex}" class="w-full p-1 border rounded text-xs">
-                <option value="text">Texto</option>
-                <option value="email">Email</option>
-                <option value="tel">Telefone</option>
-                <option value="textarea">Área de Texto</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex justify-between">
-            <label class="flex items-center text-xs">
-              <input type="checkbox" checked id="formFieldRequired-${formIndex}-${fieldIndex}" class="mr-1">
-              Obrigatório
-            </label>
-            <button onclick="removeFormField(${formIndex}, ${fieldIndex})" class="text-red-500 text-xs">
-              <i class="fas fa-trash"></i> Remover
-            </button>
-          </div>
-        </div>
-      `;
-      
-      fieldsContainer.insertAdjacentHTML('beforeend', fieldHtml);
-    }
-
-    function removeFormField(formIndex, fieldIndex) {
-      const fieldElement = document.querySelector(`[id="formFieldLabel-${formIndex}-${fieldIndex}"]`)?.parentElement?.parentElement?.parentElement;
-      if (fieldElement) {
-        fieldElement.remove();
-      }
-    }
-
-    function deleteForm(index) {
-      if (confirm('Tem certeza que deseja remover este formulário?')) {
-        window.siteCMS?.deleteForm(index);
-      }
-    }
-
-    // Funções globais para botões
-    function createNewButton() {
-      const text = document.getElementById('newButtonText').value;
-      const style = document.getElementById('newButtonStyle').value;
-      const href = document.getElementById('newButtonHref').value;
-      const id = document.getElementById('newButtonId').value;
-      const target = document.getElementById('newButtonTarget').value;
-      
-      if (!text || !id) {
-        window.siteCMS?.showToast("Texto e ID são obrigatórios", "error");
-        return;
-      }
-      
-      window.siteCMS?.createButton({
-        id,
-        text,
-        style,
-        href,
-        target,
-        classes: 'py-2 px-4 rounded-lg transition-all'
-      });
-    }
-
-    function updateButton(index) {
-      const text = document.getElementById(`buttonText-${index}`).value;
-      const style = document.getElementById(`buttonStyle-${index}`).value;
-      const href = document.getElementById(`buttonHref-${index}`).value;
-      const id = document.getElementById(`buttonId-${index}`).value;
-      const target = document.getElementById(`buttonTarget-${index}`).value;
-      
-      window.siteCMS?.updateButton(index, {
-        id,
-        text,
-        style,
-        href,
-        target,
-        classes: 'py-2 px-4 rounded-lg transition-all'
-      });
-    }
-
-    function deleteButton(index) {
-      if (confirm('Tem certeza que deseja remover este botão?')) {
-        window.siteCMS?.deleteButton(index);
-      }
-    }
   </script>
 </body>
 </html>
