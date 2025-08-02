@@ -67,9 +67,19 @@
       box-shadow: -5px 0 15px rgba(0,0,0,0.1);
       transform: translateX(400px);
       transition: transform 0.3s ease;
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 40;
     }
     .admin-panel.open {
       transform: translateX(0);
+    }
+    /* Adicione isso para evitar que o conteúdo principal role quando o painel estiver aberto */
+    body.admin-panel-open {
+      overflow: hidden;
     }
     .editable {
       position: relative;
@@ -162,9 +172,16 @@
     }
     /* Logo preview admin */
     #companyLogoPreview {
+      transition: all 0.3s ease;
+      max-height: none;
+      height: auto;
       max-height: 48px;
       max-width: 200px;
       display: block;
+    }
+    /* Estilo para o pixel do Meta */
+    .meta-pixel-script {
+      display: none;
     }
     /* Custom sections */
     .custom-section {
@@ -239,7 +256,7 @@
   </button>
 
   <!-- Painel Admin -->
-  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40">
+  <div id="adminPanel" class="admin-panel">
     <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
@@ -288,8 +305,31 @@
                 <i class="fas fa-upload mr-2"></i>Selecionar Logo
               </button>
               <div class="mt-4">
-                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden" style="max-height: 60px;">
+                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden">
               </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Seção de Controle da Logo -->
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Controle da Logo</h4>
+          <div class="space-y-4">
+            <div class="flex space-x-2">
+              <button onclick="deleteLogo()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-trash mr-2"></i>Remover Logo
+              </button>
+              <button onclick="resizeLogo('increase')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-search-plus mr-2"></i>
+              </button>
+              <button onclick="resizeLogo('decrease')" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <i class="fas fa-search-minus mr-2"></i>
+              </button>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm mr-2">Tamanho:</span>
+              <input type="range" id="logoSizeRange" min="20" max="200" value="48" class="flex-1" oninput="updateLogoSize(this.value)">
+              <span id="logoSizeValue" class="text-sm ml-2">48px</span>
             </div>
           </div>
         </div>
@@ -420,6 +460,20 @@
           <label class="flex items-center">
             <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
           </label>
+        </div>
+        
+        <!-- Seção do Pixel do Meta -->
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Pixel do Meta (Facebook)</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">ID do Pixel</label>
+              <input type="text" id="metaPixelId" class="w-full p-2 border rounded" placeholder="Ex: 123456789012345">
+            </div>
+            <button onclick="saveMetaPixel()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              <i class="fas fa-save mr-2"></i>Salvar Pixel
+            </button>
+          </div>
         </div>
       </div>
       
@@ -1231,12 +1285,12 @@
           
           if (this.isAdmin) {
             panel.classList.add('open');
-            document.body.classList.add('admin-logged-in');
+            document.body.classList.add('admin-logged-in', 'admin-panel-open');
             this.updateAdminForm();
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.remove('hidden'));
           } else {
             panel.classList.remove('open');
-            document.body.classList.remove('admin-logged-in');
+            document.body.classList.remove('admin-logged-in', 'admin-panel-open');
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
           }
         }
@@ -1334,6 +1388,108 @@
           }
         }
         
+        async deleteLogo() {
+          if (confirm('Tem certeza que deseja remover a logo?')) {
+            // Remove a logo do armazenamento se existir
+            if (this.siteData.content.companyLogo) {
+              try {
+                const filePath = new URL(this.siteData.content.companyLogo).pathname.split('/images/')[1];
+                if (filePath) {
+                  await supabase.storage.from('images').remove([`images/${filePath}`]);
+                }
+              } catch (error) {
+                console.warn("Não foi possível remover o arquivo do Storage:", error.message);
+              }
+            }
+            
+            // Remove a logo dos dados
+            delete this.siteData.content.companyLogo;
+            await this.saveData();
+            this.showToast("Logo removida com sucesso", "success");
+          }
+        }
+        
+        resizeLogo(action) {
+          const logo = document.querySelector('#companyNameContainer img');
+          if (!logo) return;
+          
+          const currentSize = parseInt(logo.style.height || '48');
+          let newSize = currentSize;
+          
+          if (action === 'increase') {
+            newSize = Math.min(currentSize + 10, 200);
+          } else {
+            newSize = Math.max(currentSize - 10, 20);
+          }
+          
+          logo.style.height = `${newSize}px`;
+          document.getElementById('logoSizeRange').value = newSize;
+          document.getElementById('logoSizeValue').textContent = `${newSize}px`;
+          
+          // Salva o tamanho preferido
+          this.siteData.content.logoSize = newSize;
+          this.saveData();
+        }
+        
+        updateLogoSize(size) {
+          const logo = document.querySelector('#companyNameContainer img');
+          if (logo) {
+            logo.style.height = `${size}px`;
+            document.getElementById('logoSizeValue').textContent = `${size}px`;
+            this.siteData.content.logoSize = size;
+            this.saveData();
+          }
+        }
+        
+        async saveMetaPixel() {
+          const pixelId = document.getElementById('metaPixelId').value;
+          if (!pixelId) {
+            this.showToast("Por favor, insira um ID de Pixel válido", "error");
+            return;
+          }
+          
+          this.siteData.content.metaPixelId = pixelId;
+          await this.saveData();
+          this.injectMetaPixel();
+          this.showToast("Pixel do Meta salvo com sucesso", "success");
+        }
+        
+        injectMetaPixel() {
+          // Remove o pixel antigo se existir
+          const oldPixel = document.getElementById('meta-pixel-script');
+          if (oldPixel) {
+            oldPixel.remove();
+          }
+          
+          const pixelId = this.siteData.content.metaPixelId;
+          if (!pixelId) return;
+          
+          // Cria o novo script do pixel
+          const script = document.createElement('script');
+          script.id = 'meta-pixel-script';
+          script.innerHTML = `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${pixelId}');
+            fbq('track', 'PageView');
+          `;
+          
+          const noscript = document.createElement('noscript');
+          noscript.innerHTML = `
+            <img height="1" width="1" style="display:none"
+              src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>
+          `;
+          
+          document.head.appendChild(script);
+          document.body.appendChild(noscript);
+        }
+        
         renderContent() {
           console.log("Renderizando conteúdo com dados:", this.siteData);
           
@@ -1347,6 +1503,20 @@
             } else {
               companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
             }
+          }
+          
+          // Aplica o tamanho da logo se existir
+          const logo = document.querySelector('#companyNameContainer img');
+          if (logo && this.siteData.content.logoSize) {
+            logo.style.height = `${this.siteData.content.logoSize}px`;
+            document.getElementById('logoSizeRange').value = this.siteData.content.logoSize;
+            document.getElementById('logoSizeValue').textContent = `${this.siteData.content.logoSize}px`;
+          }
+
+          // Injeta o pixel do Meta se existir
+          if (this.siteData.content.metaPixelId) {
+            document.getElementById('metaPixelId').value = this.siteData.content.metaPixelId;
+            this.injectMetaPixel();
           }
           
           document.querySelectorAll('[data-field]').forEach(el => {
@@ -1541,12 +1711,12 @@
           if (!container) return;
           
           container.innerHTML = (this.siteData.sections || []).map((section, index) => `
-            <div class="flex items-center justify-between bg-gray-100 p-3 rounded">
-              <div>
+            <div class="flex items-center justify-between bg-gray-100 p-3 rounded mb-2">
+              <div class="flex-1">
                 <h5 class="font-semibold">${section.title}</h5>
                 <p class="text-sm text-gray-600">ID: ${section.id} | Tipo: ${section.type}</p>
               </div>
-              <button class="text-red-500 hover:text-red-700" onclick="removeSection(${index})">
+              <button class="bg-red-500 hover:bg-red-700 text-white p-2 rounded ml-2" onclick="removeSection(${index})">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -1753,6 +1923,10 @@
     function removeTestimonial(index) { window.siteCMS?.removeTestimonial(index); }
     function addNewSection() { window.siteCMS?.addNewSection(); }
     function removeSection(index) { window.siteCMS?.removeSection(index); }
+    function deleteLogo() { window.siteCMS?.deleteLogo(); }
+    function resizeLogo(action) { window.siteCMS?.resizeLogo(action); }
+    function updateLogoSize(size) { window.siteCMS?.updateLogoSize(size); }
+    function saveMetaPixel() { window.siteCMS?.saveMetaPixel(); }
   </script>
 </body>
 </html>
