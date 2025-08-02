@@ -1253,10 +1253,17 @@
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Configuração do Supabase
+      // Configuração do Supabase (MODIFICADO)
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        db: {
+          schema: 'public'
+        },
+        auth: {
+          persistSession: false
+        }
+      });
 
       // Sistema CMS Completo com Supabase
       class SiteCMS {
@@ -1276,18 +1283,17 @@
           this.init();
         }
         
-        init() {
-          this.setupSupabaseListeners();
-          this.checkAuthState();
+        async init() {
+          await this.loadData(); // Tenta carregar primeiro sem autenticação
+          this.setupEventListeners();
         }
         
-        setupSupabaseListeners() {
+        setupEventListeners() {
           supabase.auth.onAuthStateChange((_event, session) => {
             this.user = session ? session.user : null;
             this.isAuthenticated = !!this.user;
             
             if (this.isAuthenticated) {
-              this.loadData();
               this.showToast("Conectado ao Supabase", "success");
               document.getElementById('supabaseConnectionStatus').textContent = "Conectado";
               document.getElementById('supabaseConnectionStatus').className = "text-green-600";
@@ -1298,34 +1304,17 @@
           });
         }
         
-        async checkAuthState() {
-          try {
-            document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
-            const { data: { user } } = await supabase.auth.getUser();
-            this.user = user;
-            this.isAuthenticated = !!user;
-            
-            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
-            await this.loadData();
-            
-            if (!this.isAuthenticated) {
-              // Se falhar no Supabase, tenta do localStorage
-              await this.loadFromLocalStorage();
-            }
-          } catch (error) {
-            console.error("Erro ao verificar autenticação:", error);
-            // Se der erro, tenta do localStorage como fallback
-            await this.loadFromLocalStorage();
-          }
-        }
-        
         async loadData() {
           try {
-            this.showToast("Carregando dados...", "info");
-            let { data, error } = await supabase.from('site_data').select('*').eq('id', 1).single();
-
-            if (error && error.code !== 'PGRST116') throw error;
+            document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
             
+            // 1. Tenta carregar do Supabase (sem autenticação)
+            let { data, error } = await supabase
+              .from('site_data')
+              .select('*')
+              .eq('id', 1)
+              .single();
+
             if (data) {
               this.siteData = {
                 content: data.content || {},
@@ -1338,14 +1327,12 @@
               };
               this.showToast("Dados carregados do Supabase", "success");
             } else {
-              this.loadDefaultData();
-              if(this.isAuthenticated) await this.saveData();
-              this.showToast("Dados padrão carregados", "info");
+              // 2. Se falhar, tenta do localStorage
+              await this.loadFromLocalStorage();
             }
             
             this.renderContent();
             document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
-            await this.saveToLocalStorage();
             
           } catch (error) {
             console.error("Erro ao carregar do Supabase:", error);
@@ -1403,7 +1390,7 @@
           }
         }
 
-        loadFromLocalStorage() {
+        async loadFromLocalStorage() {
           try {
             const savedData = localStorage.getItem('siteData');
             if (savedData) {
@@ -1423,13 +1410,9 @@
               console.log("Nenhum dado encontrado no localStorage, carregando padrões");
               this.loadDefaultData();
             }
-            
-            this.renderContent();
-            
           } catch (error) {
             console.error("Erro ao carregar do localStorage:", error);
             this.loadDefaultData();
-            this.renderContent();
           }
         }
         
@@ -1440,36 +1423,40 @@
             saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
             saveButton.disabled = true;
 
-            const { error } = await supabase.from('site_data').upsert({ 
-              id: 1, 
-              ...this.siteData 
-            }, { onConflict: 'id' });
-            
-            if (error) throw error;
-            
-            this.showToast("Dados salvos com sucesso!", "success");
-            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
-            
+            // 1. Salva sempre no localStorage primeiro
             await this.saveToLocalStorage();
-            this.renderContent();
             
-            setTimeout(() => {
-              saveButton.innerHTML = originalText;
-              saveButton.disabled = false;
-            }, 1000);
+            // 2. Se autenticado, tenta salvar no Supabase
+            if (this.isAuthenticated) {
+              const { error } = await supabase.from('site_data').upsert({ 
+                id: 1, 
+                ...this.siteData 
+              }, { onConflict: 'id' });
+              
+              if (error) throw error;
+              
+              this.showToast("Dados salvos no Supabase", "success");
+            } else {
+              this.showToast("Dados salvos localmente", "info");
+            }
+            
+            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
+            this.renderContent();
             
           } catch (error) {
             console.error("Erro ao salvar no Supabase:", error);
             this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
             
+            // Fallback: garante que pelo menos salvou localmente
             await this.saveToLocalStorage();
             this.showToast("Dados salvos localmente", "warning");
             
             saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
+          } finally {
             setTimeout(() => {
               saveButton.innerHTML = originalText;
               saveButton.disabled = false;
-            }, 2000);
+            }, 1000);
           }
         }
         
