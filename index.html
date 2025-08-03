@@ -75,6 +75,9 @@
       position: relative;
       transition: all 0.2s;
     }
+    .admin-logged-in .editable:focus {
+      outline: none;
+    }
     .admin-logged-in .editable:hover {
       outline: 2px dashed var(--accent);
       background-color: rgba(0, 102, 204, 0.05);
@@ -585,18 +588,18 @@
           <!-- Service 4 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
-              <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
+              <i class="fas fa-tasks text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">
-                Marketing Estratégico
+                Gestão de Desempenho
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">
-              Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
+              Estruturação de métricas e processos para avaliação e desenvolvimento contínuo da performance da equipe.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Pesquisa de mercado</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Posicionamento de marca</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Plano de marketing</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Definição de KPIs e metas</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Ciclos de avaliação de desempenho</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Planos de desenvolvimento (PDI)</span></li>
             </ul>
           </div>
           
@@ -1050,7 +1053,53 @@
         }
         
         loadDefaultData() {
-          // Captura dados padrão dos elementos HTML
+          // Dados padrão para serviços
+          this.siteData.content.servicesTitle = "Nossos Serviços";
+          this.siteData.content.servicesSubtitle = "Soluções completas e personalizadas para transformar sua empresa";
+          
+          // Serviço 1
+          this.siteData.content.service1Title = "Estratégia Empresarial";
+          this.siteData.content.service1Desc = "Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.";
+          this.siteData.content.service1Feature1 = "Planejamento estratégico";
+          this.siteData.content.service1Feature2 = "Análise de mercado";
+          this.siteData.content.service1Feature3 = "Definição de objetivos";
+          
+          // Serviço 2
+          this.siteData.content.service2Title = "Gestão de Processos";
+          this.siteData.content.service2Desc = "Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.";
+          this.siteData.content.service2Feature1 = "Mapeamento de processos";
+          this.siteData.content.service2Feature2 = "Redesenho de fluxos";
+          this.siteData.content.service2Feature3 = "Automação de tarefas";
+          
+          // Serviço 3
+          this.siteData.content.service3Title = "Análise Financeira";
+          this.siteData.content.service3Desc = "Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.";
+          this.siteData.content.service3Feature1 = "Análise de custos";
+          this.siteData.content.service3Feature2 = "Otimização tributária";
+          this.siteData.content.service3Feature3 = "Projeções financeiras";
+          
+          // Serviço 4
+          this.siteData.content.service4Title = "Gestão de Desempenho";
+          this.siteData.content.service4Desc = "Estruturação de métricas e processos para avaliação e desenvolvimento contínuo da performance da equipe.";
+          this.siteData.content.service4Feature1 = "Definição de KPIs e metas";
+          this.siteData.content.service4Feature2 = "Ciclos de avaliação de desempenho";
+          this.siteData.content.service4Feature3 = "Planos de desenvolvimento (PDI)";
+          
+          // Serviço 5
+          this.siteData.content.service5Title = "Gestão de Pessoas";
+          this.siteData.content.service5Desc = "Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.";
+          this.siteData.content.service5Feature1 = "Recrutamento estratégico";
+          this.siteData.content.service5Feature2 = "Treinamento e desenvolvimento";
+          this.siteData.content.service5Feature3 = "Clima organizacional";
+          
+          // Serviço 6
+          this.siteData.content.service6Title = "Transformação Digital";
+          this.siteData.content.service6Desc = "Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.";
+          this.siteData.content.service6Feature1 = "Diagnóstico digital";
+          this.siteData.content.service6Feature2 = "Roadmap tecnológico";
+          this.siteData.content.service6Feature3 = "Implementação de sistemas";
+          
+          // Outros dados padrão
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             if (el.tagName === 'IMG') {
@@ -1287,6 +1336,7 @@
           
           const finishEdit = () => {
             element.contentEditable = false;
+            element.blur(); // <-- CORREÇÃO: Força a remoção do foco e do pontilhado
             const newValue = element.innerHTML;
             if (newValue !== originalValue) {
               this.siteData.content[field] = newValue;
