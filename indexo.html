@@ -1050,53 +1050,7 @@
         }
         
         loadDefaultData() {
-          // Dados padrão para serviços
-          this.siteData.content.servicesTitle = "Nossos Serviços";
-          this.siteData.content.servicesSubtitle = "Soluções completas e personalizadas para transformar sua empresa";
-          
-          // Serviço 1
-          this.siteData.content.service1Title = "Estratégia Empresarial";
-          this.siteData.content.service1Desc = "Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.";
-          this.siteData.content.service1Feature1 = "Planejamento estratégico";
-          this.siteData.content.service1Feature2 = "Análise de mercado";
-          this.siteData.content.service1Feature3 = "Definição de objetivos";
-          
-          // Serviço 2
-          this.siteData.content.service2Title = "Gestão de Processos";
-          this.siteData.content.service2Desc = "Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.";
-          this.siteData.content.service2Feature1 = "Mapeamento de processos";
-          this.siteData.content.service2Feature2 = "Redesenho de fluxos";
-          this.siteData.content.service2Feature3 = "Automação de tarefas";
-          
-          // Serviço 3
-          this.siteData.content.service3Title = "Análise Financeira";
-          this.siteData.content.service3Desc = "Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.";
-          this.siteData.content.service3Feature1 = "Análise de custos";
-          this.siteData.content.service3Feature2 = "Otimização tributária";
-          this.siteData.content.service3Feature3 = "Projeções financeiras";
-          
-          // Serviço 4
-          this.siteData.content.service4Title = "Marketing Estratégico";
-          this.siteData.content.service4Desc = "Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.";
-          this.siteData.content.service4Feature1 = "Pesquisa de mercado";
-          this.siteData.content.service4Feature2 = "Posicionamento de marca";
-          this.siteData.content.service4Feature3 = "Plano de marketing";
-          
-          // Serviço 5
-          this.siteData.content.service5Title = "Gestão de Pessoas";
-          this.siteData.content.service5Desc = "Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.";
-          this.siteData.content.service5Feature1 = "Recrutamento estratégico";
-          this.siteData.content.service5Feature2 = "Treinamento e desenvolvimento";
-          this.siteData.content.service5Feature3 = "Clima organizacional";
-          
-          // Serviço 6
-          this.siteData.content.service6Title = "Transformação Digital";
-          this.siteData.content.service6Desc = "Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.";
-          this.siteData.content.service6Feature1 = "Diagnóstico digital";
-          this.siteData.content.service6Feature2 = "Roadmap tecnológico";
-          this.siteData.content.service6Feature3 = "Implementação de sistemas";
-          
-          // Outros dados padrão
+          // Captura dados padrão dos elementos HTML
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             if (el.tagName === 'IMG') {
