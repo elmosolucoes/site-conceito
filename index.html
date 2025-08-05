@@ -10,6 +10,7 @@
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#001F3F">
   <link rel="canonical" href="https://conceito.com.br">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
   <title>CONCEITO | Consultoria Empresarial Premium</title>
   
   <!-- CDNs -->
@@ -217,6 +218,21 @@
       overflow: hidden;
     }
     .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    /* Aspect ratio styles from deepseek_html_20250805_2708f7 (1).html */
+    .aspect-w-16 {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+      overflow: hidden;
+    }
+    .aspect-h-9 iframe {
       position: absolute;
       top: 0;
       left: 0;
@@ -971,10 +987,27 @@
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Configuração do Supabase
+      // Verificação para extensões
+      if (chrome?.runtime?.id) {
+        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+          if (message === 'ping') {
+            sendResponse('pong');
+            return true;
+          }
+        });
+      }
+
+      // Configuração do Supabase com opções de autenticação
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true
+        }
+      });
 
       // Sistema CMS Completo com Supabase
       class SiteCMS {
@@ -1154,7 +1187,7 @@
         async saveToLocalStorage() {
           try {
             const jsonData = JSON.stringify(this.siteData);
-            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
+            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData)));
             console.log("Dados salvos no localStorage:", this.siteData);
           } catch(e) { 
             console.warn("Não foi possível salvar no localStorage:", e); 
