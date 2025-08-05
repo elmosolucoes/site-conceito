@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,13 +11,16 @@
   <meta name="theme-color" content="#001F3F">
   <link rel="canonical" href="https://conceito.com.br">
   <title>CONCEITO | Consultoria Empresarial Premium</title>
+  
   <!-- CDNs -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --primary: #001F3F;
@@ -62,6 +64,7 @@
       height: 100px;
       background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
     }
+    
     /* Estilos de Botões Personalizáveis */
     button, .btn, input[type="submit"], input[type="button"] {
       background-color: var(--primary);
@@ -74,6 +77,7 @@
       opacity: 0.9;
       transform: translateY(-2px);
     }
+    
     /* Admin Styles */
     .admin-panel {
       width: 400px;
@@ -81,9 +85,6 @@
       box-shadow: -5px 0 15px rgba(0,0,0,0.1);
       transform: translateX(400px);
       transition: transform 0.3s ease;
-      height: 100vh; /* 1. Define altura total da viewport */
-      display: flex; /* 2. Usa flexbox para layout interno */
-      flex-direction: column; /* 3. Organiza os filhos verticalmente */
     }
     .admin-panel.open {
       transform: translateX(0);
@@ -135,18 +136,21 @@
     .nav-link:hover::after {
       width: 100%;
     }
+    
     /* Player de Vídeo Responsivo */
     .video-container {
       position: relative;
       width: 100%;
       margin-bottom: 2rem;
     }
+    
     .video-wrapper {
       position: relative;
       padding-bottom: 56.25%; /* Proporção 16:9 */
       height: 0;
       overflow: hidden;
     }
+    
     .video-wrapper iframe {
       position: absolute;
       top: 0;
@@ -155,6 +159,7 @@
       height: 100%;
       border: none;
     }
+    
     /* Modal de Login */
     #loginModal {
       transition: opacity 0.3s ease;
@@ -242,17 +247,12 @@
     .netlify-form button[type="submit"]:hover {
       background-color: #0055AA;
     }
-    
-    /* Correção para rolagem do painel administrativo */
-    .admin-panel > div.p-4:last-child { /* Seleciona o último div.p-4, que é o conteúdo principal */
-      flex-grow: 1; /* 4. Faz este div ocupar o espaço restante */
-      overflow-y: auto; /* 5. Permite rolagem vertical */
-    }
   </style>
 </head>
 <body class="bg-gray-50">
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
+
   <!-- Modal de Login -->
   <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg p-8 max-w-md w-full">
@@ -274,19 +274,22 @@
       </div>
     </div>
   </div>
+
   <!-- Botão Admin -->
   <button id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
     <i class="fas fa-cog"></i>
   </button>
+
   <!-- Painel Admin -->
   <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40">
-    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0">
+    <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto flex-grow">
+    
+    <div class="p-4 h-[calc(100%-60px)] overflow-y-auto">
       <div class="mb-6">
         <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
           <i class="fas fa-save mr-2"></i>Salvar Tudo
@@ -298,6 +301,7 @@
           <i class="fas fa-sign-out-alt mr-2"></i>Sair
         </button>
       </div>
+      
       <!-- Abas -->
       <div class="flex border-b mb-4">
         <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
@@ -305,6 +309,7 @@
         <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
         <button class="admin-tab px-4 py-2" data-tab="sections" aria-label="Aba Seções">Seções</button>
       </div>
+      
       <!-- Conteúdo -->
       <div id="content-tab" class="admin-tab-content space-y-6">
         <div class="admin-section">
@@ -330,6 +335,7 @@
             </div>
           </div>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Hero Section</h4>
           <div class="space-y-4">
@@ -359,6 +365,7 @@
             </div>
           </div>
         </div>
+        
         <!-- Nova Seção de Configuração de Botões -->
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Estilo de Botões</h4>
@@ -388,6 +395,7 @@
             </div>
           </div>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Contato</h4>
           <div class="grid grid-cols-2 gap-4">
@@ -406,6 +414,7 @@
           </div>
         </div>
       </div>
+      
       <!-- Mídia -->
       <div id="media-tab" class="admin-tab-content hidden space-y-6">
         <div class="admin-section">
@@ -422,6 +431,7 @@
             </div>
           </div>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Galeria de Fotos</h4>
           <div id="galleryItems" class="space-y-4">
@@ -431,6 +441,7 @@
             <i class="fas fa-plus mr-2"></i>Adicionar Foto
           </button>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Vídeos</h4>
           <div class="flex mb-4">
@@ -444,6 +455,7 @@
           </div>
         </div>
       </div>
+      
       <!-- Configurações -->
       <div id="settings-tab" class="admin-tab-content hidden space-y-6">
         <div class="admin-section">
@@ -456,6 +468,7 @@
             <p>Última sincronização: <span id="lastSyncTime" class="font-medium"></span></p>
           </div>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Idioma</h4>
           <select id="siteLanguage" aria-label="Idioma do site" class="w-full p-2 border rounded">
@@ -464,6 +477,7 @@
             <option value="es-ES">Español</option>
           </select>
         </div>
+        
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Tema</h4>
           <div class="grid grid-cols-4 gap-2">
@@ -473,12 +487,14 @@
             <button data-theme="rose" aria-label="Tema Rosa" class="theme-btn h-10 rounded bg-rose-600"></button>
           </div>
         </div>
+        
         <div class="admin-section">
           <label class="flex items-center">
             <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
           </label>
         </div>
       </div>
+      
       <!-- Seções -->
       <div id="sections-tab" class="admin-tab-content hidden space-y-6">
         <div class="admin-section">
@@ -486,6 +502,7 @@
           <div id="sectionsList" class="space-y-4 mb-6">
             <!-- Seções existentes serão listadas aqui -->
           </div>
+          
           <div class="bg-gray-100 p-4 rounded-lg">
             <h5 class="font-bold mb-3">Adicionar Nova Seção</h5>
             <div class="space-y-4">
@@ -515,6 +532,7 @@
       </div>
     </div>
   </div>
+
   <!-- Conteúdo do Site -->
   <div id="site-content">
     <!-- Cabeçalho -->
@@ -538,6 +556,7 @@
         </button>
       </div>
     </header>
+
     <!-- Hero Section -->
     <section class="hero-gradient pt-32 pb-20 text-white">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -564,8 +583,10 @@
         </div>
       </div>
     </section>
+
     <!-- Section Divider -->
     <div class="section-divider bg-gray-50"></div>
+
     <!-- Services Section -->
     <section id="services" class="py-20 bg-white">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -577,6 +598,7 @@
             Soluções completas e personalizadas para transformar sua empresa
           </p>
         </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Service 1 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
@@ -595,6 +617,7 @@
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature3">Definição de objetivos</span></li>
             </ul>
           </div>
+          
           <!-- Service 2 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
@@ -612,6 +635,7 @@
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature3">Automação de tarefas</span></li>
             </ul>
           </div>
+          
           <!-- Service 3 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
@@ -629,6 +653,7 @@
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature3">Projeções financeiras</span></li>
             </ul>
           </div>
+          
           <!-- Service 4 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
@@ -646,6 +671,7 @@
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Plano de marketing</span></li>
             </ul>
           </div>
+          
           <!-- Service 5 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
@@ -663,6 +689,7 @@
               <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature3">Clima organizacional</span></li>
             </ul>
           </div>
+          
           <!-- Service 6 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
@@ -683,6 +710,7 @@
         </div>
       </div>
     </section>
+
     <!-- Methodology Section -->
     <section id="methodology" class="py-20 bg-gray-50">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -694,6 +722,7 @@
             Processo estruturado e comprovado para garantir resultados excepcionais
           </p>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <!-- Step 1 -->
           <div class="text-center">
@@ -701,18 +730,21 @@
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step1Title">Diagnóstico</h3>
             <p class="text-gray-600 editable" data-field="step1Desc">Análise profunda da situação atual da empresa e identificação de oportunidades.</p>
           </div>
+          
           <!-- Step 2 -->
           <div class="text-center">
             <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step2Title">Planejamento</h3>
             <p class="text-gray-600 editable" data-field="step2Desc">Desenvolvimento de estratégias personalizadas com metas e indicadores claros.</p>
           </div>
+          
           <!-- Step 3 -->
           <div class="text-center">
             <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step3Title">Implementação</h3>
             <p class="text-gray-600 editable" data-field="step3Desc">Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.</p>
           </div>
+          
           <!-- Step 4 -->
           <div class="text-center">
             <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
@@ -722,6 +754,7 @@
         </div>
       </div>
     </section>
+
     <!-- Results Section -->
     <section id="results" class="py-20 bg-white">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -733,6 +766,7 @@
             Números que demonstram o impacto real das nossas consultorias
           </p>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           <!-- Stat 1 -->
           <div class="text-center">
@@ -740,18 +774,21 @@
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat1Title">Aumento de Receita</h3>
             <p class="text-gray-600 editable" data-field="stat1Desc">Média de crescimento dos nossos clientes</p>
           </div>
+          
           <!-- Stat 2 -->
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">12</div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat2Title">Meses</h3>
             <p class="text-gray-600 editable" data-field="stat2Desc">Tempo médio para transformação completa</p>
           </div>
+          
           <!-- Stat 3 -->
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">95%</div>
             <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat3Title">Satisfação</h3>
             <p class="text-gray-600 editable" data-field="stat3Desc">Taxa de satisfação dos nossos clientes</p>
           </div>
+          
           <!-- Stat 4 -->
           <div class="text-center">
             <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">+300</div>
@@ -761,6 +798,7 @@
         </div>
       </div>
     </section>
+
     <!-- Testimonials Section -->
     <section id="testimonials" class="py-20 bg-gray-50">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -772,9 +810,11 @@
             Depoimentos reais de empresários que transformaram seus negócios
           </p>
         </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsContainer">
           <!-- Depoimentos serão renderizados dinamicamente aqui -->
         </div>
+        
         <div class="text-center mt-8">
           <button onclick="addTestimonial()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg admin-only hidden">
             <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
@@ -782,6 +822,7 @@
         </div>
       </div>
     </section>
+
     <!-- Galeria de Fotos -->
     <section id="gallery" class="py-12 bg-white">
       <div class="container mx-auto px-4">
@@ -791,6 +832,7 @@
         </div>
       </div>
     </section>
+
     <!-- Galeria de Vídeos - Atualizada com proporções corretas -->
     <section id="videos" class="py-12 bg-gray-100">
       <div class="container mx-auto px-4">
@@ -800,6 +842,7 @@
         </div>
       </div>
     </section>
+
     <!-- Seção "Envie Seu Currículo" -->
     <section id="careers" class="py-20 bg-white custom-section">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -811,6 +854,7 @@
             Faça parte do nosso time de consultores especializados
           </p>
         </div>
+
         <div class="max-w-2xl mx-auto netlify-form">
           <form name="careers" method="POST" data-netlify="true" enctype="multipart/form-data">
             <input type="hidden" name="form-name" value="careers">
@@ -843,8 +887,10 @@
         </div>
       </div>
     </section>
+
     <!-- Seções personalizadas serão inseridas aqui -->
     <div id="custom-sections-container"></div>
+
     <!-- Contact Section -->
     <section id="contact" class="py-20 hero-gradient">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -856,6 +902,7 @@
             Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
           </p>
         </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <!-- Contact Form -->
           <div class="bg-white rounded-2xl p-8 shadow-2xl">
@@ -888,11 +935,13 @@
               </button>
             </form>
           </div>
+
           <!-- Contact Info -->
           <div class="text-white">
             <h3 class="text-2xl font-bold mb-8 editable" data-field="contactInfoTitle">
               Informações de Contato
             </h3>
+            
             <div class="space-y-6">
               <div class="flex items-center">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-phone"></i></div>
@@ -901,6 +950,7 @@
                   <p class="text-gray-200 editable" data-field="phone">(11) 9999-9999</p>
                 </div>
               </div>
+              
               <div class="flex items-center">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-envelope"></i></div>
                 <div>
@@ -908,6 +958,7 @@
                   <p class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
                 </div>
               </div>
+              
               <div class="flex items-center">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-map-marker-alt"></i></div>
                 <div>
@@ -915,6 +966,7 @@
                   <p class="text-gray-200 editable" data-field="address">Av. Paulista, 1000 - São Paulo/SP</p>
                 </div>
               </div>
+              
               <div class="flex items-center">
                 <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-clock"></i></div>
                 <div>
@@ -927,6 +979,7 @@
         </div>
       </div>
     </section>
+
     <!-- Footer -->
     <footer class="bg-[#001F3F] text-white py-12">
       <div class="container mx-auto px-4">
@@ -940,6 +993,7 @@
               <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
             </div>
           </div>
+          
           <div>
             <h3 class="text-xl font-bold mb-4 editable" data-field="footerLinksTitle">Links Rápidos</h3>
             <ul class="space-y-2" id="footerLinks">
@@ -950,6 +1004,7 @@
               <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contato</a></li>
             </ul>
           </div>
+          
           <div>
             <h3 class="text-xl font-bold mb-4 editable" data-field="footerNewsletterTitle">Newsletter</h3>
             <p class="text-gray-300 mb-4 editable" data-field="footerNewsletterText">Assine nossa newsletter para receber dicas e novidades.</p>
@@ -965,6 +1020,7 @@
       </div>
     </footer>
   </div>
+
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -972,6 +1028,7 @@
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
       // Sistema CMS Completo com Supabase
       class SiteCMS {
         constructor() {
@@ -987,14 +1044,17 @@
           };
           this.init();
         }
+        
         init() {
           this.setupSupabaseListeners();
           this.checkAuthState();
         }
+        
         setupSupabaseListeners() {
           supabase.auth.onAuthStateChange((_event, session) => {
             this.user = session ? session.user : null;
             this.isAuthenticated = !!this.user;
+            
             if (this.isAuthenticated) {
               this.loadData();
               this.showToast("Conectado ao Supabase", "success");
@@ -1006,14 +1066,17 @@
             }
           });
         }
+        
         async checkAuthState() {
           try {
             document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
             const { data: { user } } = await supabase.auth.getUser();
             this.user = user;
             this.isAuthenticated = !!user;
+            
             // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
             await this.loadData();
+            
             if (!this.isAuthenticated) {
               // Se falhar no Supabase, tenta do localStorage
               await this.loadFromLocalStorage();
@@ -1024,11 +1087,14 @@
             await this.loadFromLocalStorage();
           }
         }
+        
         async loadData() {
           try {
             this.showToast("Carregando dados...", "info");
             let { data, error } = await supabase.from('site_data').select('*').eq('id', 1).single();
+
             if (error && error.code !== 'PGRST116') throw error;
+            
             if (data) {
               this.siteData = {
                 content: data.content || {},
@@ -1043,15 +1109,18 @@
               if(this.isAuthenticated) await this.saveData();
               this.showToast("Dados padrão carregados", "info");
             }
+            
             this.renderContent();
             document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
             await this.saveToLocalStorage();
+            
           } catch (error) {
             console.error("Erro ao carregar do Supabase:", error);
             this.showToast("Erro ao carregar do Supabase", "error");
             await this.loadFromLocalStorage();
           }
         }
+        
         loadDefaultData() {
           // Captura dados padrão dos elementos HTML
           document.querySelectorAll('[data-field]').forEach(el => {
@@ -1066,6 +1135,7 @@
               this.siteData.content[field] = el.innerHTML.trim();
             }
           });
+          
           // Dados padrão para outras seções
           this.siteData.media = { gallery: [], videos: [] };
           this.siteData.testimonials = [];
@@ -1087,6 +1157,7 @@
             ]
           };
         }
+        
         async saveToLocalStorage() {
           try {
             const jsonData = JSON.stringify(this.siteData);
@@ -1096,6 +1167,7 @@
             console.warn("Não foi possível salvar no localStorage:", e); 
           }
         }
+
         loadFromLocalStorage() {
           try {
             const savedData = localStorage.getItem('siteData');
@@ -1114,37 +1186,48 @@
               console.log("Nenhum dado encontrado no localStorage, carregando padrões");
               this.loadDefaultData();
             }
+            
             this.renderContent();
+            
           } catch (error) {
             console.error("Erro ao carregar do localStorage:", error);
             this.loadDefaultData();
             this.renderContent();
           }
         }
+        
         async saveData() {
           const saveButton = document.getElementById('saveAll');
           let originalText = saveButton.innerHTML;
           try {
             saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
             saveButton.disabled = true;
+
             const { error } = await supabase.from('site_data').upsert({ 
               id: 1, 
               ...this.siteData 
             }, { onConflict: 'id' });
+            
             if (error) throw error;
+            
             this.showToast("Dados salvos com sucesso!", "success");
             document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
+            
             await this.saveToLocalStorage();
             this.renderContent();
+            
             setTimeout(() => {
               saveButton.innerHTML = originalText;
               saveButton.disabled = false;
             }, 1000);
+            
           } catch (error) {
             console.error("Erro ao salvar no Supabase:", error);
             this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
+            
             await this.saveToLocalStorage();
             this.showToast("Dados salvos localmente", "warning");
+            
             saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
             setTimeout(() => {
               saveButton.innerHTML = originalText;
@@ -1152,17 +1235,21 @@
             }, 2000);
           }
         }
+        
         async authenticate(email, password) {
           try {
             document.getElementById('loginButtonText').textContent = "Autenticando...";
             document.getElementById('loginSpinner').classList.remove('hidden');
             document.getElementById('loginError').classList.add('hidden');
+            
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
+            
             this.showToast("Login realizado com sucesso", "success");
             this.hideLoginModal();
             this.isAuthenticated = true;
             this.toggleAdmin(true);
+            
           } catch (error) {
             console.error("Erro de autenticação:", error);
             document.getElementById('loginError').textContent = error.message;
@@ -1173,6 +1260,7 @@
             document.getElementById('loginSpinner').classList.add('hidden');
           }
         }
+        
         async logout() {
           try {
             await supabase.auth.signOut();
@@ -1184,6 +1272,7 @@
             console.error("Erro ao fazer logout:", error); 
           }
         }
+        
         showToast(message, type = "info") {
           const toast = document.getElementById('toast');
           toast.textContent = message;
@@ -1202,13 +1291,16 @@
             setTimeout(() => toast.classList.add('hidden'), 300);
           }, 5000);
         }
+        
         toggleAdmin(show = null) {
           if (!this.isAuthenticated && (show === true || show === null)) {
             this.showLoginModal();
             return;
           }
+          
           const panel = document.getElementById('adminPanel');
           this.isAdmin = show === null ? !panel.classList.contains('open') : show;
+          
           if (this.isAdmin) {
             panel.classList.add('open');
             document.body.classList.add('admin-logged-in');
@@ -1220,13 +1312,16 @@
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
           }
         }
+        
         showLoginModal() {
           document.getElementById('loginModal').classList.remove('hidden');
           document.getElementById('adminEmail').focus();
         }
+        
         hideLoginModal() {
           document.getElementById('loginModal').classList.add('hidden');
         }
+        
         switchTab(tabId) {
           document.querySelectorAll('.admin-tab').forEach(tab => 
             tab.classList.toggle('active', tab.dataset.tab === tabId)
@@ -1235,11 +1330,13 @@
             content.classList.toggle('hidden', content.id !== `${tabId}-tab`)
           );
         }
+        
         updateAdminForm() {
           Object.keys(this.siteData.content).forEach(field => {
             const input = document.getElementById(field);
             if (input) {
               input.value = this.siteData.content[field] || '';
+              
               if (field === 'heroImage' || field === 'companyLogo') {
                 const preview = document.getElementById(field + 'Preview');
                 if (preview && this.siteData.content[field]) {
@@ -1249,37 +1346,46 @@
               }
             }
           });
+          
           // Configurações de botões
           if (this.siteData.content.buttonPrimaryColor) {
             document.getElementById('buttonPrimaryColor').value = this.siteData.content.buttonPrimaryColor;
             document.documentElement.style.setProperty('--primary', this.siteData.content.buttonPrimaryColor);
           }
+          
           if (this.siteData.content.buttonTextColor) {
             document.getElementById('buttonTextColor').value = this.siteData.content.buttonTextColor;
             document.documentElement.style.setProperty('--button-text-color', this.siteData.content.buttonTextColor);
           }
+          
           if (this.siteData.content.buttonBorderRadius) {
             document.getElementById('buttonBorderRadius').value = this.siteData.content.buttonBorderRadius;
             document.getElementById('borderRadiusValue').textContent = `${this.siteData.content.buttonBorderRadius}px`;
             document.documentElement.style.setProperty('--button-border-radius', `${this.siteData.content.buttonBorderRadius}px`);
           }
+          
           if (this.siteData.content.buttonPaddingY) {
             document.getElementById('buttonPaddingY').value = this.siteData.content.buttonPaddingY;
             document.getElementById('paddingYValue').textContent = `${this.siteData.content.buttonPaddingY}px`;
             document.documentElement.style.setProperty('--button-padding-y', `${this.siteData.content.buttonPaddingY}px`);
           }
+          
           if (this.siteData.content.buttonPaddingX) {
             document.getElementById('buttonPaddingX').value = this.siteData.content.buttonPaddingX;
             document.getElementById('paddingXValue').textContent = `${this.siteData.content.buttonPaddingX}px`;
             document.documentElement.style.setProperty('--button-padding-x', `${this.siteData.content.buttonPaddingX}px`);
           }
+          
           this.renderSectionsList();
         }
+        
         enableInlineEdit(element) {
           const field = element.dataset.field;
           const originalValue = element.innerHTML;
+          
           element.contentEditable = true;
           element.focus();
+          
           const finishEdit = () => {
             element.contentEditable = false;
             const newValue = element.innerHTML;
@@ -1288,6 +1394,7 @@
               this.saveData();
             }
           };
+          
           element.addEventListener('blur', finishEdit, { once: true });
           element.addEventListener('keydown', (e) => { 
             if (e.key === 'Enter') { 
@@ -1296,45 +1403,59 @@
             }
           });
         }
+        
         async handleImageUpload(file, field) {
           if (!file) return null;
+          
           try {
             this.showToast("Enviando imagem...", "info");
             const fileExt = file.name.split('.').pop();
             const fileName = `${field}-${Date.now()}.${fileExt}`;
             const filePath = `images/${fileName}`;
+
             let { error: uploadError } = await supabase.storage
               .from('images')
               .upload(filePath, file, { upsert: true });
+              
             if (uploadError) throw uploadError;
+
             const { data: { publicUrl } } = supabase.storage
               .from('images')
               .getPublicUrl(filePath);
+              
             if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
+            
             this.showToast("Imagem enviada com sucesso!", "success");
             return publicUrl;
+            
           } catch (error) {
             console.error("Erro ao processar imagem:", error);
             this.showToast(`Erro ao processar imagem: ${error.message}`, "error");
             return null;
           }
         }
+        
         renderContent() {
           console.log("Renderizando conteúdo com dados:", this.siteData);
+          
           const companyNameContainer = document.getElementById('companyNameContainer');
           if (companyNameContainer) {
             const logo = this.siteData.content.companyLogo;
             const name = this.siteData.content.companyName || "CONCEITO";
+            
             if (logo && logo.trim() !== '') {
               companyNameContainer.innerHTML = `<img src="${logo}" alt="Logo" class="h-10 w-auto">`;
             } else {
               companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
             }
           }
+          
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             const value = this.siteData.content[field];
+            
             if (value === undefined || value === null) return;
+            
             if (el.tagName === 'IMG') {
               if (value && value.trim() !== '') {
                 el.src = value;
@@ -1353,18 +1474,22 @@
               el.innerHTML = value;
             }
           });
+          
           this.renderGallery();
           this.renderVideos();
           this.renderTestimonials();
           this.renderCustomSections();
           this.renderNavigation();
         }
+
         renderGallery() {
           const container = document.getElementById('galleryGrid');
           const adminContainer = document.getElementById('galleryItems');
           if (!container || !adminContainer) return;
+          
           container.innerHTML = '';
           adminContainer.innerHTML = '';
+          
           (this.siteData.media.gallery || []).forEach((item, index) => {
             container.innerHTML += `
               <div class="relative">
@@ -1372,6 +1497,7 @@
                 <p class="mt-2 text-center text-gray-600">${item.desc}</p>
               </div>
             `;
+            
             adminContainer.innerHTML += `
               <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
                 <img src="${item.url}" class="w-12 h-12 object-cover rounded mr-4">
@@ -1383,62 +1509,53 @@
             `;
           });
         }
+        
         renderVideos() {
           const container = document.getElementById('videosGrid');
           const adminContainer = document.getElementById('videoItems');
           if (!container || !adminContainer) return;
+          
           container.innerHTML = '';
           adminContainer.innerHTML = '';
+          
           (this.siteData.media.videos || []).forEach((item, index) => {
-            // Verifica se o youtubeId é válido antes de renderizar
-            if (item.youtubeId && item.youtubeId.length === 11) {
-              container.innerHTML += `
-                <div class="video-container">
-                  <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen></iframe>
-                  </div>
-                  <p class="mt-2 text-center text-gray-600">${item.desc}</p>
+            container.innerHTML += `
+              <div class="video-container">
+                <div class="video-wrapper">
+                  <iframe src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1" 
+                          frameborder="0" 
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                          allowfullscreen></iframe>
                 </div>
-              `;
-              adminContainer.innerHTML += `
-                <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
-                  <div class="flex-1 text-sm">
-                    <p class="font-semibold">${item.desc}</p>
-                    <p class="text-xs text-gray-500">${item.youtubeId}</p>
-                  </div>
-                  <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
-                    <i class="fas fa-trash"></i>
-                  </button>
+                <p class="mt-2 text-center text-gray-600">${item.desc}</p>
+              </div>
+            `;
+            
+            adminContainer.innerHTML += `
+              <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
+                <div class="flex-1 text-sm">
+                  <p class="font-semibold">${item.desc}</p>
+                  <p class="text-xs text-gray-500">${item.youtubeId}</p>
                 </div>
-              `;
-            } else {
-              console.warn("ID do YouTube inválido encontrado:", item);
-              // Mostra item inválido no admin para remoção
-              adminContainer.innerHTML += `
-                <div class="flex items-center justify-between bg-red-100 p-2 rounded">
-                  <div class="flex-1 text-sm">
-                    <p class="font-semibold text-red-700">ID Inválido: ${item.desc || 'Sem descrição'}</p>
-                    <p class="text-xs text-red-500">${item.youtubeId || 'ID não encontrado'}</p>
-                  </div>
-                  <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              `;
-            }
+                <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            `;
           });
+          
           // Carrega a API do YouTube
           this.loadYouTubeAPI();
         }
+        
         loadYouTubeAPI() {
           if (window.YT) return; // Já está carregado
+          
           const tag = document.createElement('script');
           tag.src = "https://www.youtube.com/iframe_api";
           const firstScriptTag = document.getElementsByTagName('script')[0];
           firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          
           window.onYouTubeIframeAPIReady = () => {
             document.querySelectorAll('.video-wrapper iframe').forEach((iframe, index) => {
               new YT.Player(iframe, {
@@ -1454,9 +1571,11 @@
             });
           };
         }
+        
         renderTestimonials() {
           const container = document.getElementById('testimonialsContainer');
           if (!container) return;
+          
           container.innerHTML = (this.siteData.testimonials || []).map((t, i) => `
             <div class="testimonial-card rounded-xl p-6 shadow-lg relative">
               <div class="flex items-center mb-4">
@@ -1476,10 +1595,12 @@
             </div>
           `).join('');
         }
+
         renderNavigation() {
           const mainNav = document.getElementById('mainNav');
           const footerLinks = document.getElementById('footerLinks');
           if (!mainNav || !footerLinks) return;
+          
           const defaultNav = [
             { href: "#services", text: "Serviços" },
             { href: "#methodology", text: "Metodologia" },
@@ -1487,21 +1608,27 @@
             { href: "#testimonials", text: "Depoimentos" },
             { href: "#contact", text: "Contato" }
           ];
+          
           const dynamicNav = (this.siteData.sections || []).map(s => ({ 
             href: `#${s.id}`, 
             text: s.title 
           }));
+          
           const allNavLinks = [...defaultNav, ...dynamicNav];
+
           mainNav.innerHTML = allNavLinks.map(link => 
             `<a href="${link.href}" class="nav-link text-[#001F3F] font-medium">${link.text}</a>`
           ).join('');
+          
           footerLinks.innerHTML = allNavLinks.map(link => 
             `<li><a href="${link.href}" class="text-gray-300 hover:text-white transition-colors">${link.text}</a></li>`
           ).join('');
         }
+        
         renderCustomSections() {
           const container = document.getElementById('custom-sections-container');
           if (!container) return;
+          
           container.innerHTML = (this.siteData.sections || []).map(section => {
             switch(section.type) {
               case 'text':
@@ -1539,9 +1666,11 @@
             }
           }).join('');
         }
+        
         renderSectionsList() {
           const container = document.getElementById('sectionsList');
           if (!container) return;
+          
           container.innerHTML = (this.siteData.sections || []).map((section, index) => `
             <div class="flex items-center justify-between bg-gray-100 p-3 rounded">
               <div>
@@ -1554,6 +1683,7 @@
             </div>
           `).join('');
         }
+        
         async addGalleryImage() {
           const input = document.createElement('input');
           input.type = 'file';
@@ -1561,8 +1691,10 @@
           input.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+            
             const desc = prompt('Descrição da imagem:', 'Imagem da galeria');
             if (!desc) return;
+            
             const downloadURL = await this.handleImageUpload(file, `gallery`);
             if (downloadURL) {
               if (!this.siteData.media.gallery) this.siteData.media.gallery = [];
@@ -1572,12 +1704,14 @@
           };
           input.click();
         }
+        
         async removeGalleryItem(index) {
           if (confirm('Remover esta imagem da galeria?')) {
             const item = this.siteData.media.gallery[index];
             this.siteData.media.gallery.splice(index, 1);
             await this.saveData();
             this.showToast("Imagem removida", "info");
+            
             try {
               const filePath = new URL(item.url).pathname.split('/images/')[1];
               if (filePath) {
@@ -1588,40 +1722,41 @@
             }
           }
         }
+        
         addVideo() {
           const url = prompt('Cole a URL do vídeo do YouTube:');
           if (!url) return;
-          // Regex mais robusta para capturar o ID do YouTube
-          const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-          const match = url.match(regExp);
-          let videoId = null;
+          
+          const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
           if (match && match[2].length === 11) {
-            videoId = match[2]; // Este é o ID do vídeo de 11 caracteres
-          }
-
-          if (videoId) {
             const desc = prompt('Descrição do vídeo:', 'Vídeo institucional');
             if (!desc) return;
+            
             if (!this.siteData.media.videos) this.siteData.media.videos = [];
-            this.siteData.media.videos.push({ youtubeId: videoId, desc }); // Usa o ID capturado
+            this.siteData.media.videos.push({ youtubeId: match[2], desc });
             this.saveData();
           } else {
-            this.showToast("URL do YouTube inválida ou ID não encontrado", "error");
+            this.showToast("URL do YouTube inválida", "error");
           }
         }
+        
         removeVideoItem(index) {
           if (confirm('Remover este vídeo?')) {
             this.siteData.media.videos.splice(index, 1);
             this.saveData();
           }
         }
+        
         addTestimonial() {
           const name = prompt('Nome:', 'Novo Cliente');
           if (!name) return;
+          
           const position = prompt('Cargo/Empresa:', 'Empresa');
           if (!position) return;
+          
           const content = prompt('Depoimento:', 'Ótimo serviço!');
           if (!content) return;
+          
           this.siteData.testimonials.push({
             name,
             position,
@@ -1630,27 +1765,33 @@
           });
           this.saveData();
         }
+        
         removeTestimonial(index) {
           if (confirm('Remover este depoimento?')) {
             this.siteData.testimonials.splice(index, 1);
             this.saveData();
           }
         }
+        
         addNewSection() {
           const name = document.getElementById('newSectionName').value;
           const id = document.getElementById('newSectionId').value;
           const type = document.getElementById('newSectionType').value;
+          
           if (!name || !id) {
             this.showToast("Nome e ID são obrigatórios", "error");
             return;
           }
+          
           if (!this.siteData.sections) this.siteData.sections = [];
           this.siteData.sections.push({ title: name, id, type, content: '' });
           this.saveData();
+          
           document.getElementById('newSectionName').value = '';
           document.getElementById('newSectionId').value = '';
           document.getElementById('newSectionType').value = 'text';
         }
+        
         removeSection(index) {
           if (confirm('Remover esta seção?')) {
             this.siteData.sections.splice(index, 1);
@@ -1658,20 +1799,26 @@
           }
         }
       }
+
       // Inicializa o CMS
       window.siteCMS = new SiteCMS();
+      
       // Event Listeners
       document.getElementById('loginButton').addEventListener('click', () => {
         const email = document.getElementById('adminEmail').value;
         const password = document.getElementById('adminPass').value;
         siteCMS.authenticate(email, password);
       });
+      
       document.getElementById('logoutButton').addEventListener('click', () => siteCMS.logout());
+      
       document.getElementById('adminPass').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('loginButton').click();
       });
+      
       document.getElementById('adminToggle').addEventListener('click', () => siteCMS.toggleAdmin());
       document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
+      
       document.getElementById('saveAll').addEventListener('click', () => {
         document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
           const field = input.id;
@@ -1679,82 +1826,99 @@
             siteCMS.siteData.content[field] = input.value;
           }
         });
+        
         // Salva configurações de botões
         siteCMS.siteData.content.buttonPrimaryColor = document.getElementById('buttonPrimaryColor').value;
         siteCMS.siteData.content.buttonTextColor = document.getElementById('buttonTextColor').value;
         siteCMS.siteData.content.buttonBorderRadius = document.getElementById('buttonBorderRadius').value;
         siteCMS.siteData.content.buttonPaddingY = document.getElementById('buttonPaddingY').value;
         siteCMS.siteData.content.buttonPaddingX = document.getElementById('buttonPaddingX').value;
+        
         // Aplica estilos imediatamente
         document.documentElement.style.setProperty('--primary', siteCMS.siteData.content.buttonPrimaryColor);
         document.documentElement.style.setProperty('--button-text-color', siteCMS.siteData.content.buttonTextColor);
         document.documentElement.style.setProperty('--button-border-radius', `${siteCMS.siteData.content.buttonBorderRadius}px`);
         document.documentElement.style.setProperty('--button-padding-y', `${siteCMS.siteData.content.buttonPaddingY}px`);
         document.documentElement.style.setProperty('--button-padding-x', `${siteCMS.siteData.content.buttonPaddingX}px`);
+        
         siteCMS.saveData();
       });
+      
       document.getElementById('resetAll').addEventListener('click', () => {
         if (confirm('Restaurar dados padrão? Isso não pode ser desfeito.')) {
           siteCMS.loadDefaultData();
           siteCMS.saveData();
         }
       });
+      
       document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.addEventListener('click', (e) => siteCMS.switchTab(e.currentTarget.dataset.tab));
       });
+      
       document.addEventListener('dblclick', (e) => {
         if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
           siteCMS.enableInlineEdit(e.target);
         }
       });
+      
       document.getElementById('heroImageUpload').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        
         const url = await siteCMS.handleImageUpload(file, 'heroImage');
         if (url) {
           siteCMS.siteData.content.heroImage = url;
           await siteCMS.saveData();
         }
       });
+      
       document.getElementById('companyLogoUpload').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        
         const url = await siteCMS.handleImageUpload(file, 'companyLogo');
         if (url) {
           siteCMS.siteData.content.companyLogo = url;
           await siteCMS.saveData();
         }
       });
+      
       document.getElementById('loginModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) {
           siteCMS.hideLoginModal();
         }
       });
+      
       // Configurações de botões
       document.getElementById('buttonPrimaryColor').addEventListener('input', (e) => {
         document.documentElement.style.setProperty('--primary', e.target.value);
         siteCMS.siteData.content.buttonPrimaryColor = e.target.value;
       });
+      
       document.getElementById('buttonTextColor').addEventListener('input', (e) => {
         document.documentElement.style.setProperty('--button-text-color', e.target.value);
         siteCMS.siteData.content.buttonTextColor = e.target.value;
       });
+      
       document.getElementById('buttonBorderRadius').addEventListener('input', (e) => {
         document.getElementById('borderRadiusValue').textContent = `${e.target.value}px`;
         document.documentElement.style.setProperty('--button-border-radius', `${e.target.value}px`);
         siteCMS.siteData.content.buttonBorderRadius = e.target.value;
       });
+      
       document.getElementById('buttonPaddingY').addEventListener('input', (e) => {
         document.getElementById('paddingYValue').textContent = `${e.target.value}px`;
         document.documentElement.style.setProperty('--button-padding-y', `${e.target.value}px`);
         siteCMS.siteData.content.buttonPaddingY = e.target.value;
       });
+      
       document.getElementById('buttonPaddingX').addEventListener('input', (e) => {
         document.getElementById('paddingXValue').textContent = `${e.target.value}px`;
         document.documentElement.style.setProperty('--button-padding-x', `${e.target.value}px`);
         siteCMS.siteData.content.buttonPaddingX = e.target.value;
       });
     });
+
     // Funções globais para serem chamadas pelos botões
     function addGalleryImage() { window.siteCMS?.addGalleryImage(); }
     function removeGalleryItem(index) { window.siteCMS?.removeGalleryItem(index); }
@@ -1767,4 +1931,3 @@
   </script>
 </body>
 </html>
-```
