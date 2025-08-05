@@ -12,6 +12,16 @@
   <link rel="canonical" href="https://conceito.com.br">
   <title>CONCEITO | Consultoria Empresarial Premium</title>
   
+  <!-- === CORREÇÃO: Política de Segurança de Conteúdo (CSP) === -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+                 font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+                 img-src 'self' data: https:;
+                 frame-src 'self' https://www.youtube.com;
+                 connect-src 'self' https://*.supabase.co;">
+
   <!-- CDNs -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -177,7 +187,7 @@
       margin-bottom: 1.5rem;
     }
     
-    /* === CORREÇÃO: Estilos genéricos para botões === */
+    /* Estilos genéricos para botões */
     .btn {
       display: inline-block;
       font-weight: 600;
@@ -211,7 +221,7 @@
       border-color: var(--secondary, #003366);
     }
     
-    /* === CORREÇÃO: Container para Player de Vídeo === */
+    /* Container para Player de Vídeo */
     .video-container {
       position: relative;
       padding-bottom: 56.25%; /* Proporção 16:9 */
@@ -257,6 +267,7 @@
   </style>
 </head>
 <body class="bg-gray-50">
+  <!-- O restante do seu código HTML (body) continua o mesmo... -->
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
 
@@ -1453,7 +1464,6 @@
           });
         }
         
-        // === FUNÇÃO CORRIGIDA: renderVideos ===
         renderVideos() {
           const container = document.getElementById('videosGrid');
           const adminContainer = document.getElementById('videoItems');
@@ -1463,7 +1473,6 @@
           adminContainer.innerHTML = '';
           
           (this.siteData.media.videos || []).forEach((item, index) => {
-            // Usa o novo container para manter a proporção
             container.innerHTML += `
               <div class="mb-8">
                 <div class="video-container">
@@ -1544,7 +1553,6 @@
           ).join('');
         }
         
-        // === FUNÇÃO CORRIGIDA: renderCustomSections ===
         renderCustomSections() {
           const container = document.getElementById('custom-sections-container');
           if (!container) return;
@@ -1563,7 +1571,6 @@
                   </section>
                 `;
               case 'form':
-                // Aplica as classes de formulário e botão
                 return `
                   <section id="${section.id}" class="py-20 bg-gray-50 custom-section">
                     <div class="container mx-auto px-4">
@@ -1785,7 +1792,7 @@
         const url = await siteCMS.handleImageUpload(file, 'companyLogo');
         if (url) {
           siteCMS.siteData.content.companyLogo = url;
-          await siteCMS.saveData();
+          await site.saveData();
         }
       });
       
