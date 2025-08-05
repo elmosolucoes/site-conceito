@@ -10,7 +10,6 @@
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#001F3F">
   <link rel="canonical" href="https://conceito.com.br">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
   <title>CONCEITO | Consultoria Empresarial Premium</title>
   
   <!-- CDNs -->
@@ -75,10 +74,6 @@
     .editable {
       position: relative;
       transition: all 0.2s;
-    }
-    /* CORREÇÃO VISUAL: Remove o contorno padrão do navegador e aplica o nosso apenas no hover */
-    .admin-logged-in .editable:focus {
-      outline: none;
     }
     .admin-logged-in .editable:hover {
       outline: 2px dashed var(--accent);
@@ -209,36 +204,6 @@
     }
     .netlify-form button[type="submit"]:hover {
       background-color: #0055AA;
-    }
-    /* Video container styles */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-      height: 0;
-      overflow: hidden;
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    /* Aspect ratio styles from deepseek_html_20250805_2708f7 (1).html */
-    .aspect-w-16 {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-      height: 0;
-      overflow: hidden;
-    }
-    .aspect-h-9 iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
     }
   </style>
 </head>
@@ -620,18 +585,18 @@
           <!-- Service 4 -->
           <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-6">
-              <i class="fas fa-tasks text-5xl service-icon mb-4"></i>
+              <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
               <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">
-                Gestão de Desempenho
+                Marketing Estratégico
               </h3>
             </div>
             <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">
-              Estruturação de métricas e processos para avaliação e desenvolvimento contínuo da performance da equipe.
+              Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
             </p>
             <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Definição de KPIs e metas</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Ciclos de avaliação de desempenho</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Planos de desenvolvimento (PDI)</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Pesquisa de mercado</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Posicionamento de marca</span></li>
+              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Plano de marketing</span></li>
             </ul>
           </div>
           
@@ -987,27 +952,10 @@
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Verificação para extensões
-      if (chrome?.runtime?.id) {
-        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-          if (message === 'ping') {
-            sendResponse('pong');
-            return true;
-          }
-        });
-      }
-
-      // Configuração do Supabase com opções de autenticação
+      // Configuração do Supabase
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
-      
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-          autoRefreshToken: true,
-          persistSession: true,
-          detectSessionInUrl: true
-        }
-      });
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       // Sistema CMS Completo com Supabase
       class SiteCMS {
@@ -1102,53 +1050,7 @@
         }
         
         loadDefaultData() {
-          // Dados padrão para serviços
-          this.siteData.content.servicesTitle = "Nossos Serviços";
-          this.siteData.content.servicesSubtitle = "Soluções completas e personalizadas para transformar sua empresa";
-          
-          // Serviço 1
-          this.siteData.content.service1Title = "Estratégia Empresarial";
-          this.siteData.content.service1Desc = "Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.";
-          this.siteData.content.service1Feature1 = "Planejamento estratégico";
-          this.siteData.content.service1Feature2 = "Análise de mercado";
-          this.siteData.content.service1Feature3 = "Definição de objetivos";
-          
-          // Serviço 2
-          this.siteData.content.service2Title = "Gestão de Processos";
-          this.siteData.content.service2Desc = "Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.";
-          this.siteData.content.service2Feature1 = "Mapeamento de processos";
-          this.siteData.content.service2Feature2 = "Redesenho de fluxos";
-          this.siteData.content.service2Feature3 = "Automação de tarefas";
-          
-          // Serviço 3
-          this.siteData.content.service3Title = "Análise Financeira";
-          this.siteData.content.service3Desc = "Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.";
-          this.siteData.content.service3Feature1 = "Análise de custos";
-          this.siteData.content.service3Feature2 = "Otimização tributária";
-          this.siteData.content.service3Feature3 = "Projeções financeiras";
-          
-          // Serviço 4
-          this.siteData.content.service4Title = "Gestão de Desempenho";
-          this.siteData.content.service4Desc = "Estruturação de métricas e processos para avaliação e desenvolvimento contínuo da performance da equipe.";
-          this.siteData.content.service4Feature1 = "Definição de KPIs e metas";
-          this.siteData.content.service4Feature2 = "Ciclos de avaliação de desempenho";
-          this.siteData.content.service4Feature3 = "Planos de desenvolvimento (PDI)";
-          
-          // Serviço 5
-          this.siteData.content.service5Title = "Gestão de Pessoas";
-          this.siteData.content.service5Desc = "Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.";
-          this.siteData.content.service5Feature1 = "Recrutamento estratégico";
-          this.siteData.content.service5Feature2 = "Treinamento e desenvolvimento";
-          this.siteData.content.service5Feature3 = "Clima organizacional";
-          
-          // Serviço 6
-          this.siteData.content.service6Title = "Transformação Digital";
-          this.siteData.content.service6Desc = "Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.";
-          this.siteData.content.service6Feature1 = "Diagnóstico digital";
-          this.siteData.content.service6Feature2 = "Roadmap tecnológico";
-          this.siteData.content.service6Feature3 = "Implementação de sistemas";
-          
-          // Outros dados padrão
+          // Captura dados padrão dos elementos HTML
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             if (el.tagName === 'IMG') {
@@ -1187,7 +1089,7 @@
         async saveToLocalStorage() {
           try {
             const jsonData = JSON.stringify(this.siteData);
-            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData)));
+            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
             console.log("Dados salvos no localStorage:", this.siteData);
           } catch(e) { 
             console.warn("Não foi possível salvar no localStorage:", e); 
@@ -1385,7 +1287,6 @@
           
           const finishEdit = () => {
             element.contentEditable = false;
-            element.blur(); // <-- CORREÇÃO: Força a remoção do foco e do pontilhado
             const newValue = element.innerHTML;
             if (newValue !== originalValue) {
               this.siteData.content[field] = newValue;
@@ -1519,8 +1420,8 @@
           (this.siteData.media.videos || []).forEach((item, index) => {
             container.innerHTML += `
               <div class="relative">
-                <div class="video-container rounded-lg overflow-hidden shadow-md">
-                  <iframe src="https://www.youtube.com/embed/${item.youtubeId}?rel=0&modestbranding=1&autohide=1&showinfo=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.youtubeId}" frameborder="0" allowfullscreen></iframe>
                 </div>
                 <p class="mt-2 text-center text-gray-600">${item.desc}</p>
               </div>
@@ -1692,21 +1593,17 @@
         }
         
         addVideo() {
-          const url = document.getElementById('youtubeUrl').value;
-          if (!url) {
-            this.showToast("Por favor, insira uma URL do YouTube", "error");
-            return;
-          }
+          const url = prompt('Cole a URL do vídeo do YouTube:');
+          if (!url) return;
           
-          const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-          if (match && match[1].length === 11) {
+          const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+          if (match && match[2].length === 11) {
             const desc = prompt('Descrição do vídeo:', 'Vídeo institucional');
             if (!desc) return;
             
             if (!this.siteData.media.videos) this.siteData.media.videos = [];
-            this.siteData.media.videos.push({ youtubeId: match[1], desc });
+            this.siteData.media.videos.push({ youtubeId: match[2], desc });
             this.saveData();
-            document.getElementById('youtubeUrl').value = '';
           } else {
             this.showToast("URL do YouTube inválida", "error");
           }
