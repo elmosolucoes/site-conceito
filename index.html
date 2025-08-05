@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- === CORREÇÃO DEFINITIVA: Política de Segurança de Conteúdo (CSP) Reforçada === -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+                 font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+                 img-src 'self' data: https:;
+                 frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
+                 connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
+
   <meta name="author" content="CONCEITO Consultoria">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
@@ -12,16 +23,6 @@
   <link rel="canonical" href="https://conceito.com.br">
   <title>CONCEITO | Consultoria Empresarial Premium</title>
   
-  <!-- === CORREÇÃO: Política de Segurança de Conteúdo (CSP) === -->
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self'; 
-                 script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com;
-                 font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
-                 img-src 'self' data: https:;
-                 frame-src 'self' https://www.youtube.com;
-                 connect-src 'self' https://*.supabase.co;">
-
   <!-- CDNs -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -267,7 +268,6 @@
   </style>
 </head>
 <body class="bg-gray-50">
-  <!-- O restante do seu código HTML (body) continua o mesmo... -->
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
 
@@ -1792,7 +1792,7 @@
         const url = await siteCMS.handleImageUpload(file, 'companyLogo');
         if (url) {
           siteCMS.siteData.content.companyLogo = url;
-          await site.saveData();
+          await siteCMS.saveData();
         }
       });
       
