@@ -3,17 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- === CORREÇÃO DEFINITIVA: Política de Segurança de Conteúdo (CSP) Reforçada === -->
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self';
-                 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com;
-                 font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
-                 img-src 'self' data: https:;
-                 frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
-                 connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
-
   <meta name="author" content="CONCEITO Consultoria">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
@@ -39,6 +28,10 @@
       --accent: #0066CC;
       --light: #F8FAFC;
       --dark: #1E293B;
+      --button-text-color: #FFFFFF;
+      --button-border-radius: 8px;
+      --button-padding-y: 12px;
+      --button-padding-x: 24px;
     }
     body {
       font-family: 'Montserrat', sans-serif;
@@ -71,6 +64,20 @@
       height: 100px;
       background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
     }
+    
+    /* Estilos de Botões Personalizáveis */
+    button, .btn, input[type="submit"], input[type="button"] {
+      background-color: var(--primary);
+      color: var(--button-text-color);
+      border-radius: var(--button-border-radius);
+      padding: var(--button-padding-y) var(--button-padding-x);
+      transition: all 0.3s ease;
+    }
+    button:hover, .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
     /* Admin Styles */
     .admin-panel {
       width: 400px;
@@ -129,6 +136,26 @@
     .nav-link:hover::after {
       width: 100%;
     }
+    
+    /* Player de Vídeo Responsivo */
+    .aspect-w-16 {
+      position: relative;
+      padding-bottom: 56.25%; /* Proporção 16:9 */
+      height: 0;
+      overflow: hidden;
+    }
+    .aspect-h-9 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+    }
+    
     /* Modal de Login */
     #loginModal {
       transition: opacity 0.3s ease;
@@ -187,83 +214,34 @@
       color: #001F3F;
       margin-bottom: 1.5rem;
     }
-    
-    /* Estilos genéricos para botões */
-    .btn {
-      display: inline-block;
-      font-weight: 600;
-      text-align: center;
-      vertical-align: middle;
-      cursor: pointer;
-      user-select: none;
-      border: 1px solid transparent;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      line-height: 1.5;
-      border-radius: 0.375rem;
-      transition: all 0.2s ease-in-out;
-    }
-    .btn-primary {
-      color: #fff;
-      background-color: var(--accent, #0066CC);
-      border-color: var(--accent, #0066CC);
-    }
-    .btn-primary:hover {
-      background-color: #0055AA;
-      border-color: #004499;
-    }
-    .btn-secondary {
-      color: #fff;
-      background-color: var(--primary, #001F3F);
-      border-color: var(--primary, #001F3F);
-    }
-    .btn-secondary:hover {
-      background-color: var(--secondary, #003366);
-      border-color: var(--secondary, #003366);
-    }
-    
-    /* Container para Player de Vídeo */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* Proporção 16:9 */
-      height: 0;
-      overflow: hidden;
-      max-width: 100%;
-      border-radius: 0.75rem; /* cantos arredondados */
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Estilos para formulários (unificados) */
-    .form-container {
+    /* Netlify form styles */
+    .netlify-form {
       background: white;
       border-radius: 12px;
       padding: 2rem;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
-    .form-container input[type="text"],
-    .form-container input[type="email"],
-    .form-container input[type="tel"],
-    .form-container textarea,
-    .form-container input[type="file"] {
+    .netlify-form input[type="text"],
+    .netlify-form input[type="email"],
+    .netlify-form input[type="tel"],
+    .netlify-form textarea,
+    .netlify-form input[type="file"] {
       width: 100%;
       padding: 0.75rem;
       border: 1px solid #cbd5e1;
       border-radius: 0.375rem;
       margin-bottom: 1rem;
-      transition: all 0.2s;
     }
-    .form-container input:focus,
-    .form-container textarea:focus {
-        border-color: var(--accent, #0066CC);
-        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-        outline: none;
+    .netlify-form button[type="submit"] {
+      background-color: #0066CC;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .netlify-form button[type="submit"]:hover {
+      background-color: #0055AA;
     }
   </style>
 </head>
@@ -380,6 +358,36 @@
             <div>
               <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
               <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Nova Seção de Configuração de Botões -->
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Estilo de Botões</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Cor Primária</label>
+              <input type="color" id="buttonPrimaryColor" value="#0066CC" class="w-full p-1 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Cor do Texto</label>
+              <input type="color" id="buttonTextColor" value="#FFFFFF" class="w-full p-1 border rounded">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Arredondamento</label>
+              <input type="range" id="buttonBorderRadius" min="0" max="20" value="8" class="w-full">
+              <span id="borderRadiusValue">8px</span>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Padding Vertical</label>
+              <input type="range" id="buttonPaddingY" min="8" max="24" value="12" class="w-full">
+              <span id="paddingYValue">12px</span>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Padding Horizontal</label>
+              <input type="range" id="buttonPaddingX" min="16" max="48" value="24" class="w-full">
+              <span id="paddingXValue">24px</span>
             </div>
           </div>
         </div>
@@ -804,7 +812,7 @@
         </div>
         
         <div class="text-center mt-8">
-          <button onclick="addTestimonial()" class="btn btn-primary admin-only hidden">
+          <button onclick="addTestimonial()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg admin-only hidden">
             <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
           </button>
         </div>
@@ -821,12 +829,12 @@
       </div>
     </section>
 
-    <!-- Galeria de Vídeos -->
+    <!-- Galeria de Vídeos - Atualizada com proporções corretas -->
     <section id="videos" class="py-12 bg-gray-100">
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="videosTitle">Vídeos</h2>
         <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Itens de vídeo serão adicionados dinamicamente -->
+          <!-- Itens de vídeo serão adicionados dinamicamente com proporções corretas -->
         </div>
       </div>
     </section>
@@ -843,31 +851,31 @@
           </p>
         </div>
 
-        <div class="max-w-2xl mx-auto form-container">
+        <div class="max-w-2xl mx-auto netlify-form">
           <form name="careers" method="POST" data-netlify="true" enctype="multipart/form-data">
             <input type="hidden" name="form-name" value="careers">
             <div class="space-y-6">
               <div>
                 <label class="block text-sm font-medium mb-1">Nome Completo</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Telefone</label>
-                <input type="tel" name="phone">
+                <input type="tel" name="phone" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Mensagem</label>
-                <textarea name="message" rows="4"></textarea>
+                <textarea name="message" rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Currículo (PDF)</label>
-                <input type="file" name="resume" accept=".pdf" required>
+                <input type="file" name="resume" accept=".pdf" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
-              <button type="submit" class="btn btn-secondary w-full">
+              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Enviar Currículo
               </button>
             </div>
@@ -893,32 +901,32 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <!-- Contact Form -->
-          <div class="form-container">
+          <div class="bg-white rounded-2xl p-8 shadow-2xl">
             <h3 class="text-2xl font-bold text-[#001F3F] mb-6 editable" data-field="contactFormTitle">
               Solicite uma Consultoria
             </h3>
             <form id="contact-form" class="space-y-6">
               <div>
                 <label class="block text-sm font-medium mb-1">Nome Completo</label>
-                <input type="text">
+                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email">
+                <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Telefone</label>
-                <input type="tel">
+                <input type="tel" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Empresa</label>
-                <input type="text">
+                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-sm font-medium mb-1">Mensagem</label>
-                <textarea rows="4"></textarea>
+                <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
               </div>
-              <button type="submit" class="btn btn-secondary w-full">
+              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Enviar Mensagem
               </button>
             </form>
@@ -1062,13 +1070,16 @@
             this.user = user;
             this.isAuthenticated = !!user;
             
+            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
             await this.loadData();
             
             if (!this.isAuthenticated) {
+              // Se falhar no Supabase, tenta do localStorage
               await this.loadFromLocalStorage();
             }
           } catch (error) {
             console.error("Erro ao verificar autenticação:", error);
+            // Se der erro, tenta do localStorage como fallback
             await this.loadFromLocalStorage();
           }
         }
@@ -1107,6 +1118,7 @@
         }
         
         loadDefaultData() {
+          // Captura dados padrão dos elementos HTML
           document.querySelectorAll('[data-field]').forEach(el => {
             const field = el.dataset.field;
             if (el.tagName === 'IMG') {
@@ -1120,6 +1132,7 @@
             }
           });
           
+          // Dados padrão para outras seções
           this.siteData.media = { gallery: [], videos: [] };
           this.siteData.testimonials = [];
           this.siteData.sections = [];
@@ -1330,6 +1343,35 @@
             }
           });
           
+          // Configurações de botões
+          if (this.siteData.content.buttonPrimaryColor) {
+            document.getElementById('buttonPrimaryColor').value = this.siteData.content.buttonPrimaryColor;
+            document.documentElement.style.setProperty('--primary', this.siteData.content.buttonPrimaryColor);
+          }
+          
+          if (this.siteData.content.buttonTextColor) {
+            document.getElementById('buttonTextColor').value = this.siteData.content.buttonTextColor;
+            document.documentElement.style.setProperty('--button-text-color', this.siteData.content.buttonTextColor);
+          }
+          
+          if (this.siteData.content.buttonBorderRadius) {
+            document.getElementById('buttonBorderRadius').value = this.siteData.content.buttonBorderRadius;
+            document.getElementById('borderRadiusValue').textContent = `${this.siteData.content.buttonBorderRadius}px`;
+            document.documentElement.style.setProperty('--button-border-radius', `${this.siteData.content.buttonBorderRadius}px`);
+          }
+          
+          if (this.siteData.content.buttonPaddingY) {
+            document.getElementById('buttonPaddingY').value = this.siteData.content.buttonPaddingY;
+            document.getElementById('paddingYValue').textContent = `${this.siteData.content.buttonPaddingY}px`;
+            document.documentElement.style.setProperty('--button-padding-y', `${this.siteData.content.buttonPaddingY}px`);
+          }
+          
+          if (this.siteData.content.buttonPaddingX) {
+            document.getElementById('buttonPaddingX').value = this.siteData.content.buttonPaddingX;
+            document.getElementById('paddingXValue').textContent = `${this.siteData.content.buttonPaddingX}px`;
+            document.documentElement.style.setProperty('--button-padding-x', `${this.siteData.content.buttonPaddingX}px`);
+          }
+          
           this.renderSectionsList();
         }
         
@@ -1474,15 +1516,15 @@
           
           (this.siteData.media.videos || []).forEach((item, index) => {
             container.innerHTML += `
-              <div class="mb-8">
-                <div class="video-container">
-                  <iframe src="https://www.youtube.com/embed/${item.youtubeId}" 
+              <div class="video-container">
+                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+                  <iframe class="w-full h-full" 
+                          src="https://www.youtube.com/embed/${item.youtubeId}" 
                           frameborder="0" 
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                          allowfullscreen>
-                  </iframe>
+                          allowfullscreen></iframe>
                 </div>
-                <p class="mt-3 text-center text-gray-700">${item.desc}</p>
+                <p class="mt-2 text-center text-gray-600">${item.desc}</p>
               </div>
             `;
             
@@ -1575,14 +1617,14 @@
                   <section id="${section.id}" class="py-20 bg-gray-50 custom-section">
                     <div class="container mx-auto px-4">
                       <h2 class="custom-section-title text-center mb-8">${section.title}</h2>
-                      <div class="max-w-2xl mx-auto form-container">
+                      <div class="max-w-2xl mx-auto netlify-form">
                         <form name="${section.id}" method="POST" data-netlify="true">
                           <input type="hidden" name="form-name" value="${section.id}">
                           <div class="space-y-4">
                             <input type="text" name="name" placeholder="Nome" required>
                             <input type="email" name="email" placeholder="Email" required>
                             <textarea name="message" rows="4" placeholder="Mensagem"></textarea>
-                            <button type="submit" class="btn btn-primary w-full">Enviar</button>
+                            <button type="submit">Enviar</button>
                           </div>
                         </form>
                       </div>
@@ -1754,6 +1796,21 @@
             siteCMS.siteData.content[field] = input.value;
           }
         });
+        
+        // Salva configurações de botões
+        siteCMS.siteData.content.buttonPrimaryColor = document.getElementById('buttonPrimaryColor').value;
+        siteCMS.siteData.content.buttonTextColor = document.getElementById('buttonTextColor').value;
+        siteCMS.siteData.content.buttonBorderRadius = document.getElementById('buttonBorderRadius').value;
+        siteCMS.siteData.content.buttonPaddingY = document.getElementById('buttonPaddingY').value;
+        siteCMS.siteData.content.buttonPaddingX = document.getElementById('buttonPaddingX').value;
+        
+        // Aplica estilos imediatamente
+        document.documentElement.style.setProperty('--primary', siteCMS.siteData.content.buttonPrimaryColor);
+        document.documentElement.style.setProperty('--button-text-color', siteCMS.siteData.content.buttonTextColor);
+        document.documentElement.style.setProperty('--button-border-radius', `${siteCMS.siteData.content.buttonBorderRadius}px`);
+        document.documentElement.style.setProperty('--button-padding-y', `${siteCMS.siteData.content.buttonPaddingY}px`);
+        document.documentElement.style.setProperty('--button-padding-x', `${siteCMS.siteData.content.buttonPaddingX}px`);
+        
         siteCMS.saveData();
       });
       
@@ -1800,6 +1857,35 @@
         if (e.target === e.currentTarget) {
           siteCMS.hideLoginModal();
         }
+      });
+      
+      // Configurações de botões
+      document.getElementById('buttonPrimaryColor').addEventListener('input', (e) => {
+        document.documentElement.style.setProperty('--primary', e.target.value);
+        siteCMS.siteData.content.buttonPrimaryColor = e.target.value;
+      });
+      
+      document.getElementById('buttonTextColor').addEventListener('input', (e) => {
+        document.documentElement.style.setProperty('--button-text-color', e.target.value);
+        siteCMS.siteData.content.buttonTextColor = e.target.value;
+      });
+      
+      document.getElementById('buttonBorderRadius').addEventListener('input', (e) => {
+        document.getElementById('borderRadiusValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-border-radius', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonBorderRadius = e.target.value;
+      });
+      
+      document.getElementById('buttonPaddingY').addEventListener('input', (e) => {
+        document.getElementById('paddingYValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-padding-y', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonPaddingY = e.target.value;
+      });
+      
+      document.getElementById('buttonPaddingX').addEventListener('input', (e) => {
+        document.getElementById('paddingXValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-padding-x', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonPaddingX = e.target.value;
       });
     });
 
