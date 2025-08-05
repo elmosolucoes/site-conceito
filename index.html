@@ -138,22 +138,26 @@
     }
     
     /* Player de Vídeo Responsivo */
-    .aspect-w-16 {
+    .video-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+    
+    .video-wrapper {
       position: relative;
       padding-bottom: 56.25%; /* Proporção 16:9 */
       height: 0;
       overflow: hidden;
     }
-    .aspect-h-9 {
+    
+    .video-wrapper iframe {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-    }
-    .video-container {
-      position: relative;
-      width: 100%;
+      border: none;
     }
     
     /* Modal de Login */
@@ -1517,9 +1521,8 @@
           (this.siteData.media.videos || []).forEach((item, index) => {
             container.innerHTML += `
               <div class="video-container">
-                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
-                  <iframe class="w-full h-full" 
-                          src="https://www.youtube.com/embed/${item.youtubeId}" 
+                <div class="video-wrapper">
+                  <iframe src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1" 
                           frameborder="0" 
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                           allowfullscreen></iframe>
@@ -1540,6 +1543,33 @@
               </div>
             `;
           });
+          
+          // Carrega a API do YouTube
+          this.loadYouTubeAPI();
+        }
+        
+        loadYouTubeAPI() {
+          if (window.YT) return; // Já está carregado
+          
+          const tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          const firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          
+          window.onYouTubeIframeAPIReady = () => {
+            document.querySelectorAll('.video-wrapper iframe').forEach((iframe, index) => {
+              new YT.Player(iframe, {
+                events: {
+                  'onReady': (event) => {
+                    // Player pronto para ser controlado
+                  },
+                  'onStateChange': (event) => {
+                    // Pode adicionar lógica para eventos de estado do player
+                  }
+                }
+              });
+            });
+          };
         }
         
         renderTestimonials() {
