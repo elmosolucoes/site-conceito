@@ -1,315 +1,338 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-    
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="author" content="CONCEITO Consultoria">
-  <meta name="robots" content="index, follow">
-  <meta property="og:title" content="CONCEITO | Consultoria Empresarial Premium">
-  <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#001F3F">
-  <!-- CSP Corrigida -->
-  <default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.youtube.com https://qpfhmfncponqvdaglrzc.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://qpfhmfncponqvdaglrzc.supabase.co; media-src 'self' blob: https://qpfhmfncponqvdaglrzc.supabase.co; connect-src 'self' https://qpfhmfncponqvdaglrzc.supabase.co; frame-src 'self' https://www.youtube.com;">
-  <link rel="canonical" href="https://conceito.com.br">
-  <title>CONCEITO | Consultoria Empresarial Premium</title>
-  <!-- CDNs -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --primary: #001F3F;
-      --secondary: #003366;
-      --accent: #0066CC;
-      --light: #F8FAFC;
-      --dark: #1E293B;
-      --button-text-color: #FFFFFF;
-      --button-border-radius: 8px;
-      --button-padding-y: 12px;
-      --button-padding-x: 24px;
-    }
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #F8FAFC;
-    }
-    .hero-gradient {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
-    }
-    .text-outline {
-      text-shadow: -1px -1px 0 var(--primary), 1px -1px 0 var(--primary), -1px 1px 0 var(--primary), 1px 1px 0 var(--primary);
-    }
-    .floating {
-      animation: floating 3s ease-in-out infinite;
-    }
-    @keyframes floating {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-    .card-hover:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    .service-icon {
-      background: linear-gradient(135deg, var(--accent), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .section-divider {
-      height: 100px;
-      background: linear-gradient(to bottom right, transparent 49.5%, white 50%), linear-gradient(to top right, transparent 49.5%, white 50%);
-    }
-    /* Estilos de Botões Personalizáveis */
-    button, .btn, input[type="submit"], input[type="button"] {
-      background-color: var(--primary);
-      color: var(--button-text-color);
-      border-radius: var(--button-border-radius);
-      padding: var(--button-padding-y) var(--button-padding-x);
-      transition: all 0.3s ease;
-    }
-    button:hover, .btn:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
-    /* Admin Styles */
-    .admin-panel {
-      width: 400px;
-      background: white;
-      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-      transform: translateX(400px);
-      transition: transform 0.3s ease;
-      height: 100vh; /* 1. Define altura total da viewport */
-      display: flex; /* 2. Usa flexbox para layout interno */
-      flex-direction: column; /* 3. Organiza os filhos verticalmente */
-    }
-    .admin-panel.open {
-      transform: translateX(0);
-    }
-    .editable {
-      position: relative;
-      transition: all 0.2s;
-    }
-    .admin-logged-in .editable:hover {
-      outline: 2px dashed var(--accent);
-      background-color: rgba(0, 102, 204, 0.05);
-    }
-    .edit-badge {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: var(--accent);
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .admin-logged-in .editable:hover .edit-badge {
-      opacity: 1;
-    }
-    .testimonial-card {
-      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-    }
-    .nav-link {
-      position: relative;
-      overflow: hidden;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background-color: var(--accent);
-      transition: width 0.3s ease;
-    }
-    .nav-link:hover::after {
-      width: 100%;
-    }
-    /* Player de Vídeo Responsivo */
-    .video-container {
-      position: relative;
-      width: 100%;
-      margin-bottom: 2rem;
-    }
-    .video-wrapper {
-      position: relative;
-      padding-bottom: 56.25%; /* Proporção 16:9 */
-      height: 0;
-      overflow: hidden;
-    }
-    .video-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    /* Modal de Login */
-    #loginModal {
-      transition: opacity 0.3s ease;
-    }
-    #loginModal input {
-      border-color: #cbd5e1;
-    }
-    #loginModal input:focus {
-      outline: none;
-      border-color: #0066CC;
-      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-    }
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 12px 24px;
-      background: #001F3F;
-      color: white;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    /* Logo preview admin */
-    #companyLogoPreview {
-      max-height: 48px;
-      max-width: 200px;
-      display: block;
-    }
-    /* Custom sections */
-    .custom-section {
-      padding: 80px 0;
-    }
-    .custom-section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.5rem;
-      color: #001F3F;
-      margin-bottom: 1.5rem;
-    }
-    /* Netlify form styles */
-    .netlify-form {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    .netlify-form input[type="text"],
-    .netlify-form input[type="email"],
-    .netlify-form input[type="tel"],
-    .netlify-form textarea,
-    .netlify-form input[type="file"] {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 0.375rem;
-      margin-bottom: 1rem;
-    }
-    .netlify-form button[type="submit"] {
-      background-color: #0066CC;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
-      font-weight: 600;
-      transition: background-color 0.2s;
-    }
-    .netlify-form button[type="submit"]:hover {
-      background-color: #0055AA;
-    }
-    /* Correção para rolagem do painel administrativo */
-    .admin-panel > div.p-4:last-child { /* Seleciona o último div.p-4, que é o conteúdo principal */
-      flex-grow: 1; /* 4. Faz este div ocupar o espaço restante */
-      overflow-y: auto; /* 5. Permite rolagem vertical */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="CONCEITO Consultoria">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="CONCEITO| Consultoria Empresarial Premium">
+    <meta property="og:description" content="Transformação empresarial de alto impacto com metodologia exclusiva">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#001F3F">
+    <meta name="description" content="Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.">
+    <link rel="canonical" href="https://conceito.com.br">
+    <title>CONCEITO| Consultoria Empresarial Premium</title>
     
-    /* Garante que o container da mídia flutuante tenha posição relativa */
-    .hero-gradient .relative.floating {
-      position: relative;
-    }
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --primary: #0066CC;
+            --secondary: #001F3F;
+            --accent: #FFD700;
+            --text: #333333;
+            --background: #F8FAFC;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+        }
 
-    /* Estilos para o container de vídeo dentro do hero */
-    #hero-youtube-container, #hero-local-video {
-      width: 100%; /* Ou um valor fixo se preferir */
-      border-radius: 0.5rem; /* rounded-lg */
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
-    }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+        }
 
-    #hero-youtube-container .video-wrapper {
-      position: relative;
-      padding-bottom: 56.25%; /* Proporção 16:9 */
-      height: 0;
-      overflow: hidden;
-    }
+        .bg-primary { background-color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .bg-accent { background-color: var(--accent); }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-accent { color: var(--accent); }
+        .border-primary { border-color: var(--primary); }
 
-    #hero-youtube-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 0.5rem;
-    }
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        }
 
-    #hero-local-video {
-       /* O video se ajustará automaticamente com w-full e h-auto */
-       max-height: 500px; /* Limita a altura máxima se necessário */
-    }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .service-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .card-hover:hover .service-icon {
+            transform: scale(1.1);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Painel Administrativo - Corrigido */
+        .admin-panel {
+            width: 400px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 100; /* Garante que fique acima de outros elementos */
+            transform: translateX(100%); /* Painel completamente fora da tela à direita (fechado) */
+            transition: transform 0.3s ease-in-out; /* Transição suave */
+        }
 
-    /* Classes auxiliares para mostrar/ocultar */
-    .media-show {
-        display: block !important; /* Ou flex, conforme o elemento */
-    }
-    .media-hide {
-        display: none !important;
-    }
-  </style>
+        .admin-panel.open {
+            transform: translateX(0); /* Painel na posição visível (aberto) */
+        }
+        
+        .admin-only {
+            display: none;
+        }
+        
+        .admin-logged-in .admin-only {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+        }
+        
+        .toast.success {
+            background-color: #10B981;
+        }
+        
+        .toast.error {
+            background-color: #EF4444;
+        }
+        
+        .toast.info {
+            background-color: #3B82F6;
+        }
+        
+        .toast.warning {
+            background-color: #F59E0B;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .editable {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .editable:hover {
+            outline: 2px dashed var(--primary);
+            cursor: pointer;
+        }
+        
+        .admin-logged-in .editable:hover::after {
+            content: "Editar";
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .section-divider {
+            height: 2px;
+        }
+        
+        .admin-panel > div.p-4:last-child {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .hero-gradient .relative.floating {
+            position: relative;
+        }
+        
+        #hero-youtube-container, #hero-local-video {
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        #hero-youtube-container .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        #hero-youtube-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0.5rem;
+        }
+        
+        #hero-local-video {
+            max-height: 500px;
+        }
+        
+        .media-show {
+            display: block !important;
+        }
+        
+        .media-hide {
+            display: none !important;
+        }
+        
+        .admin-section {
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .admin-tab-btn {
+            position: relative;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .admin-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .admin-tab-content {
+            display: none;
+        }
+        
+        .admin-tab-content.active {
+            display: block;
+        }
+        
+        .testimonial-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        #loginModal {
+            transition: opacity 0.3s ease;
+        }
+        
+        #loginModal input {
+            border-color: #cbd5e1;
+        }
+        
+        #loginModal input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+        
+        .edit-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 102, 204, 0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .admin-logged-in .editable:hover .edit-badge {
+            opacity: 1;
+        }
+        
+        .text-outline {
+            -webkit-text-stroke: 1px white;
+            color: transparent;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
   <!-- Toast Notification -->
   <div id="toast" class="toast hidden"></div>
+  
   <!-- Modal de Login -->
   <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg p-8 max-w-md w-full">
@@ -331,39 +354,454 @@
       </div>
     </div>
   </div>
+  
   <!-- Botão Admin -->
   <button id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
     <i class="fas fa-cog"></i>
   </button>
+
+  <!-- Header -->
+  <header class="fixed w-full bg-white shadow-md z-30">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center">
+        <!-- Aqui aparece automaticamente o nome da empresa OU a logo, conforme configurado no painel admin -->
+        <span id="companyNameContainer"></span>
+      </div>
+      <nav class="hidden md:flex space-x-10">
+        <a href="#services" class="text-gray-600 hover:text-[#0066CC] font-medium transition-colors nav-link">Serviços</a>
+        <a href="#methodology" class="text-gray-600 hover:text-[#0066CC] font-medium transition-colors nav-link">Metodologia</a>
+        <a href="#results" class="text-gray-600 hover:text-[#0066CC] font-medium transition-colors nav-link">Resultados</a>
+        <a href="#testimonials" class="text-gray-600 hover:text-[#0066CC] font-medium transition-colors nav-link">Depoimentos</a>
+        <a href="#contact" class="text-gray-600 hover:text-[#0066CC] font-medium transition-colors nav-link">Contato</a>
+        <!-- Links dinâmicos para seções adicionadas serão inseridos aqui -->
+      </nav>
+      <button class="md:hidden text-[#001F3F]">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-32 pb-20 text-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="md:flex items-center justify-between">
+        <div class="md:w-1/2 mb-12 md:mb-0">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle"><span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span></h1>
+          <p class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.</p>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <a id="heroPrimaryBtn" href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">Fale com um especialista</a>
+            <a id="heroSecondaryBtn" href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">Conheça nossa metodologia</a>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <div class="relative floating w-full max-w-lg">
+            <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Business growth" class="rounded-lg shadow-2xl w-full h-auto object-cover editable-img media-hide" data-field="heroImage" data-alt-field="heroImageAlt">
+            <div id="hero-youtube-container" class="video-container w-full rounded-lg shadow-2xl media-hide">
+              <div class="video-wrapper">
+                <iframe id="hero-youtube-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+            <video id="hero-local-video" class="rounded-lg shadow-2xl w-full h-auto object-cover media-hide" controls loop muted>
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="servicesTitle">Nossos Serviços</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="servicesSubtitle">Soluções completas e personalizadas para transformar sua empresa</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title">Estratégia Empresarial</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc">Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.</p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature1">Análise SWOT</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature2">Planejamento estratégico</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature3">Benchmarking</span></li>
+          </ul>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-users-cog text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title">Gestão de Processos</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc">Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.</p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature1">Mapeamento de processos</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature2">Automação</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature3">Indicadores de desempenho</span></li>
+          </ul>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-lightbulb text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title">Inovação e Transformação</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc">Implementação de soluções inovadoras para modernizar sua empresa e impulsionar resultados.</p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature1">Transformação digital</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature2">Cultura de inovação</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature3">Tecnologias emergentes</span></li>
+          </ul>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-6">
+            <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
+            <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">Marketing Estratégico</h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.</p>
+          <ul class="text-sm text-gray-500 space-y-2">
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Branding</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Campanhas digitais</span></li>
+            <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Análise de mercado</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Methodology Section -->
+  <section id="methodology" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="methodologyTitle">Nossa Metodologia Exclusiva</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="methodologySubtitle">Processo comprovado em mais de 200 empresas para resultados reais e duradouros</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Step 1 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step1Title">Diagnóstico</h3>
+          <p class="text-gray-600 editable" data-field="step1Desc">Análise completa da empresa para identificar pontos fortes, oportunidades e gargalos.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step2Title">Planejamento</h3>
+          <p class="text-gray-600 editable" data-field="step2Desc">Desenvolvimento de estratégias personalizadas com metas e indicadores claros.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step3Title">Implementação</h3>
+          <p class="text-gray-600 editable" data-field="step3Desc">Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="text-center">
+          <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step4Title">Resultados</h3>
+          <p class="text-gray-600 editable" data-field="step4Desc">Entrega de resultados mensuráveis e plano de sustentabilidade para o futuro.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Results Section -->
+  <section id="results" class="py-20 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="resultsTitle">Resultados Comprovados</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="resultsSubtitle">Números que demonstram o impacto real das nossas consultorias</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <!-- Stat 1 -->
+        <div class="text-center">
+          <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">+150%</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat1Title">Aumento de Receita</h3>
+          <p class="text-gray-600 editable" data-field="stat1Desc">Média de crescimento dos nossos clientes</p>
+        </div>
+        <!-- Stat 2 -->
+        <div class="text-center">
+          <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">+300%</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat2Title">Eficiência Operacional</h3>
+          <p class="text-gray-600 editable" data-field="stat2Desc">Redução de custos operacionais</p>
+        </div>
+        <!-- Stat 3 -->
+        <div class="text-center">
+          <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">95%</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat3Title">Satisfação do Cliente</h3>
+          <p class="text-gray-600 editable" data-field="stat3Desc">Dos clientes recomendam nossos serviços</p>
+        </div>
+        <!-- Stat 4 -->
+        <div class="text-center">
+          <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">24/7</div>
+          <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat4Title">Suporte Premium</h3>
+          <p class="text-gray-600 editable" data-field="stat4Desc">Acompanhamento contínuo pós-projeto</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="testimonialsTitle">O que nossos clientes dizem</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="testimonialsSubtitle">Depoimentos reais de empresários que transformaram seus negócios</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsContainer">
+        <!-- Depoimentos serão renderizados dinamicamente aqui -->
+      </div>
+      <div class="text-center mt-8">
+        <button onclick="siteCMS.addTestimonial()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg admin-only hidden">
+          <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Galeria de Fotos -->
+  <section id="gallery" class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="galleryTitle">Galeria de Fotos</h2>
+      <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Itens da galeria serão adicionados dinamicamente -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Galeria de Vídeos -->
+  <section id="videos" class="py-12 bg-gray-100">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="videosTitle">Vídeos</h2>
+      <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Itens de vídeo serão adicionados dinamicamente com proporções corretas -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Seção "Envie Seu Currículo" -->
+  <section id="careers" class="py-20 bg-white custom-section">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="careersTitle">Envie Seu Currículo</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="careersSubtitle">Faça parte do nosso time de consultores especializados</p>
+      </div>
+      <div class="max-w-2xl mx-auto netlify-form">
+        <form class="bg-gray-50 p-8 rounded-xl space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-1">Nome Completo</label>
+              <input type="text" name="name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Email</label>
+              <input type="email" name="email" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Telefone</label>
+              <input type="tel" name="phone" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Área de Interesse</label>
+              <select name="area" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>Consultoria</option>
+                <option>Marketing</option>
+                <option>Desenvolvimento</option>
+                <option>Design</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Mensagem</label>
+            <textarea name="message" rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Currículo (PDF)</label>
+            <input type="file" name="resume" accept=".pdf" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
+            Enviar Currículo
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <div class="section-divider bg-gray-50"></div>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-[#001F3F]">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl p-8 shadow-2xl">
+          <h3 class="text-2xl font-bold text-[#001F3F] mb-6 editable" data-field="contactFormTitle">Solicite uma Consultoria</h3>
+          <form id="contact-form" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium mb-1">Nome Completo</label>
+              <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Email</label>
+              <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Telefone</label>
+              <input type="tel" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Empresa</label>
+              <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Mensagem</label>
+              <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
+              Enviar Mensagem
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="text-white">
+          <h3 class="text-2xl font-bold mb-8 editable" data-field="contactInfoTitle">Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível</h3>
+          <div class="space-y-6">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold editable" data-field="contactEmailLabel">Email</h4>
+                <p class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold editable" data-field="contactAddressLabel">Endereço</h4>
+                <p class="text-gray-200 editable" data-field="address">Av. Paulista, 1000 - São Paulo/SP</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold editable" data-field="contactPhoneLabel">Telefone</h4>
+                <p class="text-gray-200 editable" data-field="phone">(11) 3123-4567</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold editable" data-field="contactHoursLabel">Horário de Atendimento</h4>
+                <p class="text-gray-200 editable" data-field="hours">Segunda a Sexta, das 9h às 18h</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#001F3F] text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-2xl font-bold mb-4 editable" data-field="footerTitle">CONCEITO</h3>
+          <p class="text-gray-300 editable" data-field="footerAbout">Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.</p>
+          <div class="flex space-x-4 mt-4">
+            <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-4 editable" data-field="footerLinksTitle">Links Rápidos</h3>
+          <ul class="space-y-2">
+            <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Serviços</a></li>
+            <li><a href="#methodology" class="text-gray-300 hover:text-white transition-colors">Metodologia</a></li>
+            <li><a href="#results" class="text-gray-300 hover:text-white transition-colors">Resultados</a></li>
+            <li><a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Depoimentos</a></li>
+            <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contato</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-4 editable" data-field="footerNewsletterTitle">Newsletter</h3>
+          <p class="text-gray-300 mb-4 editable" data-field="footerNewsletterText">Assine nossa newsletter para receber dicas e novidades.</p>
+          <form class="flex">
+            <input type="email" placeholder="Seu email" class="flex-1 p-2 rounded-l-lg focus:outline-none text-gray-800">
+            <button type="submit" class="bg-[#0066CC] hover:bg-[#0055AA] text-white px-4 rounded-r-lg">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p class="editable" data-field="footerCopyright">&copy; 2023 Conceito. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
   <!-- Painel Admin -->
-  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40 flex flex-col"> <!-- Adicionado flex e flex-col -->
-    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0"> <!-- Adicionado flex-shrink-0 -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto flex-grow"> <!-- Removido h-[calc...] problemático, adicionado flex-grow -->
+    <div class="p-4 overflow-y-auto flex-grow">
       <div class="mb-6">
-        <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
-          <i class="fas fa-save mr-2"></i>Salvar Tudo
-        </button>
-        <button id="resetAll" aria-label="Restaurar dados padrão" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
-          <i class="fas fa-undo mr-2"></i>Restaurar Padrão
-        </button>
-        <button id="logoutButton" aria-label="Sair do painel administrativo" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
-          <i class="fas fa-sign-out-alt mr-2"></i>Sair
-        </button>
+        <div class="flex border-b">
+          <button class="admin-tab-btn py-2 px-4 font-medium active" data-tab="content">Conteúdo</button>
+          <button class="admin-tab-btn py-2 px-4 font-medium" data-tab="media">Mídia</button>
+          <button class="admin-tab-btn py-2 px-4 font-medium" data-tab="settings">Configurações</button>
+        </div>
       </div>
-      <!-- Abas -->
-      <div class="flex border-b mb-4">
-        <button class="admin-tab active px-4 py-2 border-b-2 border-blue-600" data-tab="content" aria-label="Aba Conteúdo">Conteúdo</button>
-        <button class="admin-tab px-4 py-2" data-tab="media" aria-label="Aba Mídia">Mídia</button>
-        <button class="admin-tab px-4 py-2" data-tab="settings" aria-label="Aba Configurações">Configurações</button>
-        <button class="admin-tab px-4 py-2" data-tab="sections" aria-label="Aba Seções">Seções</button>
-      </div>
-      <!-- Conteúdo -->
-      <div id="content-tab" class="admin-tab-content space-y-6">
+
+      <!-- Aba de Conteúdo -->
+      <div id="content-tab" class="admin-tab-content active space-y-6">
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Cabeçalho</h4>
           <div class="space-y-4">
@@ -378,97 +816,40 @@
             <div>
               <label class="block text-sm font-medium mb-1">Logo da Empresa</label>
               <input type="file" id="companyLogoUpload" accept="image/*" class="hidden">
-              <button onclick="document.getElementById('companyLogoUpload').click()" aria-label="Selecionar logo" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              <button onclick="document.getElementById('companyLogoUpload').click()" aria-label="Selecionar logo da empresa" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
                 <i class="fas fa-upload mr-2"></i>Selecionar Logo
               </button>
-              <div class="mt-4">
-                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden" style="max-height: 60px;">
+              <div class="mt-2">
+                <img id="companyLogoPreview" class="max-w-full h-auto rounded border hidden">
               </div>
             </div>
           </div>
         </div>
+
         <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Hero Section</h4>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Título Principal</label>
-              <textarea id="heroTitle" aria-label="Título Principal" class="w-full p-2 border rounded" rows="3"></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Subtítulo</label>
-              <textarea id="heroSubtitle" aria-label="Subtítulo" class="w-full p-2 border rounded" rows="2"></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Botão Primário</label>
-              <input type="text" id="heroCtaPrimary" aria-label="Botão Primário" class="w-full p-2 border rounded">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Link Botão Primário</label>
-              <input type="text" id="heroCtaPrimaryLink" aria-label="Link Botão Primário" class="w-full p-2 border rounded" placeholder="#contact">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Botão Secundário</label>
-              <input type="text" id="heroCtaSecondary" aria-label="Botão Secundário" class="w-full p-2 border rounded">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
-              <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
-            </div>
+          <h4 class="font-bold text-lg mb-3">Campos Editáveis</h4>
+          <div id="editableFields" class="space-y-4">
+            <!-- Campos editáveis serão adicionados aqui dinamicamente -->
           </div>
         </div>
-        <!-- Nova Seção de Configuração de Botões -->
+
         <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Estilo de Botões</h4>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Cor Primária</label>
-              <input type="color" id="buttonPrimaryColor" value="#0066CC" class="w-full p-1 border rounded">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Cor do Texto</label>
-              <input type="color" id="buttonTextColor" value="#FFFFFF" class="w-full p-1 border rounded">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Arredondamento</label>
-              <input type="range" id="buttonBorderRadius" min="0" max="20" value="8" class="w-full">
-              <span id="borderRadiusValue">8px</span>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Padding Vertical</label>
-              <input type="range" id="buttonPaddingY" min="8" max="24" value="12" class="w-full">
-              <span id="paddingYValue">12px</span>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Padding Horizontal</label>
-              <input type="range" id="buttonPaddingX" min="16" max="48" value="24" class="w-full">
-              <span id="paddingXValue">24px</span>
-            </div>
+          <h4 class="font-bold text-lg mb-3">Depoimentos</h4>
+          <div id="testimonialItems" class="space-y-4">
+            <!-- Depoimentos serão adicionados aqui -->
           </div>
-        </div>
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Contato</h4>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Telefone</label>
-              <input type="text" id="phone" aria-label="Telefone" class="w-full p-2 border rounded">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Email</label>
-              <input type="email" id="email" aria-label="Email" class="w-full p-2 border rounded">
-            </div>
-            <div class="col-span-2">
-              <label class="block text-sm font-medium mb-1">Endereço</label>
-              <input type="text" id="address" aria-label="Endereço" class="w-full p-2 border rounded">
-            </div>
-          </div>
+          <button onclick="siteCMS.addTestimonial()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
+          </button>
         </div>
       </div>
-      <!-- Mídia -->
+
+      <!-- Aba de Mídia -->
       <div id="media-tab" class="admin-tab-content hidden space-y-6">
         <!-- Nova Seção: Configuração da Mídia Hero -->
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Configuração da Mídia Hero</h4>
-
+          
           <!-- Escolha do Tipo de Mídia -->
           <div class="mb-4">
             <label class="block text-sm font-medium mb-1">Tipo de Mídia</label>
@@ -513,20 +894,22 @@
             </div>
           </div>
         </div>
+
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Galeria de Fotos</h4>
           <div id="galleryItems" class="space-y-4">
             <!-- Itens da galeria serão adicionados aqui -->
           </div>
-          <button onclick="addGalleryImage()" aria-label="Adicionar foto à galeria" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+          <button onclick="siteCMS.addGalleryImage()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
             <i class="fas fa-plus mr-2"></i>Adicionar Foto
           </button>
         </div>
+
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Vídeos</h4>
           <div class="flex mb-4">
             <input type="text" id="youtubeUrl" aria-label="URL do vídeo do YouTube" placeholder="Cole a URL do YouTube" class="flex-1 p-2 border rounded">
-            <button onclick="addVideo()" aria-label="Adicionar vídeo à galeria" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <button onclick="siteCMS.addVideo()" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
               <i class="fas fa-plus"></i>
             </button>
           </div>
@@ -535,7 +918,8 @@
           </div>
         </div>
       </div>
-      <!-- Configurações -->
+
+      <!-- Aba de Configurações -->
       <div id="settings-tab" class="admin-tab-content hidden space-y-6">
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Supabase Config</h4>
@@ -547,987 +931,295 @@
             <p>Última sincronização: <span id="lastSyncTime" class="font-medium"></span></p>
           </div>
         </div>
+
         <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Idioma</h4>
-          <select id="siteLanguage" aria-label="Idioma do site" class="w-full p-2 border rounded">
-            <option value="pt-BR">Português (Brasil)</option>
-            <option value="en-US">English (EUA)</option>
-            <option value="es-ES">Español</option>
-          </select>
-        </div>
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Tema</h4>
-          <div class="grid grid-cols-4 gap-2">
-            <button data-theme="blue" aria-label="Tema Azul" class="theme-btn h-10 rounded bg-blue-800 border-2 border-blue-600"></button>
-            <button data-theme="emerald" aria-label="Tema Verde" class="theme-btn h-10 rounded bg-emerald-600"></button>
-            <button data-theme="indigo" aria-label="Tema Indigo" class="theme-btn h-10 rounded bg-indigo-600"></button>
-            <button data-theme="rose" aria-label="Tema Rosa" class="theme-btn h-10 rounded bg-rose-600"></button>
+          <h4 class="font-bold text-lg mb-3">Gerenciador de Seções</h4>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Nome da Seção</label>
+              <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">ID da Seção (sem espaços)</label>
+              <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Tipo de Seção</label>
+              <select id="newSectionType" class="w-full p-2 border rounded">
+                <option value="text">Texto Simples</option>
+                <option value="cards">Cards</option>
+                <option value="form">Formulário</option>
+                <option value="gallery">Galeria</option>
+              </select>
+            </div>
+            <button onclick="siteCMS.addNewSection()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              <i class="fas fa-plus mr-2"></i>Adicionar Seção
+            </button>
           </div>
-        </div>
-        <div class="admin-section">
-          <label class="flex items-center">
-            <input type="checkbox" id="darkMode" aria-label="Ativar modo escuro" class="mr-2"> Modo Escuro
-          </label>
         </div>
       </div>
-      <!-- Seções -->
-      <div id="sections-tab" class="admin-tab-content hidden space-y-6">
-        <div class="admin-section">
-          <h4 class="font-bold text-lg mb-3">Gerenciar Seções</h4>
-          <div id="sectionsList" class="space-y-4 mb-6">
-            <!-- Seções existentes serão listadas aqui -->
-          </div>
-          <div class="bg-gray-100 p-4 rounded-lg">
-            <h5 class="font-bold mb-3">Adicionar Nova Seção</h5>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium mb-1">Nome da Seção</label>
-                <input type="text" id="newSectionName" class="w-full p-2 border rounded" placeholder="Ex: Trabalhe Conosco">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">ID da Seção (sem espaços)</label>
-                <input type="text" id="newSectionId" class="w-full p-2 border rounded" placeholder="Ex: trabalhe-conosco">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Tipo de Seção</label>
-                <select id="newSectionType" class="w-full p-2 border rounded">
-                  <option value="text">Texto Simples</option>
-                  <option value="cards">Cards</option>
-                  <option value="form">Formulário</option>
-                  <option value="gallery">Galeria</option>
-                </select>
-              </div>
-              <button onclick="addNewSection()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                <i class="fas fa-plus mr-2"></i>Adicionar Seção
-              </button>
-            </div>
-          </div>
-        </div>
+
+      <div class="mt-8">
+        <button id="saveAll" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
+          <i class="fas fa-save mr-2"></i>Salvar Tudo
+        </button>
+        <button id="resetAll" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">
+          <i class="fas fa-undo mr-2"></i>Restaurar Padrão
+        </button>
+        <button id="logoutButton" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded mt-2">
+          <i class="fas fa-sign-out-alt mr-2"></i>Sair
+        </button>
       </div>
     </div>
   </div>
-  <!-- Conteúdo do Site -->
-  <div id="site-content">
-    <!-- Cabeçalho -->
-    <header class="fixed w-full bg-white shadow-md z-30">
-      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center">
-          <!-- Aqui aparece automaticamente o nome da empresa OU a logo, conforme configurado no painel admin -->
-          <span id="companyNameContainer"></span>
-          <span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full editable" data-field="version">v24</span>
-        </div>
-        <nav class="hidden md:flex space-x-8" id="mainNav">
-          <a href="#services" class="nav-link text-[#001F3F] font-medium">Serviços</a>
-          <a href="#methodology" class="nav-link text-[#001F3F] font-medium">Metodologia</a>
-          <a href="#results" class="nav-link text-[#001F3F] font-medium">Resultados</a>
-          <a href="#testimonials" class="nav-link text-[#001F3F] font-medium">Depoimentos</a>
-          <a href="#contact" class="nav-link text-[#001F3F] font-medium">Contato</a>
-          <!-- Links dinâmicos para seções adicionadas serão inseridos aqui -->
-        </nav>
-        <button class="md:hidden text-[#001F3F]">
-          <i class="fas fa-bars text-xl"></i>
-        </button>
-      </div>
-    </header>
-    <!-- Hero Section -->
-    <section class="hero-gradient pt-32 pb-20 text-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="md:flex items-center justify-between">
-          <div class="md:w-1/2 mb-12 md:mb-0">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight editable" style="font-family: 'Bebas Neue';" data-field="heroTitle">
-              <span class="text-outline">TRANSFORME</span> SEU NEGÓCIO COM <span class="text-yellow-300">CONSULTORIA PREMIUM</span>
-            </h1>
-            <p class="text-lg md:text-xl mb-8 max-w-lg editable" data-field="heroSubtitle">
-              Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.
-            </p>
-            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <a id="heroPrimaryBtn" href="#contact" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center editable" data-field="heroCtaPrimary">
-                Fale com um especialista
-              </a>
-              <a id="heroSecondaryBtn" href="#methodology" class="bg-transparent hover:bg-blue-900 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 text-center editable" data-field="heroCtaSecondary">
-                Conheça nossa metodologia
-              </a>
-            </div>
-          </div>
-          <div class="md:w-1/2 flex justify-center">
-            <!-- Container para a mídia flutuante -->
-            <div class="relative floating w-full max-w-lg"> <!-- Mantém a classe 'floating' no container -->
-                <!-- Imagem Flutuante (inicialmente visível ou oculta) -->
-                <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Business growth" class="rounded-lg shadow-2xl w-full h-auto object-cover editable-img hidden" data-field="heroImage" data-alt-field="heroImageAlt">
 
-                <!-- Vídeo Flutuante do YouTube (inicialmente oculto) -->
-                <div id="hero-youtube-container" class="video-container w-full rounded-lg shadow-2xl hidden"> <!-- Classe 'hidden' inicial -->
-                    <div class="video-wrapper">
-                        <iframe id="hero-youtube-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                 </div>
-
-                 <!-- Vídeo Flutuante Local (inicialmente oculto) -->
-                 <video id="hero-local-video" class="rounded-lg shadow-2xl w-full h-auto object-cover hidden" controls loop muted>
-                    Seu navegador não suporta o elemento de vídeo.
-                 </video>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Section Divider -->
-    <div class="section-divider bg-gray-50"></div>
-    <!-- Services Section -->
-    <section id="services" class="py-20 bg-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="servicesTitle">
-            Nossos Serviços
-          </h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="servicesSubtitle">
-            Soluções completas e personalizadas para transformar sua empresa
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Service 1 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-chart-line text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service1Title">
-                Estratégia Empresarial
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service1Desc">
-              Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature1">Planejamento estratégico</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature2">Análise de mercado</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service1Feature3">Definição de objetivos</span></li>
-            </ul>
-          </div>
-          <!-- Service 2 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-users-cog text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service2Title">
-                Gestão de Processos
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service2Desc">
-              Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature1">Mapeamento de processos</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature2">Redesenho de fluxos</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service2Feature3">Automação de tarefas</span></li>
-            </ul>
-          </div>
-          <!-- Service 3 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-chart-pie text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service3Title">
-                Análise Financeira
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service3Desc">
-              Diagnóstico financeiro completo com plano de ação para melhorar resultados e rentabilidade.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature1">Análise de custos</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature2">Otimização tributária</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service3Feature3">Projeções financeiras</span></li>
-            </ul>
-          </div>
-          <!-- Service 4 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-people-group text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service4Title">
-                Marketing Estratégico
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service4Desc">
-              Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature1">Pesquisa de mercado</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature2">Posicionamento de marca</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service4Feature3">Plano de marketing</span></li>
-            </ul>
-          </div>
-          <!-- Service 5 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-user-tie text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service5Title">
-                Gestão de Pessoas
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service5Desc">
-              Desenvolvimento de equipes de alta performance e cultura organizacional alinhada aos objetivos.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature1">Recrutamento estratégico</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature2">Treinamento e desenvolvimento</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service5Feature3">Clima organizacional</span></li>
-            </ul>
-          </div>
-          <!-- Service 6 -->
-          <div class="card-hover transition-all bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="text-center mb-6">
-              <i class="fas fa-calculator text-5xl service-icon mb-4"></i>
-              <h3 class="text-2xl font-bold text-[#001F3F] mb-4 editable" data-field="service6Title">
-                Transformação Digital
-              </h3>
-            </div>
-            <p class="text-gray-600 leading-relaxed mb-6 editable" data-field="service6Desc">
-              Implementação de tecnologias e processos digitais para modernizar e escalar seu negócio.
-            </p>
-            <ul class="text-sm text-gray-500 space-y-2">
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature1">Diagnóstico digital</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature2">Roadmap tecnológico</span></li>
-              <li><i class="fas fa-check text-[#0066CC] mr-2"></i><span class="editable" data-field="service6Feature3">Implementação de sistemas</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Methodology Section -->
-    <section id="methodology" class="py-20 bg-gray-50">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="methodologyTitle">
-            Nossa Metodologia
-          </h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="methodologySubtitle">
-            Processo estruturado e comprovado para garantir resultados excepcionais
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <!-- Step 1 -->
-          <div class="text-center">
-            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step1Title">Diagnóstico</h3>
-            <p class="text-gray-600 editable" data-field="step1Desc">Análise profunda da situação atual da empresa e identificação de oportunidades.</p>
-          </div>
-          <!-- Step 2 -->
-          <div class="text-center">
-            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step2Title">Planejamento</h3>
-            <p class="text-gray-600 editable" data-field="step2Desc">Desenvolvimento de estratégias personalizadas com metas e indicadores claros.</p>
-          </div>
-          <!-- Step 3 -->
-          <div class="text-center">
-            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step3Title">Implementação</h3>
-            <p class="text-gray-600 editable" data-field="step3Desc">Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.</p>
-          </div>
-          <!-- Step 4 -->
-          <div class="text-center">
-            <div class="bg-[#001F3F] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-4 editable" data-field="step4Title">Resultados</h3>
-            <p class="text-gray-600 editable" data-field="step4Desc">Entrega de resultados mensuráveis e plano de sustentabilidade para o futuro.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Results Section -->
-    <section id="results" class="py-20 bg-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="resultsTitle">
-            Resultados Comprovados
-          </h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="resultsSubtitle">
-            Números que demonstram o impacto real das nossas consultorias
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          <!-- Stat 1 -->
-          <div class="text-center">
-            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat1">+150%</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat1Title">Aumento de Receita</h3>
-            <p class="text-gray-600 editable" data-field="stat1Desc">Média de crescimento dos nossos clientes</p>
-          </div>
-          <!-- Stat 2 -->
-          <div class="text-center">
-            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat2">12</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat2Title">Meses</h3>
-            <p class="text-gray-600 editable" data-field="stat2Desc">Tempo médio para transformação completa</p>
-          </div>
-          <!-- Stat 3 -->
-          <div class="text-center">
-            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat3">95%</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat3Title">Satisfação</h3>
-            <p class="text-gray-600 editable" data-field="stat3Desc">Taxa de satisfação dos nossos clientes</p>
-          </div>
-          <!-- Stat 4 -->
-          <div class="text-center">
-            <div class="text-5xl font-black text-[#0066CC] mb-4 editable" style="font-family: 'Bebas Neue';" data-field="stat4">+300</div>
-            <h3 class="text-xl font-bold text-[#001F3F] mb-2 editable" data-field="stat4Title">Empresas</h3>
-            <p class="text-gray-600 editable" data-field="stat4Desc">Transformadas com nossa metodologia</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-20 bg-gray-50">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="testimonialsTitle">
-            O que nossos clientes dizem
-          </h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="testimonialsSubtitle">
-            Depoimentos reais de empresários que transformaram seus negócios
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonialsContainer">
-          <!-- Depoimentos serão renderizados dinamicamente aqui -->
-        </div>
-        <div class="text-center mt-8">
-          <button onclick="addTestimonial()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg admin-only hidden">
-            <i class="fas fa-plus mr-2"></i>Adicionar Depoimento
-          </button>
-        </div>
-      </div>
-    </section>
-    <!-- Galeria de Fotos -->
-    <section id="gallery" class="py-12 bg-white">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="galleryTitle">Galeria de Fotos</h2>
-        <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Itens da galeria serão adicionados dinamicamente -->
-        </div>
-      </div>
-    </section>
-    <!-- Galeria de Vídeos - Atualizada com proporções corretas -->
-    <section id="videos" class="py-12 bg-gray-100">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-8 editable" data-field="videosTitle">Vídeos</h2>
-        <div id="videosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Itens de vídeo serão adicionados dinamicamente com proporções corretas -->
-        </div>
-      </div>
-    </section>
-    <!-- Seção "Envie Seu Currículo" -->
-    <section id="careers" class="py-20 bg-white custom-section">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-[#001F3F] mb-6 editable" style="font-family: 'Bebas Neue';" data-field="careersTitle">
-            Envie Seu Currículo
-          </h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto editable" data-field="careersSubtitle">
-            Faça parte do nosso time de consultores especializados
-          </p>
-        </div>
-        <div class="max-w-2xl mx-auto netlify-form">
-          <form name="careers" method="POST" data-netlify="true" enctype="multipart/form-data">
-            <input type="hidden" name="form-name" value="careers">
-            <div class="space-y-6">
-              <div>
-                <label class="block text-sm font-medium mb-1">Nome Completo</label>
-                <input type="text" name="name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email" name="email" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Telefone</label>
-                <input type="tel" name="phone" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Mensagem</label>
-                <textarea name="message" rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Currículo (PDF)</label>
-                <input type="file" name="resume" accept=".pdf" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                Enviar Currículo
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-    <!-- Seções personalizadas serão inseridas aqui -->
-    <div id="custom-sections-container"></div>
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 hero-gradient">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-white mb-6 editable" style="font-family: 'Bebas Neue';" data-field="contactTitle">
-            Vamos Transformar Sua Empresa
-          </h2>
-          <p class="text-xl text-white max-w-3xl mx-auto editable" data-field="contactSubtitle">
-            Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível
-          </p>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <!-- Contact Form -->
-          <div class="bg-white rounded-2xl p-8 shadow-2xl">
-            <h3 class="text-2xl font-bold text-[#001F3F] mb-6 editable" data-field="contactFormTitle">
-              Solicite uma Consultoria
-            </h3>
-            <form id="contact-form" class="space-y-6">
-              <div>
-                <label class="block text-sm font-medium mb-1">Nome Completo</label>
-                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Telefone</label>
-                <input type="tel" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Empresa</label>
-                <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Mensagem</label>
-                <textarea rows="4" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-              </div>
-              <button type="submit" class="w-full bg-[#001F3F] hover:bg-[#003366] text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                Enviar Mensagem
-              </button>
-            </form>
-          </div>
-          <!-- Contact Info -->
-          <div class="text-white">
-            <h3 class="text-2xl font-bold mb-8 editable" data-field="contactInfoTitle">
-              Informações de Contato
-            </h3>
-            <div class="space-y-6">
-              <div class="flex items-center">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-phone"></i></div>
-                <div>
-                  <h4 class="font-semibold editable" data-field="contactPhoneLabel">Telefone</h4>
-                  <p class="text-gray-200 editable" data-field="phone">(11) 9999-9999</p>
-                </div>
-              </div>
-              <div class="flex items-center">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-envelope"></i></div>
-                <div>
-                  <h4 class="font-semibold editable" data-field="contactEmailLabel">Email</h4>
-                  <p class="text-gray-200 editable" data-field="email">contato@conceito.com.br</p>
-                </div>
-              </div>
-              <div class="flex items-center">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-map-marker-alt"></i></div>
-                <div>
-                  <h4 class="font-semibold editable" data-field="contactAddressLabel">Endereço</h4>
-                  <p class="text-gray-200 editable" data-field="address">Av. Paulista, 1000 - São Paulo/SP</p>
-                </div>
-              </div>
-              <div class="flex items-center">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-clock"></i></div>
-                <div>
-                  <h4 class="font-semibold editable" data-field="contactHoursLabel">Horário de Atendimento</h4>
-                  <p class="text-gray-200 editable" data-field="hours">Segunda a Sexta, das 9h às 18h</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Footer -->
-    <footer class="bg-[#001F3F] text-white py-12">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 class="text-2xl font-bold mb-4 editable" data-field="footerTitle">CONCEITO</h3>
-            <p class="text-gray-300 editable" data-field="footerAbout">Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.</p>
-            <div class="flex space-x-4 mt-4">
-              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
-            </div>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold mb-4 editable" data-field="footerLinksTitle">Links Rápidos</h3>
-            <ul class="space-y-2" id="footerLinks">
-              <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Serviços</a></li>
-              <li><a href="#methodology" class="text-gray-300 hover:text-white transition-colors">Metodologia</a></li>
-              <li><a href="#results" class="text-gray-300 hover:text-white transition-colors">Resultados</a></li>
-              <li><a href="#testimonials" class="text-gray-300 hover:text-white transition-colors">Depoimentos</a></li>
-              <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contato</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold mb-4 editable" data-field="footerNewsletterTitle">Newsletter</h3>
-            <p class="text-gray-300 mb-4 editable" data-field="footerNewsletterText">Assine nossa newsletter para receber dicas e novidades.</p>
-            <form class="flex">
-              <input type="email" placeholder="Seu email" class="flex-1 p-2 rounded-l-lg focus:outline-none text-gray-800">
-              <button type="submit" class="bg-[#0066CC] hover:bg-[#0055AA] text-white px-4 rounded-r-lg"><i class="fas fa-paper-plane"></i></button>
-            </form>
-          </div>
-        </div>
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-          <p class="editable" data-field="footerCopyright">&copy; 2024 CONCEITO Consultoria. Todos os direitos reservados.</p>
-        </div>
-      </div>
-    </footer>
-  </div>
-  <!-- Scripts -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Configuração do Supabase
-      const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      // Sistema CMS Completo com Supabase
-      class SiteCMS {
-        constructor() {
-          this.isAdmin = false;
-          this.isAuthenticated = false;
-          this.user = null;
-          this.siteData = {
-            content: {},
-            media: { gallery: [], videos: [] },
-            testimonials: [],
-            sections: [],
-            navigation: { main: [], footer: [] }
-          };
-          this.init();
-        }
-        init() {
-          this.setupSupabaseListeners();
-          this.checkAuthState();
-        }
-        setupSupabaseListeners() {
-          supabase.auth.onAuthStateChange((_event, session) => {
-            this.user = session ? session.user : null;
-            this.isAuthenticated = !!this.user;
-            if (this.isAuthenticated) {
-              this.loadData();
-              this.showToast("Conectado ao Supabase", "success");
-              document.getElementById('supabaseConnectionStatus').textContent = "Conectado";
-              document.getElementById('supabaseConnectionStatus').className = "text-green-600";
-            } else {
-              document.getElementById('supabaseConnectionStatus').textContent = "Desconectado";
-              document.getElementById('supabaseConnectionStatus').className = "text-red-600";
-            }
-          });
-        }
-        async checkAuthState() {
-          try {
-            document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
-            const { data: { user } } = await supabase.auth.getUser();
-            this.user = user;
-            this.isAuthenticated = !!user;
-            // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
-            await this.loadData();
-            if (!this.isAuthenticated) {
-              // Se falhar no Supabase, tenta do localStorage
-              await this.loadFromLocalStorage();
-            }
-          } catch (error) {
-            console.error("Erro ao verificar autenticação:", error);
-            // Se der erro, tenta do localStorage como fallback
-            await this.loadFromLocalStorage();
-          }
-        }
-        async loadData() {
-          try {
-            this.showToast("Carregando dados...", "info");
-            let { data, error } = await supabase.from('site_data').select('*').eq('id', 1).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            if (data) {
-              this.siteData = {
-                content: data.content || {},
-                media: data.media || { gallery: [], videos: [] },
-                testimonials: data.testimonials || [],
-                sections: data.sections || [],
-                navigation: data.navigation || { main: [], footer: [] }
-              };
-              this.showToast("Dados carregados do Supabase", "success");
-            } else {
-              this.loadDefaultData();
-              if(this.isAuthenticated) await this.saveData();
-              this.showToast("Dados padrão carregados", "info");
-            }
-            this.renderContent();
-            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
-            await this.saveToLocalStorage();
-          } catch (error) {
-            console.error("Erro ao carregar do Supabase:", error);
-            this.showToast("Erro ao carregar do Supabase", "error");
-            await this.loadFromLocalStorage();
-          }
-        }
-        loadDefaultData() {
-          // Captura dados padrão dos elementos HTML
-          document.querySelectorAll('[data-field]').forEach(el => {
-            const field = el.dataset.field;
-            if (el.tagName === 'IMG') {
-              this.siteData.content[field] = el.src;
-              if (el.dataset.altField) this.siteData.content[el.dataset.altField] = el.alt;
-            } else if (el.tagName === 'A' && el.hasAttribute('href')) {
-              this.siteData.content[field + 'Link'] = el.getAttribute('href');
-              this.siteData.content[field] = el.innerHTML.trim();
-            } else {
-              this.siteData.content[field] = el.innerHTML.trim();
-            }
-          });
-          // Dados padrão para outras seções
-          this.siteData.media = { gallery: [], videos: [] };
-          this.siteData.testimonials = [];
-          this.siteData.sections = [];
-          this.siteData.navigation = {
-            main: [
-              { text: "Serviços", href: "#services" },
-              { text: "Metodologia", href: "#methodology" },
-              { text: "Resultados", href: "#results" },
-              { text: "Depoimentos", href: "#testimonials" },
-              { text: "Contato", href: "#contact" }
-            ],
-            footer: [
-              { text: "Serviços", href: "#services" },
-              { text: "Metodologia", href: "#methodology" },
-              { text: "Resultados", href: "#results" },
-              { text: "Depoimentos", href: "#testimonials" },
-              { text: "Contato", href: "#contact" }
-            ]
-          };
-          // Adiciona campos padrão para o tipo de mídia e ID do vídeo
-          this.siteData.content.heroMediaType = this.siteData.content.heroMediaType || 'image'; // Padrão é imagem
-          this.siteData.content.heroYoutubeId = this.siteData.content.heroYoutubeId || ''; // ID vazio por padrão
-          this.siteData.content.heroLocalVideo = this.siteData.content.heroLocalVideo || ''; // URL vazia por padrão
-        }
-        async saveToLocalStorage() {
-          try {
-            const jsonData = JSON.stringify(this.siteData);
-            localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
-            console.log("Dados salvos no localStorage:", this.siteData);
-          } catch(e) { 
-            console.warn("Não foi possível salvar no localStorage:", e); 
-          }
-        }
-        loadFromLocalStorage() {
-          try {
-            const savedData = localStorage.getItem('siteData');
-            if (savedData) {
-              const parsed = JSON.parse(decodeURIComponent(escape(atob(savedData))));
-              this.siteData = {
-                content: parsed.content || {},
-                media: parsed.media || { gallery: [], videos: [] },
-                testimonials: parsed.testimonials || [],
-                sections: parsed.sections || [],
-                navigation: parsed.navigation || { main: [], footer: [] }
-              };
-              console.log("Dados carregados do localStorage:", this.siteData);
-              this.showToast("Dados carregados do armazenamento local", "info");
-            } else {
-              console.log("Nenhum dado encontrado no localStorage, carregando padrões");
-              this.loadDefaultData();
-            }
-            this.renderContent();
-          } catch (error) {
-            console.error("Erro ao carregar do localStorage:", error);
-            this.loadDefaultData();
-            this.renderContent();
-          }
-        }
-        async saveData() {
-          const saveButton = document.getElementById('saveAll');
-          let originalText = saveButton.innerHTML;
-          try {
-            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
-            saveButton.disabled = true;
-            const { error } = await supabase.from('site_data').upsert({ 
-              id: 1, 
-              ...this.siteData 
-            }, { onConflict: 'id' });
-            if (error) throw error;
-            this.showToast("Dados salvos com sucesso!", "success");
-            document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
-            await this.saveToLocalStorage();
-            this.renderContent();
-            setTimeout(() => {
-              saveButton.innerHTML = originalText;
-              saveButton.disabled = false;
-            }, 1000);
-          } catch (error) {
-            console.error("Erro ao salvar no Supabase:", error);
-            this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
-            await this.saveToLocalStorage();
-            this.showToast("Dados salvos localmente", "warning");
-            saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
-            setTimeout(() => {
-              saveButton.innerHTML = originalText;
-              saveButton.disabled = false;
-            }, 2000);
-          }
-        }
-        async authenticate(email, password) {
-          try {
-            document.getElementById('loginButtonText').textContent = "Autenticando...";
-            document.getElementById('loginSpinner').classList.remove('hidden');
-            document.getElementById('loginError').classList.add('hidden');
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            this.showToast("Login realizado com sucesso", "success");
-            this.hideLoginModal();
-            this.isAuthenticated = true;
-            this.toggleAdmin(true);
-          } catch (error) {
-            console.error("Erro de autenticação:", error);
-            document.getElementById('loginError').textContent = error.message;
-            document.getElementById('loginError').classList.remove('hidden');
-            this.showToast("Erro ao fazer login", "error");
-          } finally {
-            document.getElementById('loginButtonText').textContent = "Entrar";
-            document.getElementById('loginSpinner').classList.add('hidden');
-          }
-        }
-        async logout() {
-          try {
-            await supabase.auth.signOut();
-            this.isAuthenticated = false;
-            this.toggleAdmin(false);
-            this.showLoginModal();
-            this.showToast("Logout realizado", "info");
-          } catch (error) { 
-            console.error("Erro ao fazer logout:", error); 
-          }
-        }
-        showToast(message, type = "info") {
-          const toast = document.getElementById('toast');
-          toast.textContent = message;
-          toast.className = 'toast';
-          const colors = { 
-            success: '#4CAF50', 
-            error: '#F44336', 
-            warning: '#FF9800', 
-            info: '#2196F3' 
-          };
-          toast.style.backgroundColor = colors[type] || colors.info;
-          toast.classList.remove('hidden');
-          toast.classList.add('show');
-          setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.classList.add('hidden'), 300);
-          }, 5000);
-        }
-        toggleAdmin(show = null) {
-          if (!this.isAuthenticated && (show === true || show === null)) {
-            this.showLoginModal();
-            return;
-          }
-          const panel = document.getElementById('adminPanel');
-          this.isAdmin = show === null ? !panel.classList.contains('open') : show;
-          if (this.isAdmin) {
-            panel.classList.add('open');
-            document.body.classList.add('admin-logged-in');
-            this.updateAdminForm();
-            document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.remove('hidden'));
-          } else {
-            panel.classList.remove('open');
-            document.body.classList.remove('admin-logged-in');
-            document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
-          }
-        }
-        showLoginModal() {
-          document.getElementById('loginModal').classList.remove('hidden');
-          document.getElementById('adminEmail').focus();
-        }
-        hideLoginModal() {
-          document.getElementById('loginModal').classList.add('hidden');
-        }
-        switchTab(tabId) {
-          document.querySelectorAll('.admin-tab').forEach(tab => 
-            tab.classList.toggle('active', tab.dataset.tab === tabId)
-          );
-          document.querySelectorAll('.admin-tab-content').forEach(content => 
-            content.classList.toggle('hidden', content.id !== `${tabId}-tab`)
-          );
-        }
-        updateAdminForm() {
-          Object.keys(this.siteData.content).forEach(field => {
-            const input = document.getElementById(field);
-            if (input) {
-              input.value = this.siteData.content[field] || '';
-              if (field === 'heroImage' || field === 'companyLogo') {
-                const preview = document.getElementById(field + 'Preview');
-                if (preview && this.siteData.content[field]) {
-                  preview.src = this.siteData.content[field];
-                  preview.classList.remove('hidden');
-                }
-              }
-            }
-          });
-          
-          // Atualiza campos da nova seção de mídia hero
-          const mediaTypeSelect = document.getElementById('heroMediaType');
-          const youtubeIdInput = document.getElementById('heroYoutubeId');
-          const localVideoUrl = this.siteData.content.heroLocalVideo;
-          const imagePreview = document.getElementById('heroImagePreview');
-          const localVideoPreview = document.getElementById('heroLocalVideoPreview');
-          const localVideoName = document.getElementById('heroLocalVideoName');
+    // Configuração do Supabase (substitua pelos seus valores)
+    const SUPABASE_URL = 'https://seu-projeto.supabase.co';
+    const SUPABASE_ANON_KEY = 'sua-chave-anonima';
+    
+    // Inicialização do Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-          if (mediaTypeSelect) {
-            mediaTypeSelect.value = this.siteData.content.heroMediaType || 'image';
-            // Dispara o evento 'change' manualmente para mostrar/esconder os campos corretos
-            mediaTypeSelect.dispatchEvent(new Event('change'));
-          }
-          if (youtubeIdInput) {
-            youtubeIdInput.value = this.siteData.content.heroYoutubeId || '';
-          }
-          if (imagePreview && this.siteData.content.heroImage) {
-            imagePreview.src = this.siteData.content.heroImage;
-            imagePreview.classList.remove('hidden');
-          }
-          if (localVideoPreview && localVideoUrl) {
-            localVideoPreview.src = localVideoUrl;
-            localVideoPreview.classList.remove('hidden');
-            // Se tivermos o nome original do arquivo, poderia ser salvo também
-            if(localVideoName) {
-              localVideoName.textContent = localVideoUrl.split('/').pop(); // Extrai nome do arquivo da URL
-              localVideoName.classList.remove('hidden');
-            }
-          }
-          
-          // Configurações de botões
-          if (this.siteData.content.buttonPrimaryColor) {
-            document.getElementById('buttonPrimaryColor').value = this.siteData.content.buttonPrimaryColor;
-            document.documentElement.style.setProperty('--primary', this.siteData.content.buttonPrimaryColor);
-          }
-          if (this.siteData.content.buttonTextColor) {
-            document.getElementById('buttonTextColor').value = this.siteData.content.buttonTextColor;
-            document.documentElement.style.setProperty('--button-text-color', this.siteData.content.buttonTextColor);
-          }
-          if (this.siteData.content.buttonBorderRadius) {
-            document.getElementById('buttonBorderRadius').value = this.siteData.content.buttonBorderRadius;
-            document.getElementById('borderRadiusValue').textContent = `${this.siteData.content.buttonBorderRadius}px`;
-            document.documentElement.style.setProperty('--button-border-radius', `${this.siteData.content.buttonBorderRadius}px`);
-          }
-          if (this.siteData.content.buttonPaddingY) {
-            document.getElementById('buttonPaddingY').value = this.siteData.content.buttonPaddingY;
-            document.getElementById('paddingYValue').textContent = `${this.siteData.content.buttonPaddingY}px`;
-            document.documentElement.style.setProperty('--button-padding-y', `${this.siteData.content.buttonPaddingY}px`);
-          }
-          if (this.siteData.content.buttonPaddingX) {
-            document.getElementById('buttonPaddingX').value = this.siteData.content.buttonPaddingX;
-            document.getElementById('paddingXValue').textContent = `${this.siteData.content.buttonPaddingX}px`;
-            document.documentElement.style.setProperty('--button-padding-x', `${this.siteData.content.buttonPaddingX}px`);
-          }
-          this.renderSectionsList();
+    // Sistema CMS Completo com Supabase
+    class SiteCMS {
+        constructor() {
+            this.isAdmin = false;
+            this.isAuthenticated = false;
+            this.user = null;
+            this.siteData = {
+                content: {},
+                media: { gallery: [], videos: [] },
+                testimonials: [],
+                sections: [],
+                navigation: { main: [], footer: [] }
+            };
+            this.init();
         }
-        enableInlineEdit(element) {
-          const field = element.dataset.field;
-          const originalValue = element.innerHTML;
-          element.contentEditable = true;
-          element.focus();
-          const finishEdit = () => {
-            element.contentEditable = false;
-            const newValue = element.innerHTML;
-            if (newValue !== originalValue) {
-              this.siteData.content[field] = newValue;
-              this.saveData();
-            }
-          };
-          element.addEventListener('blur', finishEdit, { once: true });
-          element.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter') { 
-              e.preventDefault(); 
-              finishEdit(); 
-            }
-          });
+
+        init() {
+            this.setupSupabaseListeners();
+            this.checkAuthState();
         }
-        async handleImageUpload(file, field) {
-          if (!file) return null;
-          try {
-            this.showToast("Enviando imagem...", "info");
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${field}-${Date.now()}.${fileExt}`;
-            const filePath = `images/${fileName}`;
-            let { error: uploadError } = await supabase.storage
-              .from('images')
-              .upload(filePath, file, { upsert: true });
-            if (uploadError) throw uploadError;
-            const { data: { publicUrl } } = supabase.storage
-              .from('images')
-              .getPublicUrl(filePath);
-            if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
-            this.showToast("Imagem enviada com sucesso!", "success");
-            return publicUrl;
-          } catch (error) {
-            console.error("Erro ao processar imagem:", error);
-            this.showToast(`Erro ao processar imagem: ${error.message}`, "error");
-            return null;
-          }
-        }
-        // Novo método para lidar com upload de vídeo local
-        async handleVideoUpload(file, field) {
-          if (!file) return null;
-          try {
-            this.showToast("Enviando vídeo...", "info");
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${field}-${Date.now()}.${fileExt}`;
-            const filePath = `videos/${fileName}`; // Pasta diferente para vídeos
-            let { error: uploadError } = await supabase.storage
-              .from('images') // Assume que 'images' também serve para vídeos, ou crie um bucket 'videos'
-              .upload(filePath, file, { upsert: true });
-            if (uploadError) throw uploadError;
-            const { data: { publicUrl } } = supabase.storage
-              .from('images') // Mesmo bucket
-              .getPublicUrl(filePath);
-            if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
-            this.showToast("Vídeo enviado com sucesso!", "success");
-            return publicUrl;
-          } catch (error) {
-            console.error("Erro ao processar vídeo:", error);
-            this.showToast(`Erro ao processar vídeo: ${error.message}`, "error");
-            return null;
-          }
-        }
-        renderContent() {
-          console.log("Renderizando conteúdo com dados:", this.siteData);
-          const companyNameContainer = document.getElementById('companyNameContainer');
-          if (companyNameContainer) {
-            const logo = this.siteData.content.companyLogo;
-            const name = this.siteData.content.companyName || "CONCEITO";
-            if (logo && logo.trim() !== '') {
-              companyNameContainer.innerHTML = `<img src="${logo}" alt="Logo" class="h-10 w-auto">`;
-            } else {
-              companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
-            }
-          }
-          document.querySelectorAll('[data-field]').forEach(el => {
-            const field = el.dataset.field;
-            const value = this.siteData.content[field];
-            if (value === undefined || value === null) return;
-            if (el.tagName === 'IMG') {
-              if (value && value.trim() !== '') {
-                el.src = value;
-                const altField = el.dataset.altField;
-                if (altField && this.siteData.content[altField]) {
-                  el.alt = this.siteData.content[altField];
+
+        setupSupabaseListeners() {
+            supabase.auth.onAuthStateChange((_event, session) => {
+                this.user = session ? session.user : null;
+                this.isAuthenticated = !!this.user;
+                this.updateUI();
+                if (this.isAuthenticated) {
+                    this.loadData();
                 }
-              }
-            } else if (el.tagName === 'A') {
-              el.innerHTML = value;
-              const linkField = field + 'Link';
-              if (this.siteData.content[linkField]) {
-                el.href = this.siteData.content[linkField];
-              }
-            } else {
-              el.innerHTML = value;
-            }
-          });
-          // Renderização da mídia hero
-          this.renderHeroMedia();
-          this.renderGallery();
-          this.renderVideos();
-          this.renderTestimonials();
-          this.renderCustomSections();
-          this.renderNavigation();
+            });
         }
-        
+
+        async checkAuthState() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                this.user = session ? session.user : null;
+                this.isAuthenticated = !!this.user;
+                this.updateUI();
+                if (this.isAuthenticated) {
+                    await this.loadData();
+                }
+            } catch (error) {
+                console.error("Erro ao verificar autenticação:", error);
+                // Se der erro, tenta do localStorage como fallback
+                await this.loadFromLocalStorage();
+            }
+        }
+
+        updateUI() {
+            document.body.classList.toggle('admin-logged-in', this.isAuthenticated);
+            document.getElementById('loginModal').classList.add('hidden');
+            
+            if (this.isAuthenticated) {
+                this.populateAdminPanel();
+            }
+        }
+
+        async loadData() {
+            try {
+                this.showToast("Carregando dados...", "info");
+                let { data, error } = await supabase
+                    .from('site_data')
+                    .select('*')
+                    .eq('id', 1)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (data) {
+                    this.siteData = {
+                        content: data.content || {},
+                        media: data.media || { gallery: [], videos: [] },
+                        testimonials: data.testimonials || [],
+                        sections: data.sections || [],
+                        navigation: data.navigation || { main: [], footer: [] }
+                    };
+                    this.showToast("Dados carregados do Supabase", "success");
+                } else {
+                    this.loadDefaultData();
+                    if(this.isAuthenticated) await this.saveData();
+                    this.showToast("Dados padrão carregados", "info");
+                }
+                
+                this.renderContent();
+            } catch (error) {
+                console.error("Erro ao carregar dados:", error);
+                await this.loadFromLocalStorage();
+                this.showToast(`Erro ao carregar dados: ${error.message}`, "error");
+            }
+        }
+
+        loadDefaultData() {
+            this.siteData = {
+                content: {
+                    companyName: "CONCEITO",
+                    companyLogo: "",
+                    heroTitle: "<span class='text-outline'>TRANSFORME</span> SEU NEGÓCIO COM <span class='text-yellow-300'>CONSULTORIA PREMIUM</span>",
+                    heroSubtitle: "Metodologia exclusiva que aumenta em até 300% a eficiência operacional e rentabilidade de empresas em 12 meses.",
+                    heroCtaPrimary: "Fale com um especialista",
+                    heroCtaSecondary: "Conheça nossa metodologia",
+                    servicesTitle: "Nossos Serviços",
+                    servicesSubtitle: "Soluções completas e personalizadas para transformar sua empresa",
+                    service1Title: "Estratégia Empresarial",
+                    service1Desc: "Desenvolvimento de estratégias customizadas para acelerar o crescimento e maximizar resultados.",
+                    service1Feature1: "Análise SWOT",
+                    service1Feature2: "Planejamento estratégico",
+                    service1Feature3: "Benchmarking",
+                    service2Title: "Gestão de Processos",
+                    service2Desc: "Otimização de processos internos para aumentar eficiência e reduzir custos operacionais.",
+                    service2Feature1: "Mapeamento de processos",
+                    service2Feature2: "Automação",
+                    service2Feature3: "Indicadores de desempenho",
+                    service3Title: "Inovação e Transformação",
+                    service3Desc: "Implementação de soluções inovadoras para modernizar sua empresa e impulsionar resultados.",
+                    service3Feature1: "Transformação digital",
+                    service3Feature2: "Cultura de inovação",
+                    service3Feature3: "Tecnologias emergentes",
+                    service4Title: "Marketing Estratégico",
+                    service4Desc: "Planejamento e execução de estratégias de marketing para alavancar vendas e posicionamento.",
+                    service4Feature1: "Branding",
+                    service4Feature2: "Campanhas digitais",
+                    service4Feature3: "Análise de mercado",
+                    methodologyTitle: "Nossa Metodologia Exclusiva",
+                    methodologySubtitle: "Processo comprovado em mais de 200 empresas para resultados reais e duradouros",
+                    step1Title: "Diagnóstico",
+                    step1Desc: "Análise completa da empresa para identificar pontos fortes, oportunidades e gargalos.",
+                    step2Title: "Planejamento",
+                    step2Desc: "Desenvolvimento de estratégias personalizadas com metas e indicadores claros.",
+                    step3Title: "Implementação",
+                    step3Desc: "Execução com acompanhamento próximo e ajustes em tempo real para otimizar resultados.",
+                    step4Title: "Resultados",
+                    step4Desc: "Entrega de resultados mensuráveis e plano de sustentabilidade para o futuro.",
+                    resultsTitle: "Resultados Comprovados",
+                    resultsSubtitle: "Números que demonstram o impacto real das nossas consultorias",
+                    stat1: "+150%",
+                    stat1Title: "Aumento de Receita",
+                    stat1Desc: "Média de crescimento dos nossos clientes",
+                    stat2: "+300%",
+                    stat2Title: "Eficiência Operacional",
+                    stat2Desc: "Redução de custos operacionais",
+                    stat3: "95%",
+                    stat3Title: "Satisfação do Cliente",
+                    stat3Desc: "Dos clientes recomendam nossos serviços",
+                    stat4: "24/7",
+                    stat4Title: "Suporte Premium",
+                    stat4Desc: "Acompanhamento contínuo pós-projeto",
+                    testimonialsTitle: "O que nossos clientes dizem",
+                    testimonialsSubtitle: "Depoimentos reais de empresários que transformaram seus negócios",
+                    galleryTitle: "Galeria de Fotos",
+                    videosTitle: "Vídeos",
+                    careersTitle: "Envie Seu Currículo",
+                    careersSubtitle: "Faça parte do nosso time de consultores especializados",
+                    contactFormTitle: "Solicite uma Consultoria",
+                    contactInfoTitle: "Entre em contato conosco e descubra como podemos elevar sua empresa ao próximo nível",
+                    contactEmailLabel: "Email",
+                    email: "contato@conceito.com.br",
+                    contactAddressLabel: "Endereço",
+                    address: "Av. Paulista, 1000 - São Paulo/SP",
+                    contactPhoneLabel: "Telefone",
+                    phone: "(11) 3123-4567",
+                    contactHoursLabel: "Horário de Atendimento",
+                    hours: "Segunda a Sexta, das 9h às 18h",
+                    footerTitle: "CONCEITO",
+                    footerAbout: "Consultoria empresarial premium focada em resultados excepcionais e transformação sustentável.",
+                    footerLinksTitle: "Links Rápidos",
+                    footerNewsletterTitle: "Newsletter",
+                    footerNewsletterText: "Assine nossa newsletter para receber dicas e novidades.",
+                    footerCopyright: "&copy; 2023 Conceito. Todos os direitos reservados.",
+                    heroMediaType: "image",
+                    heroImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
+                    heroImageAlt: "Business growth",
+                    heroYoutubeId: "",
+                    heroLocalVideo: ""
+                },
+                media: { gallery: [], videos: [] },
+                testimonials: [],
+                sections: [],
+                navigation: {
+                    main: [
+                        { text: "Serviços", href: "#services" },
+                        { text: "Metodologia", href: "#methodology" },
+                        { text: "Resultados", href: "#results" },
+                        { text: "Depoimentos", href: "#testimonials" },
+                        { text: "Contato", href: "#contact" }
+                    ],
+                    footer: [
+                        { text: "Serviços", href: "#services" },
+                        { text: "Metodologia", href: "#methodology" },
+                        { text: "Resultados", href: "#results" },
+                        { text: "Depoimentos", href: "#testimonials" },
+                        { text: "Contato", href: "#contact" }
+                    ]
+                }
+            };
+            // Adiciona campos padrão para o tipo de mídia e ID do vídeo
+            this.siteData.content.heroMediaType = this.siteData.content.heroMediaType || 'image'; // Padrão é imagem
+            this.siteData.content.heroYoutubeId = this.siteData.content.heroYoutubeId || ''; // ID vazio por padrão
+            this.siteData.content.heroLocalVideo = this.siteData.content.heroLocalVideo || ''; // URL vazia por padrão
+        }
+
+        renderContent() {
+            console.log("Renderizando conteúdo com dados:", this.siteData);
+            
+            const companyNameContainer = document.getElementById('companyNameContainer');
+            if (companyNameContainer) {
+                const logo = this.siteData.content.companyLogo;
+                const name = this.siteData.content.companyName || "CONCEITO";
+                if (logo && logo.trim() !== '') {
+                    companyNameContainer.innerHTML = `<img src="${logo}" alt="Logo" class="h-10 w-auto">`;
+                } else {
+                    companyNameContainer.innerHTML = `<h1 class="text-3xl font-bold text-[#001F3F] editable" data-field="companyName" style="font-family: 'Bebas Neue'">${name}</h1>`;
+                }
+            }
+
+            // Renderizar campos editáveis
+            document.querySelectorAll('[data-field]').forEach(element => {
+                const field = element.getAttribute('data-field');
+                if (this.siteData.content[field] !== undefined) {
+                    if (element.tagName === 'IMG') {
+                        element.src = this.siteData.content[field];
+                        const altField = element.getAttribute('data-alt-field');
+                        if (altField && this.siteData.content[altField]) {
+                            element.alt = this.siteData.content[altField];
+                        }
+                    } else {
+                        element.innerHTML = this.siteData.content[field]; // Usar innerHTML para conteúdo HTML
+                    }
+                }
+            });
+
+            // Renderização da mídia hero
+            this.renderHeroMedia();
+            this.renderGallery();
+            this.renderVideos();
+            this.renderTestimonials();
+            this.renderCustomSections();
+            this.renderNavigation();
+        }
+
         // Novo método para renderizar a mídia hero com base no tipo
         renderHeroMedia() {
             const mediaType = this.siteData.content.heroMediaType || 'image';
@@ -1542,527 +1234,705 @@
             const localVideoElement = document.getElementById('hero-local-video');
 
             // Esconde todos inicialmente
-            imageElement?.classList.add('hidden');
-            youtubeContainer?.classList.add('hidden');
-            localVideoElement?.classList.add('hidden');
+            imageElement?.classList.add('media-hide');
+            youtubeContainer?.classList.add('media-hide');
+            localVideoElement?.classList.add('media-hide');
 
             if (mediaType === 'youtube' && youtubeId) {
                 // Mostra o vídeo do YouTube
                 if (youtubeIframe) {
                     youtubeIframe.src = `https://www.youtube.com/embed/${youtubeId}?enablejsapi=1`;
                 }
-                youtubeContainer?.classList.remove('hidden');
+                youtubeContainer?.classList.remove('media-hide');
             } else if (mediaType === 'local' && localVideoUrl) {
                 // Mostra o vídeo local
                 if (localVideoElement) {
-                     localVideoElement.src = localVideoUrl;
+                    localVideoElement.src = localVideoUrl;
                 }
-                localVideoElement?.classList.remove('hidden');
+                localVideoElement?.classList.remove('media-hide');
             } else {
                 // Mostra a imagem (padrão ou se outros IDs estiverem vazios)
                 if (imageElement && imageUrl) {
-                     imageElement.src = imageUrl;
-                     imageElement.alt = imageAlt;
+                    imageElement.src = imageUrl;
+                    imageElement.alt = imageAlt;
                 }
-                imageElement?.classList.remove('hidden');
+                imageElement?.classList.remove('media-hide');
             }
         }
-        
+
         renderGallery() {
-          const container = document.getElementById('galleryGrid');
-          const adminContainer = document.getElementById('galleryItems');
-          if (!container || !adminContainer) return;
-          container.innerHTML = '';
-          adminContainer.innerHTML = '';
-          (this.siteData.media.gallery || []).forEach((item, index) => {
-            container.innerHTML += `
-              <div class="relative">
-                <img src="${item.url}" alt="${item.desc}" class="w-full h-64 object-cover rounded-lg shadow-md">
-                <p class="mt-2 text-center text-gray-600">${item.desc}</p>
-              </div>
-            `;
-            adminContainer.innerHTML += `
-              <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
-                <img src="${item.url}" class="w-12 h-12 object-cover rounded mr-4">
-                <span class="flex-1 text-sm">${item.desc}</span>
-                <button class="text-red-500 hover:text-red-700" onclick="removeGalleryItem(${index})">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            `;
-          });
-        }
-        renderVideos() {
-          const container = document.getElementById('videosGrid');
-          const adminContainer = document.getElementById('videoItems');
-          if (!container || !adminContainer) return;
-          container.innerHTML = '';
-          adminContainer.innerHTML = '';
-          (this.siteData.media.videos || []).forEach((item, index) => {
-            // Verifica se o youtubeId é válido antes de renderizar
-            if (item.youtubeId && item.youtubeId.length === 11) {
-              container.innerHTML += `
-                <div class="video-container">
-                  <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen></iframe>
-                  </div>
-                  <p class="mt-2 text-center text-gray-600">${item.desc}</p>
-                </div>
-              `;
-              adminContainer.innerHTML += `
-                <div class="flex items-center justify-between bg-gray-100 p-2 rounded">
-                  <div class="flex-1 text-sm">
-                    <p class="font-semibold">${item.desc}</p>
-                    <p class="text-xs text-gray-500">${item.youtubeId}</p>
-                  </div>
-                  <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              `;
-            } else {
-              console.warn("ID do YouTube inválido encontrado:", item);
-              // Mostra item inválido no admin para remoção
-              adminContainer.innerHTML += `
-                <div class="flex items-center justify-between bg-red-100 p-2 rounded">
-                  <div class="flex-1 text-sm">
-                    <p class="font-semibold text-red-700">ID Inválido: ${item.desc || 'Sem descrição'}</p>
-                    <p class="text-xs text-red-500">${item.youtubeId || 'ID não encontrado'}</p>
-                  </div>
-                  <button class="text-red-500 hover:text-red-700" onclick="removeVideoItem(${index})">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              `;
-            }
-          });
-          // Carrega a API do YouTube
-          this.loadYouTubeAPI();
-        }
-        loadYouTubeAPI() {
-          if (window.YT) return; // Já está carregado
-          const tag = document.createElement('script');
-          tag.src = "https://www.youtube.com/iframe_api";
-          const firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-          window.onYouTubeIframeAPIReady = () => {
-            document.querySelectorAll('.video-wrapper iframe').forEach((iframe, index) => {
-              new YT.Player(iframe, {
-                events: {
-                  'onReady': (event) => {
-                    // Player pronto para ser controlado
-                  },
-                  'onStateChange': (event) => {
-                    // Pode adicionar lógica para eventos de estado do player
-                  }
-                }
-              });
+            const container = document.getElementById('galleryGrid');
+            const adminContainer = document.getElementById('galleryItems');
+            
+            if (!container || !adminContainer) return;
+            
+            container.innerHTML = '';
+            adminContainer.innerHTML = '';
+            
+            (this.siteData.media.gallery || []).forEach((item, index) => {
+                // Renderizar na galeria pública
+                container.innerHTML += `
+                    <div class="relative group">
+                        <img src="${item.url}" alt="${item.alt || 'Imagem da galeria'}" class="w-full h-64 object-cover rounded-lg">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                            <span class="text-white text-lg font-semibold">${item.alt || 'Imagem'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Renderizar no painel admin
+                adminContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-3 bg-gray-100 rounded">
+                        <div class="flex items-center">
+                            <img src="${item.url}" alt="${item.alt || 'Imagem da galeria'}" class="w-16 h-16 object-cover rounded mr-3">
+                            <span class="text-sm">${item.alt || 'Imagem'}</span>
+                        </div>
+                        <button class="text-red-500 hover:text-red-700" onclick="siteCMS.removeGalleryItem(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
             });
-          };
         }
+
+        renderVideos() {
+            const container = document.getElementById('videosGrid');
+            const adminContainer = document.getElementById('videoItems');
+            
+            if (!container || !adminContainer) return;
+            
+            container.innerHTML = '';
+            adminContainer.innerHTML = '';
+            
+            (this.siteData.media.videos || []).forEach((item, index) => {
+                // Verifica se o youtubeId é válido antes de renderizar
+                if (item.youtubeId && item.youtubeId.length === 11) {
+                    container.innerHTML += `
+                        <div class="video-container">
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/${item.youtubeId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <p class="mt-2 text-center font-medium">${item.desc || 'Vídeo'}</p>
+                        </div>
+                    `;
+                    
+                    adminContainer.innerHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded">
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-300 rounded mr-3 flex items-center justify-center">
+                                    <i class="fab fa-youtube text-red-600 text-2xl"></i>
+                                </div>
+                                <span class="text-sm">${item.desc || 'Vídeo'}</span>
+                            </div>
+                            <button class="text-red-500 hover:text-red-700" onclick="siteCMS.removeVideoItem(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Carrega a API do YouTube
+            this.loadYouTubeAPI();
+        }
+
+        loadYouTubeAPI() {
+            if (window.YT) return; // Já está carregado
+            
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            
+            window.onYouTubeIframeAPIReady = () => {
+                document.querySelectorAll('.video-wrapper iframe').forEach((iframe, index) => {
+                    // Inicializa players se necessário
+                });
+            };
+        }
+
         renderTestimonials() {
-          const container = document.getElementById('testimonialsContainer');
-          if (!container) return;
-          container.innerHTML = (this.siteData.testimonials || []).map((t, i) => `
-            <div class="testimonial-card rounded-xl p-6 shadow-lg relative">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
-                  ${t.initials || 'N'}
-                </div>
-                <div>
-                  <h4 class="font-bold text-[#001F3F]">${t.name}</h4>
-                  <p class="text-gray-600 text-sm">${t.position}</p>
-                </div>
-              </div>
-              <p class="text-gray-700 italic mb-4">"${t.content}"</p>
-              <div class="flex text-yellow-400">
-                ${'<i class="fas fa-star"></i>'.repeat(5)}
-              </div>
-              <button class="remove-btn absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hidden" onclick="removeTestimonial(${i})">×</button>
-            </div>
-          `).join('');
+            const container = document.getElementById('testimonialsContainer');
+            const adminContainer = document.getElementById('testimonialItems');
+            
+            if (!container || !adminContainer) return;
+            
+            container.innerHTML = '';
+            adminContainer.innerHTML = '';
+            
+            (this.siteData.testimonials || []).forEach((item, index) => {
+                // Renderizar depoimento público
+                container.innerHTML += `
+                    <div class="testimonial-card p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                                ${item.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold">${item.name}</h4>
+                                <p class="text-gray-600 text-sm">${item.position}</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"${item.content}"</p>
+                    </div>
+                `;
+                
+                // Renderizar no painel admin
+                adminContainer.innerHTML += `
+                    <div class="p-4 bg-gray-100 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold">${item.name}</h4>
+                            <button class="text-red-500 hover:text-red-700" onclick="siteCMS.removeTestimonial(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${item.position}</p>
+                        <p class="text-sm">${item.content}</p>
+                    </div>
+                `;
+            });
         }
-        renderNavigation() {
-          const mainNav = document.getElementById('mainNav');
-          const footerLinks = document.getElementById('footerLinks');
-          if (!mainNav || !footerLinks) return;
-          const defaultNav = [
-            { href: "#services", text: "Serviços" },
-            { href: "#methodology", text: "Metodologia" },
-            { href: "#results", text: "Resultados" },
-            { href: "#testimonials", text: "Depoimentos" },
-            { href: "#contact", text: "Contato" }
-          ];
-          const dynamicNav = (this.siteData.sections || []).map(s => ({ 
-            href: `#${s.id}`, 
-            text: s.title 
-          }));
-          const allNavLinks = [...defaultNav, ...dynamicNav];
-          mainNav.innerHTML = allNavLinks.map(link => 
-            `<a href="${link.href}" class="nav-link text-[#001F3F] font-medium">${link.text}</a>`
-          ).join('');
-          footerLinks.innerHTML = allNavLinks.map(link => 
-            `<li><a href="${link.href}" class="text-gray-300 hover:text-white transition-colors">${link.text}</a></li>`
-          ).join('');
-        }
+
         renderCustomSections() {
-          const container = document.getElementById('custom-sections-container');
-          if (!container) return;
-          container.innerHTML = (this.siteData.sections || []).map(section => {
-            switch(section.type) {
-              case 'text':
-                return `
-                  <section id="${section.id}" class="py-20 bg-white custom-section">
-                    <div class="container mx-auto px-4">
-                      <h2 class="custom-section-title text-center mb-8">${section.title}</h2>
-                      <div class="max-w-4xl mx-auto text-gray-600 leading-relaxed">
-                        ${section.content || 'Conteúdo da seção...'}
-                      </div>
-                    </div>
-                  </section>
-                `;
-              case 'form':
-                return `
-                  <section id="${section.id}" class="py-20 bg-gray-50 custom-section">
-                    <div class="container mx-auto px-4">
-                      <h2 class="custom-section-title text-center mb-8">${section.title}</h2>
-                      <div class="max-w-2xl mx-auto netlify-form">
-                        <form name="${section.id}" method="POST" data-netlify="true">
-                          <input type="hidden" name="form-name" value="${section.id}">
-                          <div class="space-y-4">
-                            <input type="text" name="name" placeholder="Nome" required>
-                            <input type="email" name="email" placeholder="Email" required>
-                            <textarea name="message" rows="4" placeholder="Mensagem"></textarea>
-                            <button type="submit">Enviar</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </section>
-                `;
-              default:
-                return '';
+            // Implementação para seções customizadas
+        }
+
+        renderNavigation() {
+            // Implementação para navegação
+        }
+
+        populateAdminPanel() {
+            // Popula campos do painel admin com dados atuais
+            const mediaTypeSelect = document.getElementById('heroMediaType');
+            const youtubeIdInput = document.getElementById('heroYoutubeId');
+            const localVideoUrl = this.siteData.content.heroLocalVideo;
+            const imagePreview = document.getElementById('heroImagePreview');
+            const localVideoPreview = document.getElementById('heroLocalVideoPreview');
+            const localVideoName = document.getElementById('heroLocalVideoName');
+            
+            if (mediaTypeSelect) {
+                mediaTypeSelect.value = this.siteData.content.heroMediaType || 'image';
+                // Dispara o evento 'change' manualmente para mostrar/esconder os campos corretos
+                mediaTypeSelect.dispatchEvent(new Event('change'));
             }
-          }).join('');
-        }
-        renderSectionsList() {
-          const container = document.getElementById('sectionsList');
-          if (!container) return;
-          container.innerHTML = (this.siteData.sections || []).map((section, index) => `
-            <div class="flex items-center justify-between bg-gray-100 p-3 rounded">
-              <div>
-                <h5 class="font-semibold">${section.title}</h5>
-                <p class="text-sm text-gray-600">ID: ${section.id} | Tipo: ${section.type}</p>
-              </div>
-              <button class="text-red-500 hover:text-red-700" onclick="removeSection(${index})">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          `).join('');
-        }
-        async addGalleryImage() {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'image/*';
-          input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const desc = prompt('Descrição da imagem:', 'Imagem da galeria');
-            if (!desc) return;
-            const downloadURL = await this.handleImageUpload(file, `gallery`);
-            if (downloadURL) {
-              if (!this.siteData.media.gallery) this.siteData.media.gallery = [];
-              this.siteData.media.gallery.push({ url: downloadURL, desc });
-              await this.saveData();
+            
+            if (youtubeIdInput) {
+                youtubeIdInput.value = this.siteData.content.heroYoutubeId || '';
             }
-          };
-          input.click();
+            
+            if (imagePreview && this.siteData.content.heroImage) {
+                imagePreview.src = this.siteData.content.heroImage;
+                imagePreview.classList.remove('hidden');
+            }
+            
+            if (localVideoPreview && localVideoUrl) {
+                localVideoPreview.src = localVideoUrl;
+                localVideoPreview.classList.remove('hidden');
+                // Se tivermos o nome original do arquivo, poderia ser salvo também
+                if(localVideoName) {
+                    localVideoName.textContent = localVideoUrl.split('/').pop(); // Extrai nome do arquivo da URL
+                    localVideoName.classList.remove('hidden');
+                }
+            }
+            
+            // Configurações de botões
+            // ...
         }
-        async removeGalleryItem(index) {
-          if (confirm('Remover esta imagem da galeria?')) {
-            const item = this.siteData.media.gallery[index];
-            this.siteData.media.gallery.splice(index, 1);
-            await this.saveData();
-            this.showToast("Imagem removida", "info");
+
+        async saveData() {
+            if (!this.isAuthenticated) {
+                this.showToast("Você precisa estar logado para salvar", "error");
+                return;
+            }
+            
+            const saveButton = document.getElementById('saveAll');
+            const originalText = saveButton.innerHTML;
+            saveButton.innerHTML = '<span class="loading-spinner"></span> Salvando...';
+            saveButton.disabled = true;
+            
             try {
-              const filePath = new URL(item.url).pathname.split('/images/')[1];
-              if (filePath) {
-                await supabase.storage.from('images').remove([`images/${filePath}`]);
-              }
+                this.showToast("Salvando dados...", "info");
+                
+                const { data, error } = await supabase
+                    .from('site_data')
+                    .upsert({ id: 1, ...this.siteData }, { onConflict: 'id' });
+                
+                if (error) throw error;
+                
+                this.showToast("Dados salvos com sucesso!", "success");
+                document.getElementById('lastSyncTime').textContent = new Date().toLocaleString();
+                await this.saveToLocalStorage();
+                this.renderContent();
+                
+                setTimeout(() => {
+                    saveButton.innerHTML = originalText;
+                    saveButton.disabled = false;
+                }, 1000);
             } catch (error) {
-              console.warn("Não foi possível remover o arquivo do Storage:", error.message);
+                console.error("Erro ao salvar no Supabase:", error);
+                this.showToast(`Erro ao salvar no Supabase: ${error.message}`, "error");
+                await this.saveToLocalStorage();
+                this.showToast("Dados salvos localmente", "warning");
+                
+                saveButton.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao salvar';
+                setTimeout(() => {
+                    saveButton.innerHTML = originalText;
+                    saveButton.disabled = false;
+                }, 3000);
             }
-          }
         }
-        addVideo() {
-          const url = prompt('Cole a URL do vídeo do YouTube:');
-          if (!url) return;
-          // Regex mais robusta para capturar o ID do YouTube
-          const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-          const match = url.match(regExp);
-          let videoId = null;
-          if (match && match[2].length === 11) {
-            videoId = match[2]; // Este é o ID do vídeo de 11 caracteres
-          }
-          if (videoId) {
-            const desc = prompt('Descrição do vídeo:', 'Vídeo institucional');
-            if (!desc) return;
-            if (!this.siteData.media.videos) this.siteData.media.videos = [];
-            this.siteData.media.videos.push({ youtubeId: videoId, desc }); // Usa o ID capturado
-            this.saveData();
-          } else {
-            this.showToast("URL do YouTube inválida ou ID não encontrado", "error");
-          }
+
+        async saveToLocalStorage() {
+            try {
+                const jsonData = JSON.stringify(this.siteData);
+                localStorage.setItem("siteData", btoa(unescape(encodeURIComponent(jsonData))));
+                console.log("Dados salvos no localStorage:", this.siteData);
+            } catch (error) {
+                console.error("Erro ao salvar no localStorage:", error);
+            }
         }
-        removeVideoItem(index) {
-          if (confirm('Remover este vídeo?')) {
-            this.siteData.media.videos.splice(index, 1);
-            this.saveData();
-          }
+
+        async loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem("siteData");
+                if (data) {
+                    const jsonData = decodeURIComponent(escape(atob(data)));
+                    this.siteData = JSON.parse(jsonData);
+                    this.renderContent();
+                    this.showToast("Dados carregados do armazenamento local", "info");
+                } else {
+                    this.loadDefaultData();
+                    this.renderContent();
+                }
+            } catch (error) {
+                console.error("Erro ao carregar do localStorage:", error);
+                this.loadDefaultData();
+                this.renderContent();
+            }
         }
+
+        async handleImageUpload(file, field) {
+            if (!file) return null;
+            
+            try {
+                this.showToast("Enviando imagem...", "info");
+                
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${field}-${Date.now()}.${fileExt}`;
+                const filePath = `images/${fileName}`;
+                
+                let { error: uploadError } = await supabase.storage
+                    .from('images')
+                    .upload(filePath, file, { upsert: true });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: { publicUrl } } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(filePath);
+                
+                if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
+                
+                this.showToast("Imagem enviada com sucesso!", "success");
+                return publicUrl;
+            } catch (error) {
+                console.error("Erro ao processar imagem:", error);
+                this.showToast(`Erro ao processar imagem: ${error.message}`, "error");
+                return null;
+            }
+        }
+
+        // Novo método para lidar com upload de vídeo local
+        async handleVideoUpload(file, field) {
+            if (!file) return null;
+            
+            try {
+                this.showToast("Enviando vídeo...", "info");
+                
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${field}-${Date.now()}.${fileExt}`;
+                const filePath = `videos/${fileName}`; // Pasta diferente para vídeos
+                
+                let { error: uploadError } = await supabase.storage
+                    .from('videos') // Bucket específico para vídeos
+                    .upload(filePath, file, { upsert: true });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: { publicUrl } } = supabase.storage
+                    .from('videos') // Bucket específico para vídeos
+                    .getPublicUrl(filePath);
+                
+                if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
+                
+                this.showToast("Vídeo enviado com sucesso!", "success");
+                return publicUrl;
+            } catch (error) {
+                console.error("Erro ao processar vídeo:", error);
+                this.showToast(`Erro ao processar vídeo: ${error.message}`, "error");
+                return null;
+            }
+        }
+
+        // Métodos para adicionar/remover itens
         addTestimonial() {
-          const name = prompt('Nome:', 'Novo Cliente');
-          if (!name) return;
-          const position = prompt('Cargo/Empresa:', 'Empresa');
-          if (!position) return;
-          const content = prompt('Depoimento:', 'Ótimo serviço!');
-          if (!content) return;
-          this.siteData.testimonials.push({
-            name,
-            position,
-            content,
-            initials: name.charAt(0).toUpperCase()
-          });
-          this.saveData();
+            const name = prompt('Nome:', 'Novo Cliente');
+            if (!name) return;
+            
+            const position = prompt('Cargo/Empresa:', 'Empresa');
+            if (!position) return;
+            
+            const content = prompt('Depoimento:', 'Ótimo serviço!');
+            if (!content) return;
+            
+            if (!this.siteData.testimonials) this.siteData.testimonials = [];
+            this.siteData.testimonials.push({ name, position, content });
+            this.saveData();
         }
+
         removeTestimonial(index) {
-          if (confirm('Remover este depoimento?')) {
-            this.siteData.testimonials.splice(index, 1);
-            this.saveData();
-          }
+            if (confirm('Remover este depoimento?')) {
+                this.siteData.testimonials.splice(index, 1);
+                this.saveData();
+            }
         }
+
+        addGalleryImage() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const alt = prompt('Texto alternativo:', file.name);
+                if (!alt) return;
+                
+                const url = await this.handleImageUpload(file, 'galleryImage');
+                if (url) {
+                    if (!this.siteData.media.gallery) this.siteData.media.gallery = [];
+                    this.siteData.media.gallery.push({ url, alt });
+                    this.saveData();
+                }
+            };
+            
+            fileInput.click();
+        }
+
+        removeGalleryItem(index) {
+            if (confirm('Remover esta imagem?')) {
+                const item = this.siteData.media.gallery[index];
+                if (item && item.url) {
+                    // Tentar remover do storage
+                    const fileName = item.url.split('/').pop();
+                    supabase.storage.from('images').remove([`images/${fileName}`])
+                        .then(({ data, error }) => {
+                            if (error) {
+                                console.warn("Não foi possível remover o arquivo do Storage:", error.message);
+                            }
+                        });
+                }
+                
+                this.siteData.media.gallery.splice(index, 1);
+                this.saveData();
+            }
+        }
+
+        addVideo() {
+            const url = prompt('Cole a URL do vídeo do YouTube:');
+            if (!url) return;
+            
+            // Regex mais robusta para capturar o ID do YouTube
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            let videoId = null;
+            
+            if (match && match[2].length === 11) {
+                videoId = match[2]; // Este é o ID do vídeo de 11 caracteres
+            }
+            
+            if (videoId) {
+                const desc = prompt('Descrição do vídeo:', 'Vídeo institucional');
+                if (!desc) return;
+                
+                if (!this.siteData.media.videos) this.siteData.media.videos = [];
+                this.siteData.media.videos.push({ youtubeId: videoId, desc }); // Usa o ID capturado
+                this.saveData();
+            } else {
+                this.showToast("URL do YouTube inválida ou ID não encontrado", "error");
+            }
+        }
+
+        removeVideoItem(index) {
+            if (confirm('Remover este vídeo?')) {
+                this.siteData.media.videos.splice(index, 1);
+                this.saveData();
+            }
+        }
+
         addNewSection() {
-          const name = document.getElementById('newSectionName').value;
-          const id = document.getElementById('newSectionId').value;
-          const type = document.getElementById('newSectionType').value;
-          if (!name || !id) {
-            this.showToast("Nome e ID são obrigatórios", "error");
-            return;
-          }
-          if (!this.siteData.sections) this.siteData.sections = [];
-          this.siteData.sections.push({ title: name, id, type, content: '' });
-          this.saveData();
-          document.getElementById('newSectionName').value = '';
-          document.getElementById('newSectionId').value = '';
-          document.getElementById('newSectionType').value = 'text';
-        }
-        removeSection(index) {
-          if (confirm('Remover esta seção?')) {
-            this.siteData.sections.splice(index, 1);
+            const name = document.getElementById('newSectionName').value;
+            const id = document.getElementById('newSectionId').value;
+            const type = document.getElementById('newSectionType').value;
+            
+            if (!name || !id) {
+                this.showToast("Nome e ID são obrigatórios", "error");
+                return;
+            }
+            
+            if (!this.siteData.sections) this.siteData.sections = [];
+            this.siteData.sections.push({ title: name, id, type, content: '' });
             this.saveData();
-          }
+            
+            document.getElementById('newSectionName').value = '';
+            document.getElementById('newSectionId').value = '';
+            document.getElementById('newSectionType').value = 'text';
         }
-      }
-      // Inicializa o CMS
-      window.siteCMS = new SiteCMS();
-      // Event Listeners
-      document.getElementById('loginButton').addEventListener('click', () => {
+
+        removeSection(index) {
+            if (confirm('Remover esta seção?')) {
+                this.siteData.sections.splice(index, 1);
+                this.saveData();
+            }
+        }
+
+        // Função para alternar o painel administrativo (corrigida)
+        toggleAdminPanel(forceState = null) {
+            const panel = document.getElementById('adminPanel');
+            if (!panel) return;
+
+            if (forceState === true) {
+                // Força a abertura
+                panel.classList.add('open');
+            } else if (forceState === false) {
+                // Força o fechamento
+                panel.classList.remove('open');
+            } else {
+                // Alterna o estado
+                panel.classList.toggle('open');
+            }
+        }
+
+        showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.className = 'toast hidden';
+            }, 3000);
+        }
+
+        logout() {
+            supabase.auth.signOut();
+            this.isAuthenticated = false;
+            this.user = null;
+            this.updateUI();
+            this.showToast("Logout realizado com sucesso", "success");
+        }
+    }
+
+    // Inicialização do CMS
+    window.siteCMS = new SiteCMS();
+
+    // Event Listeners
+
+    // Script para alternar abas do painel admin
+    document.querySelectorAll('.admin-tab-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const tab = button.getAttribute('data-tab');
+            
+            // Remover classe active de todos os botões e conteúdos
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Adicionar classe active ao botão clicado
+            button.classList.add('active');
+            
+            // Mostrar conteúdo da aba correspondente
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        });
+    });
+
+    // Script para alternar o painel admin (corrigido)
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... outros códigos de inicialização ...
+
+        const openAdminButton = document.getElementById('adminToggle');
+        const closeAdminButton = document.getElementById('closeAdmin');
+
+        if (openAdminButton) {
+            openAdminButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevenir comportamento padrão do botão
+                if (typeof siteCMS !== 'undefined' && siteCMS.toggleAdminPanel) {
+                    siteCMS.toggleAdminPanel(true); // Força a abertura
+                } else {
+                    // Fallback caso siteCMS não esteja disponível como esperado
+                    document.getElementById('adminPanel')?.classList.add('open');
+                }
+            });
+        }
+
+        if (closeAdminButton) {
+            closeAdminButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevenir comportamento padrão do botão
+                if (typeof siteCMS !== 'undefined' && siteCMS.toggleAdminPanel) {
+                    siteCMS.toggleAdminPanel(false); // Força o fechamento
+                } else {
+                    // Fallback caso siteCMS não esteja disponível como esperado
+                    document.getElementById('adminPanel')?.classList.remove('open');
+                }
+            });
+        }
+
+         // Também fecha ao clicar fora do painel (opcional)
+        const adminPanelElement = document.getElementById('adminPanel');
+        if (adminPanelElement) {
+            adminPanelElement.addEventListener('click', (e) => {
+                // Se o clique for diretamente no painel (não em um filho) e não no botão de toggle
+                if (e.target === adminPanelElement) {
+                     if (typeof siteCMS !== 'undefined' && siteCMS.toggleAdminPanel) {
+                        siteCMS.toggleAdminPanel(false);
+                    } else {
+                        adminPanelElement.classList.remove('open');
+                    }
+                }
+            });
+        }
+    });
+
+    // Script para login
+    document.getElementById('loginButton').addEventListener('click', async () => {
         const email = document.getElementById('adminEmail').value;
         const password = document.getElementById('adminPass').value;
-        siteCMS.authenticate(email, password);
-      });
-      document.getElementById('logoutButton').addEventListener('click', () => siteCMS.logout());
-      document.getElementById('adminPass').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('loginButton').click();
-      });
-      document.getElementById('adminToggle').addEventListener('click', () => siteCMS.toggleAdmin());
-      document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
-      document.getElementById('saveAll').addEventListener('click', () => {
-        document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
-          const field = input.id;
-          if (field && siteCMS.siteData.content.hasOwnProperty(field)) {
-            siteCMS.siteData.content[field] = input.value;
-          }
-        });
         
+        // Simular loading
+        document.getElementById('loginButtonText').classList.add('hidden');
+        document.getElementById('loginSpinner').classList.remove('hidden');
+        
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+            
+            if (error) throw error;
+            
+            siteCMS.user = data.user;
+            siteCMS.isAuthenticated = true;
+            document.getElementById('loginModal').classList.add('hidden');
+            siteCMS.updateUI();
+            siteCMS.showToast('Login realizado com sucesso!', 'success');
+        } catch (error) {
+            document.getElementById('loginError').textContent = error.message;
+            document.getElementById('loginError').classList.remove('hidden');
+        } finally {
+            document.getElementById('loginButtonText').classList.remove('hidden');
+            document.getElementById('loginSpinner').classList.add('hidden');
+        }
+    });
+
+    // Script para controle de mídia do Hero
+    document.getElementById('heroMediaType').addEventListener('change', function() {
+        const type = this.value;
+        
+        // Esconder todos os containers
+        document.getElementById('heroImageContainer').classList.add('hidden');
+        document.getElementById('heroYoutubeIdContainer').classList.add('hidden');
+        document.getElementById('heroLocalVideoContainer').classList.add('hidden');
+        
+        // Mostrar o container correspondente
+        if (type === 'image') {
+            document.getElementById('heroImageContainer').classList.remove('hidden');
+        } else if (type === 'youtube') {
+            document.getElementById('heroYoutubeIdContainer').classList.remove('hidden');
+        } else if (type === 'local') {
+            document.getElementById('heroLocalVideoContainer').classList.remove('hidden');
+        }
+    });
+
+    // Preview de imagem do Hero
+    document.getElementById('heroImageUpload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const url = await siteCMS.handleImageUpload(file, 'heroImage');
+            if (url) {
+                siteCMS.siteData.content.heroImage = url;
+                siteCMS.siteData.content.heroMediaType = 'image';
+                
+                const preview = document.getElementById('heroImagePreview');
+                preview.src = url;
+                preview.classList.remove('hidden');
+                document.getElementById('heroImageAlt').value = file.name.replace(/\.[^/.]+$/, "");
+                
+                // Atualiza tipo de mídia no select
+                const mediaTypeSelect = document.getElementById('heroMediaType');
+                if (mediaTypeSelect) {
+                    mediaTypeSelect.value = 'image';
+                }
+            }
+        }
+    });
+
+    // Preview de vídeo local do Hero
+    document.getElementById('heroLocalVideoUpload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const url = await siteCMS.handleVideoUpload(file, 'heroLocalVideo');
+            if (url) {
+                siteCMS.siteData.content.heroLocalVideo = url;
+                siteCMS.siteData.content.heroMediaType = 'local';
+                
+                const preview = document.getElementById('heroLocalVideoPreview');
+                const nameDisplay = document.getElementById('heroLocalVideoName');
+                if (preview && nameDisplay) {
+                    preview.src = url;
+                    preview.classList.remove('hidden');
+                    nameDisplay.textContent = file.name;
+                    nameDisplay.classList.remove('hidden');
+                }
+                
+                // Atualiza tipo de mídia no select
+                const mediaTypeSelect = document.getElementById('heroMediaType');
+                if (mediaTypeSelect) {
+                    mediaTypeSelect.value = 'local';
+                }
+            }
+        }
+    });
+
+    // Salvar todos os dados
+    document.getElementById('saveAll').addEventListener('click', () => {
         // Salva os novos campos da mídia hero
         const mediaTypeSelect = document.getElementById('heroMediaType');
         const youtubeIdInput = document.getElementById('heroYoutubeId');
-        // heroLocalVideo é salvo diretamente em handleVideoUpload
-
-        if (mediaTypeSelect && siteCMS.siteData.content.hasOwnProperty('heroMediaType')) {
-          siteCMS.siteData.content.heroMediaType = mediaTypeSelect.value;
-        }
-        if (youtubeIdInput && siteCMS.siteData.content.hasOwnProperty('heroYoutubeId')) {
-          siteCMS.siteData.content.heroYoutubeId = youtubeIdInput.value.trim();
-        }
-        // heroLocalVideo é salvo diretamente em handleVideoUpload
         
-        // Salva configurações de botões
-        siteCMS.siteData.content.buttonPrimaryColor = document.getElementById('buttonPrimaryColor').value;
-        siteCMS.siteData.content.buttonTextColor = document.getElementById('buttonTextColor').value;
-        siteCMS.siteData.content.buttonBorderRadius = document.getElementById('buttonBorderRadius').value;
-        siteCMS.siteData.content.buttonPaddingY = document.getElementById('buttonPaddingY').value;
-        siteCMS.siteData.content.buttonPaddingX = document.getElementById('buttonPaddingX').value;
-        // Aplica estilos imediatamente
-        document.documentElement.style.setProperty('--primary', siteCMS.siteData.content.buttonPrimaryColor);
-        document.documentElement.style.setProperty('--button-text-color', siteCMS.siteData.content.buttonTextColor);
-        document.documentElement.style.setProperty('--button-border-radius', `${siteCMS.siteData.content.buttonBorderRadius}px`);
-        document.documentElement.style.setProperty('--button-padding-y', `${siteCMS.siteData.content.buttonPaddingY}px`);
-        document.documentElement.style.setProperty('--button-padding-x', `${siteCMS.siteData.content.buttonPaddingX}px`);
+        if (mediaTypeSelect && siteCMS.siteData.content.hasOwnProperty('heroMediaType')) {
+            siteCMS.siteData.content.heroMediaType = mediaTypeSelect.value;
+        }
+        
+        if (youtubeIdInput && siteCMS.siteData.content.hasOwnProperty('heroYoutubeId')) {
+            siteCMS.siteData.content.heroYoutubeId = youtubeIdInput.value.trim();
+        }
+        
         siteCMS.saveData();
-      });
-      document.getElementById('resetAll').addEventListener('click', () => {
-        if (confirm('Restaurar dados padrão? Isso não pode ser desfeito.')) {
-          siteCMS.loadDefaultData();
-          siteCMS.saveData();
-        }
-      });
-      document.querySelectorAll('.admin-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => siteCMS.switchTab(e.currentTarget.dataset.tab));
-      });
-      document.addEventListener('dblclick', (e) => {
-        if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
-          siteCMS.enableInlineEdit(e.target);
-        }
-      });
-      
-      // Event Listener para mudanças no tipo de mídia hero
-      document.getElementById('heroMediaType')?.addEventListener('change', function() {
-        const selectedType = this.value;
-        const imageContainer = document.getElementById('heroImageContainer');
-        const youtubeIdContainer = document.getElementById('heroYoutubeIdContainer');
-        const localVideoContainer = document.getElementById('heroLocalVideoContainer');
-
-        // Esconde todos
-        imageContainer?.classList.add('hidden');
-        youtubeIdContainer?.classList.add('hidden');
-        localVideoContainer?.classList.add('hidden');
-
-        // Mostra o container apropriado
-        if (selectedType === 'image') {
-            imageContainer?.classList.remove('hidden');
-        } else if (selectedType === 'youtube') {
-            youtubeIdContainer?.classList.remove('hidden');
-        } else if (selectedType === 'local') {
-            localVideoContainer?.classList.remove('hidden');
-        }
-
-        // Atualiza o siteData e salva
-        if (window.siteCMS) {
-            window.siteCMS.siteData.content.heroMediaType = selectedType;
-            // window.siteCMS.saveData(); // Não salva automaticamente aqui, o botão 'Salvar Tudo' cuida disso
-            window.siteCMS.renderHeroMedia(); // Renderiza imediatamente para visualização
-        }
-      });
-
-      // Event Listener para mudanças no ID do vídeo do YouTube hero
-      document.getElementById('heroYoutubeId')?.addEventListener('input', function() {
-         if (window.siteCMS) {
-            window.siteCMS.siteData.content.heroYoutubeId = this.value.trim();
-            // window.siteCMS.saveData(); // Não salva automaticamente aqui
-            // Só renderiza se o tipo for youtube
-            if(window.siteCMS.siteData.content.heroMediaType === 'youtube') {
-                 window.siteCMS.renderHeroMedia();
-            }
-        }
-      });
-
-      // Event Listener para upload de vídeo local hero
-      document.getElementById('heroLocalVideoUpload').addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const url = await siteCMS.handleVideoUpload(file, 'heroLocalVideo');
-        if (url) {
-          siteCMS.siteData.content.heroLocalVideo = url;
-          // Atualiza preview
-          const preview = document.getElementById('heroLocalVideoPreview');
-          const nameDisplay = document.getElementById('heroLocalVideoName');
-          if (preview && nameDisplay) {
-            preview.src = url;
-            preview.classList.remove('hidden');
-            nameDisplay.textContent = file.name;
-            nameDisplay.classList.remove('hidden');
-          }
-          // Atualiza tipo de mídia para 'local'
-          const mediaTypeSelect = document.getElementById('heroMediaType');
-          if (mediaTypeSelect) {
-            mediaTypeSelect.value = 'local';
-            mediaTypeSelect.dispatchEvent(new Event('change')); // Dispara o evento para atualizar a UI
-          }
-          await siteCMS.saveData();
-        }
-      });
-      
-      document.getElementById('heroImageUpload').addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const url = await siteCMS.handleImageUpload(file, 'heroImage');
-        if (url) {
-          siteCMS.siteData.content.heroImage = url;
-          await siteCMS.saveData();
-        }
-      });
-      document.getElementById('companyLogoUpload').addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const url = await siteCMS.handleImageUpload(file, 'companyLogo');
-        if (url) {
-          siteCMS.siteData.content.companyLogo = url;
-          await siteCMS.saveData();
-        }
-      });
-      document.getElementById('loginModal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) {
-          siteCMS.hideLoginModal();
-        }
-      });
-      // Configurações de botões
-      document.getElementById('buttonPrimaryColor').addEventListener('input', (e) => {
-        document.documentElement.style.setProperty('--primary', e.target.value);
-        siteCMS.siteData.content.buttonPrimaryColor = e.target.value;
-      });
-      document.getElementById('buttonTextColor').addEventListener('input', (e) => {
-        document.documentElement.style.setProperty('--button-text-color', e.target.value);
-        siteCMS.siteData.content.buttonTextColor = e.target.value;
-      });
-      document.getElementById('buttonBorderRadius').addEventListener('input', (e) => {
-        document.getElementById('borderRadiusValue').textContent = `${e.target.value}px`;
-        document.documentElement.style.setProperty('--button-border-radius', `${e.target.value}px`);
-        siteCMS.siteData.content.buttonBorderRadius = e.target.value;
-      });
-      document.getElementById('buttonPaddingY').addEventListener('input', (e) => {
-        document.getElementById('paddingYValue').textContent = `${e.target.value}px`;
-        document.documentElement.style.setProperty('--button-padding-y', `${e.target.value}px`);
-        siteCMS.siteData.content.buttonPaddingY = e.target.value;
-      });
-      document.getElementById('buttonPaddingX').addEventListener('input', (e) => {
-        document.getElementById('paddingXValue').textContent = `${e.target.value}px`;
-        document.documentElement.style.setProperty('--button-padding-x', `${e.target.value}px`);
-        siteCMS.siteData.content.buttonPaddingX = e.target.value;
-      });
     });
-    // Funções globais para serem chamadas pelos botões
-    function addGalleryImage() { window.siteCMS?.addGalleryImage(); }
-    function removeGalleryItem(index) { window.siteCMS?.removeGalleryItem(index); }
-    function addVideo() { window.siteCMS?.addVideo(); }
-    function removeVideoItem(index) { window.siteCMS?.removeVideoItem(index); }
-    function addTestimonial() { window.siteCMS?.addTestimonial(); }
-    function removeTestimonial(index) { window.siteCMS?.removeTestimonial(index); }
-    function addNewSection() { window.siteCMS?.addNewSection(); }
-    function removeSection(index) { window.siteCMS?.removeSection(index); }
+
+    // Logout
+    document.getElementById('logoutButton').addEventListener('click', () => {
+        siteCMS.logout();
+    });
+
+    // Resetar dados
+    document.getElementById('resetAll').addEventListener('click', () => {
+        if (confirm('Tem certeza que deseja restaurar os dados padrão? Todas as alterações serão perdidas.')) {
+            siteCMS.loadDefaultData();
+            siteCMS.renderContent();
+            siteCMS.saveData();
+            siteCMS.showToast("Dados padrão restaurados", "info");
+        }
+    });
   </script>
 </body>
 </html>
-
-
-    
-              <script>
-                              
-              </script>
-                        </body>
-                        </html>
-                    
