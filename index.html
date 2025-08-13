@@ -11,6 +11,7 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#001F3F">
     <link rel="canonical" href="https://conceito.com.br">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏢</text></svg>">
     
     <!-- CDNs -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -172,7 +173,7 @@
         .admin-panel {
             position: fixed;
             top: 0;
-            right: -350px;
+            right: -100%;
             width: 350px;
             height: 100vh;
             background: white;
@@ -378,6 +379,12 @@
             50% { 
                 transform: translateY(-15px); 
             }
+        }
+        
+        /* Correção para rolagem do painel administrativo */
+        .admin-panel > div.p-4:last-child {
+            flex-grow: 1;
+            overflow-y: auto;
         }
     </style>
 </head>
