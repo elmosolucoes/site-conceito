@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -81,9 +80,10 @@
       box-shadow: -5px 0 15px rgba(0,0,0,0.1);
       transform: translateX(400px);
       transition: transform 0.3s ease;
-      height: 100vh; /* 1. Define altura total da viewport */
-      display: flex; /* 2. Usa flexbox para layout interno */
-      flex-direction: column; /* 3. Organiza os filhos verticalmente */
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 10000; /* Garantir que fique por cima */
     }
     .admin-panel.open {
       transform: translateX(0);
@@ -158,6 +158,7 @@
     /* Modal de Login */
     #loginModal {
       transition: opacity 0.3s ease;
+      z-index: 10001; /* Acima do painel */
     }
     #loginModal input {
       border-color: #cbd5e1;
@@ -191,7 +192,7 @@
       transform: translateY(100px);
       opacity: 0;
       transition: all 0.3s ease;
-      z-index: 1000;
+      z-index: 10002; /* Acima de tudo */
     }
     .toast.show {
       transform: translateY(0);
@@ -243,40 +244,38 @@
       background-color: #0055AA;
     }
     /* Correção para rolagem do painel administrativo */
-    .admin-panel > div.p-4:last-child { /* Seleciona o último div.p-4, que é o conteúdo principal */
-      flex-grow: 1; /* 4. Faz este div ocupar o espaço restante */
-      overflow-y: auto; /* 5. Permite rolagem vertical */
-    }
-    
-    /* Garante que o container da mídia flutuante tenha posição relativa para o vídeo */
-    .hero-gradient .relative.floating {
-      position: relative;
+    .admin-panel > div.p-4:last-child {
+      flex-grow: 1;
+      overflow-y: auto;
     }
 
-    /* Estilos para o container de vídeo dentro do hero */
-    #hero-video-container {
-      width: 100%; /* Ou um valor fixo se preferir */
-      /* Altura é definida pelo padding-bottom do .video-wrapper para manter proporção */
-      border-radius: 0.5rem; /* rounded-lg */
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
-      overflow: hidden; /* Para garantir que o border-radius do wrapper seja respeitado */
+    /* Estilos para o Hero Media */
+    .hero-media-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
     }
-
-    /* Assegura que o iframe preencha o wrapper */
-    #hero-video-iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
+    #hero-image, #hero-video-container {
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
-
-    /* Classes auxiliares para mostrar/ocultar */
-    .media-show {
-        display: block !important; /* Ou flex, conforme o elemento */
+    #hero-video-container .video-wrapper {
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+        position: relative;
     }
-    .media-hide {
+    #hero-video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 0.5rem;
+    }
+    .media-hidden {
         display: none !important;
     }
   </style>
@@ -310,14 +309,14 @@
     <i class="fas fa-cog"></i>
   </button>
   <!-- Painel Admin -->
-  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40 flex flex-col"> <!-- Adicionado flex e flex-col -->
-    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0"> <!-- Adicionado flex-shrink-0 -->
+  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40 flex flex-col">
+    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0">
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto flex-grow"> <!-- Removido h-[calc...] problemático, adicionado flex-grow -->
+    <div class="p-4 overflow-y-auto flex-grow">
       <div class="mb-6">
         <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
           <i class="fas fa-save mr-2"></i>Salvar Tudo
@@ -388,43 +387,6 @@
               <label class="block text-sm font-medium mb-1">Link Botão Secundário</label>
               <input type="text" id="heroCtaSecondaryLink" aria-label="Link Botão Secundário" class="w-full p-2 border rounded" placeholder="#methodology">
             </div>
-            
-            <!-- Nova Seção: Configuração da Mídia Hero -->
-            <div class="admin-section mt-6 p-4 border rounded bg-gray-50">
-              <h4 class="font-bold text-md mb-3">Configuração da Mídia Hero</h4>
-
-              <!-- Escolha do Tipo de Mídia -->
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Tipo de Mídia</label>
-                <select id="heroMediaType" aria-label="Tipo de Mídia Hero" class="w-full p-2 border rounded">
-                  <option value="image">Imagem</option>
-                  <option value="video">Vídeo (YouTube)</option>
-                </select>
-              </div>
-
-              <!-- Campo para ID do Vídeo do YouTube (aparece condicionalmente) -->
-              <div id="heroVideoIdContainer" class="mb-4 hidden">
-                <label class="block text-sm font-medium mb-1">ID do Vídeo do YouTube</label>
-                <input type="text" id="heroVideoId" aria-label="ID do Vídeo do YouTube" class="w-full p-2 border rounded" placeholder="Cole o ID do YouTube aqui">
-                <p class="text-xs text-gray-500 mt-1">Exemplo: Para 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', o ID é 'dQw4w9WgXcQ'.</p>
-              </div>
-
-              <!-- Upload de Imagem Hero (já existente, mas movido para cá para organização) -->
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Imagem Hero</label>
-                <input type="file" id="heroImageUpload" accept="image/*" class="hidden">
-                <button onclick="document.getElementById('heroImageUpload').click()" aria-label="Selecionar imagem para o Hero" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                  <i class="fas fa-upload mr-2"></i>Selecionar Imagem
-                </button>
-                <div class="mt-4">
-                  <img id="heroImagePreview" class="max-w-full h-auto rounded border hidden">
-                  <div class="mt-2">
-                    <label class="block text-sm font-medium mb-1">Texto Alternativo</label>
-                    <input type="text" id="heroImageAlt" aria-label="Texto Alternativo da Imagem Hero" class="w-full p-2 border rounded">
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <!-- Nova Seção de Configuração de Botões -->
@@ -476,6 +438,38 @@
       </div>
       <!-- Mídia -->
       <div id="media-tab" class="admin-tab-content hidden space-y-6">
+        <div class="admin-section">
+          <h4 class="font-bold text-lg mb-3">Mídia Hero</h4>
+          
+          <!-- Escolha do Tipo de Mídia -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Tipo de Mídia</label>
+            <select id="heroMediaType" aria-label="Tipo de Mídia Hero" class="w-full p-2 border rounded">
+              <option value="image">Imagem</option>
+              <option value="video">Vídeo (YouTube)</option>
+            </select>
+          </div>
+
+          <!-- Campo para ID do Vídeo do YouTube -->
+          <div id="heroVideoIdContainer" class="mb-4 hidden">
+            <label class="block text-sm font-medium mb-1">ID do Vídeo do YouTube</label>
+            <input type="text" id="heroVideoId" aria-label="ID do Vídeo do YouTube" class="w-full p-2 border rounded" placeholder="Cole o ID do YouTube aqui">
+            <p class="text-xs text-gray-500 mt-1">Exemplo: Para 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', o ID é 'dQw4w9WgXcQ'.</p>
+          </div>
+
+          <!-- Upload de Imagem Hero -->
+          <input type="file" id="heroImageUpload" accept="image/*" class="hidden">
+          <button onclick="document.getElementById('heroImageUpload').click()" aria-label="Selecionar imagem para o Hero" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <i class="fas fa-upload mr-2"></i>Selecionar Imagem
+          </button>
+          <div class="mt-4">
+            <img id="heroImagePreview" class="max-w-full h-auto rounded border hidden">
+            <div class="mt-2">
+              <label class="block text-sm font-medium mb-1">Texto Alternativo</label>
+              <input type="text" id="heroImageAlt" aria-label="Texto Alternativo da Imagem Hero" class="w-full p-2 border rounded">
+            </div>
+          </div>
+        </div>
         <div class="admin-section">
           <h4 class="font-bold text-lg mb-3">Galeria de Fotos</h4>
           <div id="galleryItems" class="space-y-4">
@@ -613,17 +607,16 @@
             </div>
           </div>
           <div class="md:w-1/2 flex justify-center">
-            <!-- Container para a mídia flutuante -->
-            <div class="relative floating w-full max-w-lg"> <!-- Mantém a classe 'floating' no container -->
-                <!-- Imagem Flutuante (inicialmente visível ou oculta) -->
-                <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Business growth" class="rounded-lg shadow-2xl w-full h-auto object-cover editable-img hidden" data-field="heroImage" data-alt-field="heroImageAlt">
-
-                <!-- Vídeo Flutuante (inicialmente oculto) -->
-                <div id="hero-video-container" class="video-container w-full rounded-lg shadow-2xl hidden"> <!-- Classe 'hidden' inicial -->
+            <div class="hero-media-container floating">
+                <!-- Imagem Hero -->
+                <img id="hero-image" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Business growth" class="editable-img" data-field="heroImage" data-alt-field="heroImageAlt">
+                
+                <!-- Container Vídeo Hero -->
+                <div id="hero-video-container" class="media-hidden">
                     <div class="video-wrapper">
                         <iframe id="hero-video-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                 </div>
+                </div>
             </div>
           </div>
         </div>
@@ -1037,6 +1030,7 @@
       const SUPABASE_URL = 'https://qpfhmfncponqvdaglrzc.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmhtZm5jcG9ucXZkYWdscnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MDgyOTAsImV4cCI6MjA2OTQ4NDI5MH0.Eo41Om5zt0J_itvRG8pIUjSfT9OouBV_ufajrjozAnk';
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
       // Sistema CMS Completo com Supabase
       class SiteCMS {
         constructor() {
@@ -1052,10 +1046,12 @@
           };
           this.init();
         }
+        
         init() {
           this.setupSupabaseListeners();
           this.checkAuthState();
         }
+        
         setupSupabaseListeners() {
           supabase.auth.onAuthStateChange((_event, session) => {
             this.user = session ? session.user : null;
@@ -1071,10 +1067,11 @@
             }
           });
         }
+        
         async checkAuthState() {
           try {
             document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
-            const { data: { user } } = await supabase.auth.getUser();
+            const {  { user } } = await supabase.auth.getUser();
             this.user = user;
             this.isAuthenticated = !!user;
             // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
@@ -1089,6 +1086,7 @@
             await this.loadFromLocalStorage();
           }
         }
+        
         async loadData() {
           try {
             this.showToast("Carregando dados...", "info");
@@ -1097,12 +1095,11 @@
             if (data) {
               this.siteData = {
                 content: data.content || {},
-                media: data.media || { gallery: [], videos: [] },
+                media: data.media || { gallery: [], videos: [], heroMediaType: 'image', heroVideoId: '' },
                 testimonials: data.testimonials || [],
                 sections: data.sections || [],
                 navigation: data.navigation || { main: [], footer: [] }
               };
-              this.showToast("Dados carregados do Supabase", "success");
             } else {
               this.loadDefaultData();
               if(this.isAuthenticated) await this.saveData();
@@ -1117,6 +1114,7 @@
             await this.loadFromLocalStorage();
           }
         }
+        
         loadDefaultData() {
           // Captura dados padrão dos elementos HTML
           document.querySelectorAll('[data-field]').forEach(el => {
@@ -1132,7 +1130,12 @@
             }
           });
           // Dados padrão para outras seções
-          this.siteData.media = { gallery: [], videos: [] };
+          this.siteData.media = { 
+            gallery: [], 
+            videos: [], 
+            heroMediaType: this.siteData.media?.heroMediaType || 'image',
+            heroVideoId: this.siteData.media?.heroVideoId || ''
+          };
           this.siteData.testimonials = [];
           this.siteData.sections = [];
           this.siteData.navigation = {
@@ -1151,10 +1154,8 @@
               { text: "Contato", href: "#contact" }
             ]
           };
-          // Adiciona campos padrão para o tipo de mídia e ID do vídeo
-          this.siteData.content.heroMediaType = this.siteData.content.heroMediaType || 'image'; // Padrão é imagem
-          this.siteData.content.heroVideoId = this.siteData.content.heroVideoId || ''; // ID vazio por padrão
         }
+        
         async saveToLocalStorage() {
           try {
             const jsonData = JSON.stringify(this.siteData);
@@ -1164,6 +1165,7 @@
             console.warn("Não foi possível salvar no localStorage:", e); 
           }
         }
+        
         loadFromLocalStorage() {
           try {
             const savedData = localStorage.getItem('siteData');
@@ -1171,7 +1173,7 @@
               const parsed = JSON.parse(decodeURIComponent(escape(atob(savedData))));
               this.siteData = {
                 content: parsed.content || {},
-                media: parsed.media || { gallery: [], videos: [] },
+                media: parsed.media || { gallery: [], videos: [], heroMediaType: 'image', heroVideoId: '' },
                 testimonials: parsed.testimonials || [],
                 sections: parsed.sections || [],
                 navigation: parsed.navigation || { main: [], footer: [] }
@@ -1189,6 +1191,7 @@
             this.renderContent();
           }
         }
+        
         async saveData() {
           const saveButton = document.getElementById('saveAll');
           let originalText = saveButton.innerHTML;
@@ -1220,6 +1223,7 @@
             }, 2000);
           }
         }
+        
         async authenticate(email, password) {
           try {
             document.getElementById('loginButtonText').textContent = "Autenticando...";
@@ -1241,6 +1245,7 @@
             document.getElementById('loginSpinner').classList.add('hidden');
           }
         }
+        
         async logout() {
           try {
             await supabase.auth.signOut();
@@ -1252,6 +1257,7 @@
             console.error("Erro ao fazer logout:", error); 
           }
         }
+        
         showToast(message, type = "info") {
           const toast = document.getElementById('toast');
           toast.textContent = message;
@@ -1270,6 +1276,7 @@
             setTimeout(() => toast.classList.add('hidden'), 300);
           }, 5000);
         }
+        
         toggleAdmin(show = null) {
           if (!this.isAuthenticated && (show === true || show === null)) {
             this.showLoginModal();
@@ -1288,13 +1295,16 @@
             document.querySelectorAll('.admin-only, .remove-btn').forEach(el => el.classList.add('hidden'));
           }
         }
+        
         showLoginModal() {
           document.getElementById('loginModal').classList.remove('hidden');
           document.getElementById('adminEmail').focus();
         }
+        
         hideLoginModal() {
           document.getElementById('loginModal').classList.add('hidden');
         }
+        
         switchTab(tabId) {
           document.querySelectorAll('.admin-tab').forEach(tab => 
             tab.classList.toggle('active', tab.dataset.tab === tabId)
@@ -1303,6 +1313,7 @@
             content.classList.toggle('hidden', content.id !== `${tabId}-tab`)
           );
         }
+        
         updateAdminForm() {
           Object.keys(this.siteData.content).forEach(field => {
             const input = document.getElementById(field);
@@ -1318,20 +1329,20 @@
             }
           });
           
-          // Atualiza campos da nova seção de mídia hero
+          // Atualizar campos específicos da nova seção de mídia hero
           const mediaTypeSelect = document.getElementById('heroMediaType');
           const videoIdInput = document.getElementById('heroVideoId');
           const videoIdContainer = document.getElementById('heroVideoIdContainer');
-
+          
           if (mediaTypeSelect) {
-            mediaTypeSelect.value = this.siteData.content.heroMediaType || 'image';
-            // Dispara o evento 'change' manualmente para mostrar/esconder o campo de ID do vídeo
+            mediaTypeSelect.value = this.siteData.media.heroMediaType || 'image';
+            // Disparar o evento change para atualizar a UI
             mediaTypeSelect.dispatchEvent(new Event('change'));
           }
           if (videoIdInput) {
-            videoIdInput.value = this.siteData.content.heroVideoId || '';
+            videoIdInput.value = this.siteData.media.heroVideoId || '';
           }
-          
+
           // Configurações de botões
           if (this.siteData.content.buttonPrimaryColor) {
             document.getElementById('buttonPrimaryColor').value = this.siteData.content.buttonPrimaryColor;
@@ -1358,6 +1369,7 @@
           }
           this.renderSectionsList();
         }
+        
         enableInlineEdit(element) {
           const field = element.dataset.field;
           const originalValue = element.innerHTML;
@@ -1379,6 +1391,7 @@
             }
           });
         }
+        
         async handleImageUpload(file, field) {
           if (!file) return null;
           try {
@@ -1390,7 +1403,7 @@
               .from('images')
               .upload(filePath, file, { upsert: true });
             if (uploadError) throw uploadError;
-            const { data: { publicUrl } } = supabase.storage
+            const {  { publicUrl } } = supabase.storage
               .from('images')
               .getPublicUrl(filePath);
             if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
@@ -1402,6 +1415,7 @@
             return null;
           }
         }
+        
         renderContent() {
           console.log("Renderizando conteúdo com dados:", this.siteData);
           const companyNameContainer = document.getElementById('companyNameContainer');
@@ -1436,7 +1450,6 @@
               el.innerHTML = value;
             }
           });
-          // Renderização da mídia hero
           this.renderHeroMedia();
           this.renderGallery();
           this.renderVideos();
@@ -1445,39 +1458,38 @@
           this.renderNavigation();
         }
         
-        // Novo método para renderizar a mídia hero com base no tipo
+        // Renderiza a mídia do Hero (Imagem ou Vídeo)
         renderHeroMedia() {
-            const mediaType = this.siteData.content.heroMediaType || 'image';
+            const heroImageElement = document.getElementById('hero-image');
+            const heroVideoContainer = document.getElementById('hero-video-container');
+            const heroVideoIframe = document.getElementById('hero-video-iframe');
+            
+            const mediaType = this.siteData.media.heroMediaType || 'image';
             const imageUrl = this.siteData.content.heroImage;
-            const videoId = this.siteData.content.heroVideoId;
+            const videoId = this.siteData.media.heroVideoId;
             const imageAlt = this.siteData.content.heroImageAlt || 'Business growth';
 
-            const imageElement = document.getElementById('hero-image');
-            const videoContainer = document.getElementById('hero-video-container');
-            const videoIframe = document.getElementById('hero-video-iframe');
-
-            // Esconde ambos inicialmente
-            imageElement?.classList.add('hidden');
-            videoContainer?.classList.add('hidden');
+            // Resetar classes
+            heroImageElement?.classList.remove('media-hidden');
+            heroVideoContainer?.classList.remove('media-hidden');
+            heroImageElement?.classList.add('media-hidden');
+            heroVideoContainer?.classList.add('media-hidden');
 
             if (mediaType === 'video' && videoId) {
-                // Mostra o vídeo
-                if (videoIframe) {
-                    videoIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+                // Mostrar vídeo
+                heroVideoContainer?.classList.remove('media-hidden');
+                if (heroVideoIframe) {
+                    heroVideoIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
                 }
-                videoContainer?.classList.remove('hidden');
-                // Garante que a imagem esteja oculta
-                imageElement?.classList.add('hidden');
             } else {
-                // Mostra a imagem (padrão ou se vídeo ID estiver vazio)
-                if (imageElement && imageUrl) {
-                     imageElement.src = imageUrl;
-                     imageElement.alt = imageAlt;
+                // Mostrar imagem (padrão)
+                heroImageElement?.classList.remove('media-hidden');
+                if (heroImageElement && imageUrl) {
+                    heroImageElement.src = imageUrl;
+                    heroImageElement.alt = imageAlt;
                 }
-                imageElement?.classList.remove('hidden');
-                 // Garante que o vídeo esteja oculto
-                videoContainer?.classList.add('hidden');
-                if(videoIframe) videoIframe.src = ''; // Limpa o src do vídeo se não estiver sendo usado
+                // Limpar src do vídeo se não estiver sendo usado
+                if (heroVideoIframe) heroVideoIframe.src = '';
             }
         }
         
@@ -1505,6 +1517,7 @@
             `;
           });
         }
+        
         renderVideos() {
           const container = document.getElementById('videosGrid');
           const adminContainer = document.getElementById('videoItems');
@@ -1555,6 +1568,7 @@
           // Carrega a API do YouTube
           this.loadYouTubeAPI();
         }
+        
         loadYouTubeAPI() {
           if (window.YT) return; // Já está carregado
           const tag = document.createElement('script');
@@ -1576,6 +1590,7 @@
             });
           };
         }
+        
         renderTestimonials() {
           const container = document.getElementById('testimonialsContainer');
           if (!container) return;
@@ -1598,6 +1613,7 @@
             </div>
           `).join('');
         }
+        
         renderNavigation() {
           const mainNav = document.getElementById('mainNav');
           const footerLinks = document.getElementById('footerLinks');
@@ -1621,6 +1637,7 @@
             `<li><a href="${link.href}" class="text-gray-300 hover:text-white transition-colors">${link.text}</a></li>`
           ).join('');
         }
+        
         renderCustomSections() {
           const container = document.getElementById('custom-sections-container');
           if (!container) return;
@@ -1661,6 +1678,7 @@
             }
           }).join('');
         }
+        
         renderSectionsList() {
           const container = document.getElementById('sectionsList');
           if (!container) return;
@@ -1676,6 +1694,7 @@
             </div>
           `).join('');
         }
+        
         async addGalleryImage() {
           const input = document.createElement('input');
           input.type = 'file';
@@ -1694,6 +1713,7 @@
           };
           input.click();
         }
+        
         async removeGalleryItem(index) {
           if (confirm('Remover esta imagem da galeria?')) {
             const item = this.siteData.media.gallery[index];
@@ -1710,6 +1730,7 @@
             }
           }
         }
+        
         addVideo() {
           const url = prompt('Cole a URL do vídeo do YouTube:');
           if (!url) return;
@@ -1730,12 +1751,14 @@
             this.showToast("URL do YouTube inválida ou ID não encontrado", "error");
           }
         }
+        
         removeVideoItem(index) {
           if (confirm('Remover este vídeo?')) {
             this.siteData.media.videos.splice(index, 1);
             this.saveData();
           }
         }
+        
         addTestimonial() {
           const name = prompt('Nome:', 'Novo Cliente');
           if (!name) return;
@@ -1751,12 +1774,14 @@
           });
           this.saveData();
         }
+        
         removeTestimonial(index) {
           if (confirm('Remover este depoimento?')) {
             this.siteData.testimonials.splice(index, 1);
             this.saveData();
           }
         }
+        
         addNewSection() {
           const name = document.getElementById('newSectionName').value;
           const id = document.getElementById('newSectionId').value;
@@ -1772,6 +1797,7 @@
           document.getElementById('newSectionId').value = '';
           document.getElementById('newSectionType').value = 'text';
         }
+        
         removeSection(index) {
           if (confirm('Remover esta seção?')) {
             this.siteData.sections.splice(index, 1);
@@ -1779,20 +1805,27 @@
           }
         }
       }
+      
       // Inicializa o CMS
       window.siteCMS = new SiteCMS();
+      
       // Event Listeners
       document.getElementById('loginButton').addEventListener('click', () => {
         const email = document.getElementById('adminEmail').value;
         const password = document.getElementById('adminPass').value;
         siteCMS.authenticate(email, password);
       });
+      
       document.getElementById('logoutButton').addEventListener('click', () => siteCMS.logout());
+      
       document.getElementById('adminPass').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('loginButton').click();
       });
+      
       document.getElementById('adminToggle').addEventListener('click', () => siteCMS.toggleAdmin());
+      
       document.getElementById('closeAdmin').addEventListener('click', () => siteCMS.toggleAdmin(false));
+      
       document.getElementById('saveAll').addEventListener('click', () => {
         document.querySelectorAll('#content-tab input, #content-tab textarea').forEach(input => {
           const field = input.id;
@@ -1801,39 +1834,38 @@
           }
         });
         
-        // Salva os novos campos da mídia hero
-        const mediaTypeSelect = document.getElementById('heroMediaType');
-        const videoIdInput = document.getElementById('heroVideoId');
-        if (mediaTypeSelect && siteCMS.siteData.content.hasOwnProperty('heroMediaType')) {
-          siteCMS.siteData.content.heroMediaType = mediaTypeSelect.value;
-        }
-        if (videoIdInput && siteCMS.siteData.content.hasOwnProperty('heroVideoId')) {
-          siteCMS.siteData.content.heroVideoId = videoIdInput.value.trim();
-        }
-        
-        // Salva configurações de botões
+        // Salvar configurações de botões
         siteCMS.siteData.content.buttonPrimaryColor = document.getElementById('buttonPrimaryColor').value;
         siteCMS.siteData.content.buttonTextColor = document.getElementById('buttonTextColor').value;
         siteCMS.siteData.content.buttonBorderRadius = document.getElementById('buttonBorderRadius').value;
         siteCMS.siteData.content.buttonPaddingY = document.getElementById('buttonPaddingY').value;
         siteCMS.siteData.content.buttonPaddingX = document.getElementById('buttonPaddingX').value;
+        
+        // Salvar configurações de mídia hero
+        siteCMS.siteData.media.heroMediaType = document.getElementById('heroMediaType').value;
+        siteCMS.siteData.media.heroVideoId = document.getElementById('heroVideoId').value.trim();
+        
         // Aplica estilos imediatamente
         document.documentElement.style.setProperty('--primary', siteCMS.siteData.content.buttonPrimaryColor);
         document.documentElement.style.setProperty('--button-text-color', siteCMS.siteData.content.buttonTextColor);
         document.documentElement.style.setProperty('--button-border-radius', `${siteCMS.siteData.content.buttonBorderRadius}px`);
         document.documentElement.style.setProperty('--button-padding-y', `${siteCMS.siteData.content.buttonPaddingY}px`);
         document.documentElement.style.setProperty('--button-padding-x', `${siteCMS.siteData.content.buttonPaddingX}px`);
+        
         siteCMS.saveData();
       });
+      
       document.getElementById('resetAll').addEventListener('click', () => {
         if (confirm('Restaurar dados padrão? Isso não pode ser desfeito.')) {
           siteCMS.loadDefaultData();
           siteCMS.saveData();
         }
       });
+      
       document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.addEventListener('click', (e) => siteCMS.switchTab(e.currentTarget.dataset.tab));
       });
+      
       document.addEventListener('dblclick', (e) => {
         if (siteCMS.isAdmin && e.target.classList.contains('editable')) {
           siteCMS.enableInlineEdit(e.target);
@@ -1849,21 +1881,19 @@
         } else {
           videoIdContainer?.classList.add('hidden');
         }
-        // Atualiza o siteData e salva
+        // Atualiza a visualização imediatamente
         if (window.siteCMS) {
-          window.siteCMS.siteData.content.heroMediaType = selectedType;
-          // window.siteCMS.saveData(); // Não salva automaticamente aqui, o botão 'Salvar Tudo' cuida disso
-          window.siteCMS.renderHeroMedia(); // Renderiza imediatamente para visualização
+            window.siteCMS.siteData.media.heroMediaType = selectedType;
+            window.siteCMS.renderHeroMedia();
         }
       });
 
       // Event Listener para mudanças no ID do vídeo hero
       document.getElementById('heroVideoId')?.addEventListener('input', function() {
          if (window.siteCMS) {
-            window.siteCMS.siteData.content.heroVideoId = this.value.trim();
-            // window.siteCMS.saveData(); // Não salva automaticamente aqui
+            window.siteCMS.siteData.media.heroVideoId = this.value.trim();
             // Só renderiza se o tipo for vídeo
-            if(window.siteCMS.siteData.content.heroMediaType === 'video') {
+            if(window.siteCMS.siteData.media.heroMediaType === 'video') {
                  window.siteCMS.renderHeroMedia();
             }
         }
@@ -1878,8 +1908,62 @@
           await siteCMS.saveData();
         }
       });
+      
       document.getElementById('companyLogoUpload').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const url = await siteCMS.handleImageUpload(file, 'companyLogo');
-        if (url) 
+        if (url) {
+          siteCMS.siteData.content.companyLogo = url;
+          await siteCMS.saveData();
+        }
+      });
+      
+      document.getElementById('loginModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          siteCMS.hideLoginModal();
+        }
+      });
+      
+      // Configurações de botões
+      document.getElementById('buttonPrimaryColor').addEventListener('input', (e) => {
+        document.documentElement.style.setProperty('--primary', e.target.value);
+        siteCMS.siteData.content.buttonPrimaryColor = e.target.value;
+      });
+      
+      document.getElementById('buttonTextColor').addEventListener('input', (e) => {
+        document.documentElement.style.setProperty('--button-text-color', e.target.value);
+        siteCMS.siteData.content.buttonTextColor = e.target.value;
+      });
+      
+      document.getElementById('buttonBorderRadius').addEventListener('input', (e) => {
+        document.getElementById('borderRadiusValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-border-radius', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonBorderRadius = e.target.value;
+      });
+      
+      document.getElementById('buttonPaddingY').addEventListener('input', (e) => {
+        document.getElementById('paddingYValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-padding-y', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonPaddingY = e.target.value;
+      });
+      
+      document.getElementById('buttonPaddingX').addEventListener('input', (e) => {
+        document.getElementById('paddingXValue').textContent = `${e.target.value}px`;
+        document.documentElement.style.setProperty('--button-padding-x', `${e.target.value}px`);
+        siteCMS.siteData.content.buttonPaddingX = e.target.value;
+      });
+    });
+    
+    // Funções globais para serem chamadas pelos botões
+    function addGalleryImage() { window.siteCMS?.addGalleryImage(); }
+    function removeGalleryItem(index) { window.siteCMS?.removeGalleryItem(index); }
+    function addVideo() { window.siteCMS?.addVideo(); }
+    function removeVideoItem(index) { window.siteCMS?.removeVideoItem(index); }
+    function addTestimonial() { window.siteCMS?.addTestimonial(); }
+    function removeTestimonial(index) { window.siteCMS?.removeTestimonial(index); }
+    function addNewSection() { window.siteCMS?.addNewSection(); }
+    function removeSection(index) { window.siteCMS?.removeSection(index); }
+  </script>
+</body>
+</html>
