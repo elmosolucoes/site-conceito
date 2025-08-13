@@ -917,9 +917,7 @@
                         .eq('id', 1)
                         .single();
                     
-                    if (error && error.code !== 'PGRST116') {
-                        throw error;
-                    }
+                    if (error && error.code !== 'PGRST116') throw error;
                     
                     if (data) {
                         this.siteData = {
@@ -1138,7 +1136,7 @@
                     if (uploadError) throw uploadError;
                     
                     // Obter URL pública do vídeo
-                    const { data: { publicUrl }, error: urlError } = supabase.storage
+                    const { data: { publicUrl }, error: urlError } = await supabase.storage
                         .from('videos')
                         .getPublicUrl(fileName);
                     
