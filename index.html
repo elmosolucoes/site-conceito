@@ -80,9 +80,9 @@
       box-shadow: -5px 0 15px rgba(0,0,0,0.1);
       transform: translateX(400px);
       transition: transform 0.3s ease;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+      height: 100vh; /* 1. Define altura total da viewport */
+      display: flex; /* 2. Usa flexbox para layout interno */
+      flex-direction: column; /* 3. Organiza os filhos verticalmente */
       z-index: 10000; /* Garantir que fique por cima */
     }
     .admin-panel.open {
@@ -244,11 +244,11 @@
       background-color: #0055AA;
     }
     /* Correção para rolagem do painel administrativo */
-    .admin-panel > div.p-4:last-child {
-      flex-grow: 1;
-      overflow-y: auto;
+    .admin-panel > div.p-4:last-child { /* Seleciona o último div.p-4, que é o conteúdo principal */
+      flex-grow: 1; /* 4. Faz este div ocupar o espaço restante */
+      overflow-y: auto; /* 5. Permite rolagem vertical */
     }
-
+    
     /* Estilos para o Hero Media */
     .hero-media-container {
         position: relative;
@@ -305,18 +305,18 @@
     </div>
   </div>
   <!-- Botão Admin -->
-  <button id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
+  <button type="button" id="adminToggle" aria-label="Abrir painel administrativo" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-[#001F3F] text-white p-3 rounded-l-lg z-50">
     <i class="fas fa-cog"></i>
   </button>
   <!-- Painel Admin -->
-  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40 flex flex-col">
-    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0">
+  <div id="adminPanel" class="admin-panel fixed top-0 right-0 h-full z-40 flex flex-col"> <!-- Adicionado flex e flex-col -->
+    <div class="p-4 bg-gray-100 border-b flex justify-between items-center flex-shrink-0"> <!-- Adicionado flex-shrink-0 -->
       <h3 class="font-bold text-lg">Painel Administrativo</h3>
       <button id="closeAdmin" aria-label="Fechar painel administrativo" class="text-gray-600 hover:text-gray-800">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto flex-grow">
+    <div class="p-4 overflow-y-auto flex-grow"> <!-- Removido h-[calc...] problemático, adicionado flex-grow -->
       <div class="mb-6">
         <button id="saveAll" aria-label="Salvar todas as alterações" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2">
           <i class="fas fa-save mr-2"></i>Salvar Tudo
@@ -1039,7 +1039,7 @@
           this.user = null;
           this.siteData = {
             content: {},
-            media: { gallery: [], videos: [] },
+            media: { gallery: [], videos: [], heroMediaType: 'image', heroVideoId: '' },
             testimonials: [],
             sections: [],
             navigation: { main: [], footer: [] }
@@ -1071,7 +1071,7 @@
         async checkAuthState() {
           try {
             document.getElementById('supabaseConfigStatus').textContent = `URL: ${SUPABASE_URL}`;
-            const {  { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
             this.user = user;
             this.isAuthenticated = !!user;
             // SEMPRE tenta carregar do Supabase primeiro (leitura pública)
@@ -1100,6 +1100,7 @@
                 sections: data.sections || [],
                 navigation: data.navigation || { main: [], footer: [] }
               };
+              this.showToast("Dados carregados do Supabase", "success");
             } else {
               this.loadDefaultData();
               if(this.isAuthenticated) await this.saveData();
@@ -1403,7 +1404,7 @@
               .from('images')
               .upload(filePath, file, { upsert: true });
             if (uploadError) throw uploadError;
-            const {  { publicUrl } } = supabase.storage
+            const { data: { publicUrl } } = supabase.storage
               .from('images')
               .getPublicUrl(filePath);
             if (!publicUrl) throw new Error('Não foi possível obter a URL pública.');
